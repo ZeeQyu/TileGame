@@ -4,6 +4,6 @@ An experimental tile-based game
 
 INSTALL.txt has installation instructions.
 
-Currently, there isn't anything interesting when you run the main.py. I just started. Have some patience.
+Sorry, but all the program does so far is to launch an empty window. Be patient.
 
 //ZeeQyu
