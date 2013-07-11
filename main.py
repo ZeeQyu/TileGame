@@ -6,6 +6,7 @@ from tiles import *
 from graphics import *
 from constants import *
 
+# Debug = 1: debug messages. Debug = 0: no debug messages.
 DEBUG = 1
 
 class InvalidColorException(Exception):
@@ -32,7 +33,7 @@ def generate_map(map_image):
             
             if DEBUG: print "y:", y, pixel, type, "|",
         if DEBUG: print
-    return map
+    return map, width, height
     
 def pixel_type(pixel, x, y):
     for key in TILES:
@@ -46,9 +47,8 @@ def paint_map(screen, map, images):
     screen.fill(BLACK)
     for i in range(len(map)):
         for j in range(len(map[i])):
-            image = images[map[i][j]].get()
-            image_rect = image.get_rect()
-            screen.blit(image, image_rect)
+            image = images[map[i][j].type].get()
+            screen.blit(image, (i*16, j*16))
     pygame.display.flip()
             
     
@@ -58,9 +58,9 @@ def main():
     for key in TILES.keys():
         images[key] = Graphics(key)
     map_image = get_map("map.png")
-    map = generate_map(map_image)
+    map, width, height = generate_map(map_image)
     
-    screen = pygame.display.set_mode((600, 600))
+    screen = pygame.display.set_mode((width * 16, height * 16))
     paint_map(screen, map, images)
     while True:
         for event in pygame.event.get():

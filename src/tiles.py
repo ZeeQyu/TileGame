@@ -1,6 +1,6 @@
 import pygame
 
-class Tile():
+class Tile(object):
     
     def __init__(self, type, x, y):
         
