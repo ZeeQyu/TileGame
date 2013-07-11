@@ -1,18 +1,12 @@
 import pygame
 
-class NotTile(Exception):
-    pass
-
-class Tile(pygame.sprite.DirtySprite):
+class Tile():
     
-    def __init__(self, type, x, y, visible = 1):
-        # initalize
-        pygame.sprite.DirtySprite.__init__(self)
+    def __init__(self, type, x, y):
         
         self.type = type
         self.x = x
         self.y = y
-        self.visible = visible
         
     def __str__(self):
         return "{type} tile at x {x} y {y}".format(type=self.type, x=self.x, y=self.y)
@@ -21,14 +15,4 @@ class Tile(pygame.sprite.DirtySprite):
         return self.type == other.type
     
     def __ne__(self, other):
-        return sefl.type != other.type
-
-class TileGroup(pygame.sprite.Group):
-    
-    def add(self, *sprites):
-        for sprite in sprites:
-            # check if the added sprites are Tiles.
-            if isinstance(sprite, Tile):
-                pygame.sprite.Group.add(self, sprite)
-            else:
-                raise NotTile("The added sprite wasn't a Tile.") 
+        return self.type != other.type
