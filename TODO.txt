@@ -1,0 +1,10 @@
+TODO list:
+
+1. Document all the functions with docstrings.
+2. Write down the concept, goals and ideas for this project.
+3. Add playable character.
+4. Continue documenting.
+5. Write down what all the parts do so you don't forget.
+6. Write pretty little describing lines under each function and method.
+...
+10. Did I mention I should document this project?
