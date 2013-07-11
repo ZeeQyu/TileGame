@@ -1,5 +1,8 @@
 import pygame
 
+class NotTile(Exception):
+    pass
+
 class Tile(pygame.sprite.DirtySprite):
     
     def __init__(self, type, x, y, visible = 1):
@@ -26,6 +29,6 @@ class TileGroup(pygame.sprite.Group):
         for sprite in sprites:
             # check if the added sprites are Tiles.
             if isinstance(sprite, Tile):
-                super.add(sprites)
+                pygame.sprite.Group.add(self, sprite)
             else:
                 raise NotTile("The added sprite wasn't a Tile.") 
