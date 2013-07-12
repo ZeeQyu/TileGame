@@ -6,7 +6,7 @@ PURPLE = (178, 0, 255)
 RED = (255, 0, 0)
 GRAY = (124, 124, 124)
 
-TILES = {
+IMAGES = {
          "grass": ["grassTile1.png", (255, 255, 255)],
          "grass2": ["grassTile2.png", 0],
          "grass3": ["grassTile3.png", 0],
@@ -37,5 +37,8 @@ TILES = {
          "tree9": ["treeTile9.png", 0],
          "hq": ["placeholder.png", (255, 106, 0)],
          "start_tile": ["grassTile1.png", (178, 0, 255)],
-         "package": ["package.png", (255, 0, 0)]
+         "package": ["package.png", (255, 0, 0)],
+         "player": ["player.png", 0]
                  }
+
+MOVEMENT_SPEED = 0.1
