@@ -1,8 +1,21 @@
+''' Module /src/constants.py
+    TileGame by ZeeQyu
+    https://github.com/ZeeQyu/TileGame
+    
+    Module containing various constants and the very important IMAGES dictionary that is used to load maps and images.
+    
+    To add a new image, add a new line to the IMAGES dictionary containing the image name as the key, the filename of the image in the res folder
+    and either a tuple containing a RGB value for loading maps or the number zero if that image shouldn't be used for loading the map.
+'''
+
 BLACK = (0, 0, 0)
 
+# The speed the player moves at. A float between 0 and 1 including 1 but not including 0.
 MOVEMENT_SPEED = 0.1
 
+# Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {
+          # tiles
          "grass": ["grassTile1.png", (255, 255, 255)],
          "grass2": ["grassTile2.png", 0],
          "grass3": ["grassTile3.png", 0],
@@ -34,5 +47,7 @@ IMAGES = {
          "hq": ["placeholder.png", (255, 106, 0)],
          "start_tile": ["grassTile1.png", (178, 0, 255)],
          "package": ["package.png", (255, 0, 0)],
+         
+         # entities
          "player": ["player.png", 0]
                  }
