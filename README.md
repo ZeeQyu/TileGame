@@ -4,7 +4,9 @@ An experimental tile-based game
 
 INSTALL.txt has installation instructions.
 
-So far, this program shows a map with a movable character with funny bug I wanted to show the world.
+Generates a game world and lets you move a character in a simple way (no borders and no collision)
 Arrow keys to move.
+
+Currently properly documented.
 
 //ZeeQyu
