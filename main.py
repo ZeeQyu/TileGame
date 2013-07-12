@@ -9,15 +9,10 @@ from constants import *
 from player import *
 from map import *
         
-def update_player(screen, player, x_change, y_change, image):
-    player.x = player.x + x_change
-    player.y = player.y + y_change
-    screen.blit(image, (player.x, player.y))
+
     
 def main():
     pygame.init()
-#     listener = EventListener()
-#     listener.start()
     images = {}
     for key in IMAGES.keys():
         images[key] = Graphics(key)
@@ -29,14 +24,19 @@ def main():
     paint_map(screen, map, images)
     
     player = Player(player_start_x, player_start_y)
-    update_player(screen, player, 0, 0, images["player"].get())
+    player.update(screen, images["player"].get())
 
     pygame.display.flip()
     
     while True:
         for event in pygame.event.get():
+            print event
             if event.type == QUIT:
                 sys.exit()
-
+            if event.type == KEYDOWN or event.type == KEYUP:
+                player.event_check(event)
+        player.update(screen, images["player"].get())
+        pygame.display.flip()
+        
 if __name__ == '__main__':
     main()
