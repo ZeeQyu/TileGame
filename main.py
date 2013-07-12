@@ -21,11 +21,10 @@ def main():
     map, width, height, player_start_x, player_start_y = generate_map(map_image)
         
     screen = pygame.display.set_mode((width * 16, height * 16))
-    paint_map(screen, map, images)
-    
     player = Player(player_start_x, player_start_y)
-    player.update(screen, images["player"].get())
-
+    
+    paint_map(screen, map, images)
+    player.paint(screen, images["player"].get())
     pygame.display.flip()
     
     while True:
@@ -35,8 +34,12 @@ def main():
                 sys.exit()
             if event.type == KEYDOWN or event.type == KEYUP:
                 player.event_check(event)
-        player.update(screen, images["player"].get())
-        pygame.display.flip()
+                
+        player.update()
+        if player.has_moved():
+            paint_map(screen, map, images)
+            player.paint(screen, images["player"].get())
+            pygame.display.flip()
         
 if __name__ == '__main__':
     main()

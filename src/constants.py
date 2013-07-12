@@ -1,10 +1,6 @@
-WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-ORANGE = (255, 106, 0)
-YELLOW = (255, 216, 0)
-PURPLE = (178, 0, 255)
-RED = (255, 0, 0)
-GRAY = (124, 124, 124)
+
+MOVEMENT_SPEED = 0.1
 
 IMAGES = {
          "grass": ["grassTile1.png", (255, 255, 255)],
@@ -40,5 +36,3 @@ IMAGES = {
          "package": ["package.png", (255, 0, 0)],
          "player": ["player.png", 0]
                  }
-
-MOVEMENT_SPEED = 0.1
