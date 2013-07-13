@@ -76,9 +76,9 @@ class Player(object):
             
             returns True if the player has changed pixel and False if it hasn't
         '''
-         if self.old_x != int(self.x) or self.old_y != int(self.y):
-             self.old_x = int(self.x)
-             self.old_y = int(self.y)
-             return True
-         else:
-             return False
+        if self.old_x != int(self.x) or self.old_y != int(self.y):
+            self.old_x = int(self.x)
+            self.old_y = int(self.y)
+            return True
+        else:
+            return False
