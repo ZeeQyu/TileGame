@@ -10,8 +10,11 @@
 
 BLACK = (0, 0, 0)
 
-# The speed the player moves at. A float between 0 and 1 including 1 but not including 0.
-MOVEMENT_SPEED = 0.1
+# The speed the player moves at. A number greater than 0. Stops increasing in speed at about your fps.
+MOVEMENT_SPEED = 40.0
+
+# The frequency of the ticks in seconds (seconds between every tick)
+TICK_FREQ = 0.05
 
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {

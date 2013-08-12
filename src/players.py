@@ -27,18 +27,33 @@ class Player(object):
         self.old_x = x
         self.old_y = y
         
-    def update(self):
-        ''' Updates the player location if any of the plus and minus variables are set to True using arrow key events 
+    def update(self, delta):
+        ''' Updates the player location if any of the plus and minus variables are set to True using arrow key events
+            delta should be the time since the last update in seconds.
+            
+            returns the remainder of the delta in seconds if the delta is too large 
+                (Larger than 1 / MOVEMENT_SPEED. if so, it subtracts 1 / MOVEMENT_SPEED and uses that as the delta, 
+                because the player shouldn't move more than one pixel per update because of collision detection)
         '''
+        # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
+        delta_remainder = 0
+        if delta > 1 / MOVEMENT_SPEED:
+            delta_remainder = delta - (1 / MOVEMENT_SPEED) 
+            print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/MOVEMENT_SPEED
+            delta = 1 / MOVEMENT_SPEED
+            
+        # Move the player in the direction the arrow key is pressed in.
         if self.x_plus:
-            self.x += MOVEMENT_SPEED
+            self.x += MOVEMENT_SPEED * delta
         if self.x_minus:
-            self.x -= MOVEMENT_SPEED
+            self.x -= MOVEMENT_SPEED * delta
         if self.y_plus:
-            self.y += MOVEMENT_SPEED
+            self.y += MOVEMENT_SPEED * delta
         if self.y_minus:
-            self.y -= MOVEMENT_SPEED
-    
+            self.y -= MOVEMENT_SPEED * delta
+        
+        return delta_remainder
+            
     def paint(self, screen, image):
         ''' Paints the player on the specified screen.
             
