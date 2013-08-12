@@ -23,8 +23,9 @@ I am taking inspiration from Minecraft, Lacuna Expanse, SpaceChem, Terraria, Dig
 List of goals to fulfill for the first version of the game (Will change with added subgoals as I progress):
 
 X A map loader that loads from PNG files.
-  A tick system that lets the game run at the same speed regardless of FPS 
+\ A tick system that lets the game run at the same speed regardless of FPS (Working, but with limits)
 X A movable character
+  Optimizing
   A character that can alter the terrain
   Collision
   Modular entity system
@@ -38,5 +39,5 @@ X A movable character
   Graphics options
   Sound
   Tutorial
-  Polishing
+  Polishing and optimizing
   Publishing via a Website?
