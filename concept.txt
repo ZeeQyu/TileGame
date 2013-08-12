@@ -1,0 +1,42 @@
+Concept, goals and ideas for ZeeQyu's TileGame project.
+
+Base idea and inspiration
+
+I like strategy games. I really like games where you create a system or a network that does something like
+gather resources, which you then can leave without caring about it after that. I don't like repetative micromanagement.
+There aren't a lot of games I've found that does that. I've also been wanting a game where you don't have to touch the mouse at all.
+	The goal of this project is to make a game where you run around as a little character that can place buildings and create networks
+that gather resources, process resources, create items, units and weapons to finally defeat an AI that is trying to kill you. The game should be
+easy to understand and pick up, and yet have multiple ways of winning (Easy to learn, hard to master).
+	The ultimate goal of this project is to create a game that does that, and then lets you use the resources you got from that area and
+use it on the next area to clear that area to be able to use that in the greater scheme and so on. It would start at one small area, then
+scale to a bigger area, like a landscape, and then scale to a country, then a planet, then a solarsystem, then several solarsystems, then galaxies,
+then the universe, then different dimensions. Every step you would be able to automate the process you just did, so you would create a
+functioning system for a country and then be able to easily replicate that to the next country.
+	Alternatively, it would start at landscapes, go to countries, planets and then solarsystems, after which you need to find the other player in another
+solar system and defeat him/her, making it a multiplayer game. Of course, this is this is in the very long run and when I start on multiple layers, 
+I'll probably start over using the knowledge I got from the first game to make a second, and then maybe making the third one multiplayer.
+Knowing myself, I might not even complete this first game. I make no promises.
+
+I am taking inspiration from Minecraft, Lacuna Expanse, SpaceChem, Terraria, Dig'n'Rig and probably a bunch of other games I'm inspired by without thinking about it.
+
+List of goals to fulfill for the first version of the game (Will change with added subgoals as I progress):
+
+X A map loader that loads from PNG files.
+  A tick system that lets the game run at the same speed regardless of FPS 
+X A movable character
+  A character that can alter the terrain
+  Collision
+  Modular entity system
+  Buildings
+  Friendly units
+  HQ
+  Enemies and combat
+  Win condition
+  Random map generator
+  A menu screen
+  Graphics options
+  Sound
+  Tutorial
+  Polishing
+  Publishing via a Website?
