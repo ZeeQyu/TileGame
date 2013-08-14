@@ -34,7 +34,7 @@ def main():
     # Creates a windows just the size to fit all the tiles in the map file.
     screen = pygame.display.set_mode((width * 16, height * 16))
      
-    player = players.Player(player_start_x, player_start_y)
+    player = players.Player(player_start_x, player_start_y, images["player"].get().get_width(), images["player"].get().get_height())
     
     # Paint the screen once initally
     maps.paint_map(screen, map, images)
@@ -43,7 +43,7 @@ def main():
     
     # Get time once initially and make time variables
     time_last_tick = time_count = time_prev = time.clock()
-    time_count = time_frames = time_player_delta = 0
+    time_count = time_frames = 0
     
     # Main loop
     while True:
@@ -52,10 +52,7 @@ def main():
             if event.type == QUIT:
                 sys.exit()
             if event.type == KEYDOWN or event.type == KEYUP:
-                if event.key == K_SPACE:
-                    time_player_delta = 1
-                else:
-                    player.event_check(event)
+                player.event_check(event)
                 
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
@@ -74,9 +71,8 @@ def main():
             time_last_tick = time_last_tick + TICK_FREQ
 
         # update (move) the player and only repaint the screen if the player changed which pixel it's painted at.
-        time_player_delta = player.update(time_diff + time_player_delta) 
-        # If time_diff is too big and would mean that the player would move more than a pixel, move a pixel and save the rest of the
-        # difference for the next frame. Intended for lagspikes and makes sure that collision doesn't break. This might 
+        player.update(time_diff)
+        
         if player.has_moved():
             maps.paint_map(screen, map, images)
             player.paint(screen, images["player"].get())

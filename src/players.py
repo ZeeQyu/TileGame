@@ -13,21 +13,25 @@ class Player(object):
     ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
     '''
     
-    def __init__(self, x, y):
+    def __init__(self, x, y, width, height):
         ''' "x" and "y" should be ints.
         '''
         self.x = x
         self.y = y
+        self.width = width
+        self.height = height
         # Variables for checking if the player should move.
         self.x_plus = False
         self.x_minus = False
         self.y_plus = False
         self.y_minus = False
-        #Variables for checking if the player has moved.
+        # Variables for checking if the player has moved.
         self.old_x = x
         self.old_y = y
+        # Creates four rectangles for collision checking
+        self.update_collision_rects()
         
-    def update(self, delta):
+    def update(self, delta_remainder):
         ''' Updates the player location if any of the plus and minus variables are set to True using arrow key events
             delta should be the time since the last update in seconds.
             
@@ -36,23 +40,50 @@ class Player(object):
                 because the player shouldn't move more than one pixel per update because of collision detection)
         '''
         # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
-        delta_remainder = 0
-        if delta > 1 / MOVEMENT_SPEED:
-            delta_remainder = delta - (1 / MOVEMENT_SPEED) 
-            print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/MOVEMENT_SPEED
-            delta = 1 / MOVEMENT_SPEED
+        delta = 0
+        while delta_remainder > 0:
+            if delta > 1 / MOVEMENT_SPEED:
+                delta_remainder = delta - (1 / MOVEMENT_SPEED) 
+                print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/MOVEMENT_SPEED
+                delta = 1 / MOVEMENT_SPEED
+                delta_remainder = delta_remainder - delta
+            else:
+                delta = delta_remainder
+                delta_remainder = 0
             
-        # Move the player in the direction the arrow key is pressed in.
-        if self.x_plus:
-            self.x += MOVEMENT_SPEED * delta
-        if self.x_minus:
-            self.x -= MOVEMENT_SPEED * delta
-        if self.y_plus:
-            self.y += MOVEMENT_SPEED * delta
-        if self.y_minus:
-            self.y -= MOVEMENT_SPEED * delta
+            # Move the player in the direction the arrow key is pressed in.
+            if self.x_plus:
+               self.x += MOVEMENT_SPEED * delta
+            if self.x_minus:
+                self.x -= MOVEMENT_SPEED * delta
+            if self.y_plus:
+                self.y += MOVEMENT_SPEED * delta
+            if self.y_minus:
+                self.y -= MOVEMENT_SPEED * delta
+                
+            # TODO Collision to be put here and in the maps file
+    def update_collision_rects(self):
+        ''' Method for creating four pygame Rect object along the sides of the player for use in collision detection 
+        '''
+        self.col_right = Rect(self.x + self.width - 1, 
+                              self.y + 1,
+                              1,
+                              self.height - 2)
         
-        return delta_remainder
+        self.col_left = Rect(self.x,
+                             self.y + 1,
+                             1,
+                             self.height - 2)
+        
+        self.col_top = Rect(self.x + 1,
+                            self.y,
+                            self.width - 2,
+                            1)
+        
+        self.col_bottom = Rect(self.x + 1,
+                               self.y + self.height - 2,
+                               self.width - 2,
+                               1)
             
     def paint(self, screen, image):
         ''' Paints the player on the specified screen.
@@ -85,15 +116,17 @@ class Player(object):
             elif event.key == K_UP:
                 self.y_minus = False
                 
-    def has_moved(self):
+    def has_moved(self, update=1):
         ''' Compares an old x and y value with the current one. 
             If the value has changed, the character has moved to another pixel and should be redrawn.
+            update should be 1 if you want to update the checking to a new pixel and 0 if you don't
             
             returns True if the player has changed pixel and False if it hasn't
         '''
         if self.old_x != int(self.x) or self.old_y != int(self.y):
-            self.old_x = int(self.x)
-            self.old_y = int(self.y)
+            if update:
+                self.old_x = int(self.x)
+                self.old_y = int(self.y)
             return True
         else:
             return False

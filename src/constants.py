@@ -10,14 +10,17 @@
 
 BLACK = (0, 0, 0)
 
-# The speed the player moves at. A number greater than 0. Stops increasing in speed at about your fps.
-MOVEMENT_SPEED = 40.0
+# The speed the player moves at. Any number greater than 0
+MOVEMENT_SPEED = 50.0
 
 # The frequency of the ticks in seconds (seconds between every tick)
 TICK_FREQ = 0.05
 
 # Dictionary containing image data. Read module docstring above for more details.
-IMAGES = {
+IMAGES = {# Format : "image_name_in_code": 
+          # ["filename in res", (color code in map.png) or 0,
+          # 1 for collision check 0 for not],
+          
           # tiles
          "grass": ["grassTile1.png", (255, 255, 255)],
          "grass2": ["grassTile2.png", 0],
@@ -54,3 +57,7 @@ IMAGES = {
          # entities
          "player": ["player.png", 0]
                  }
+
+#List of tiles that should be used in collision detection
+COLLIDING_TILES = ["rock", "tree", "hq"]
+
