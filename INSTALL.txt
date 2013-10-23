@@ -6,13 +6,11 @@ Detailed instructions (Windows):
 Install python 2.7.5 from http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi
 Install pygame 1.9.1 from http://pygame.org/ftp/pygame-1.9.1.win32-py2.7.msi
 Install PIL 1.1.7 from http://effbot.org/downloads/PIL-1.1.7.win32-py2.7.exe
-Install git if you haven't. http://git-scm.com/download/win
-During the installation, make sure you let it modify your path so you can run it from the command line.
+Install git if you haven't. http://github-windows.s3.amazonaws.com/GitHubSetup.exe
+You don't need to log in.
 
-open cmd (search for cmd in the search field in the start menu(windows 7)). run the following lines, one by one.
-
-git clone https://github.com/ZeeQyu/TileGame.git
-cd TileGame
-C:\Python27\python.exe main.py		(or another path if you didn't install it in the default location)
+Go to the project homepage: https://github.com/ZeeQyu/TileGame
+and press the "Clone in Desktop" in the bottom right. The git application should open and download it. 
+Go to Documents/GitHub/TileGame or wherever you put it and run main.py
 
 That should do it.
