@@ -1,7 +1,6 @@
 TODO list:
 
 1. Collision and tile properties.
-2. Optimize the game so that the entire map isn't constructed every time it is drawn.
-3. Random textures for grass and trees
-4. Come up with a better way of doing ticks and movement which lets the player move quicker than a pixel per fps,
-	perhaps disconnecting rendering and movement more completely.
+2. Random textures for grass and trees
+3. Character that can edit terrain
+4. Mouse support
