@@ -14,7 +14,7 @@
 from constants import *
 from tiles import *
 import Image
-import pygame.Surface as Surface # TODO FIX ME
+from pygame import Surface # TODO FIX ME
 
 class InvalidMapColorException(Exception):
     ''' Exception sub-class for fancy error messages
@@ -84,7 +84,7 @@ def paint_map(screen, map_screen_buffer):
             image = images[map[i][j].type].get()
             screen.blit(image, (i*16, j*16))
             
-def update_map(map, images, width, height):
+def update_map(map, images):
     ''' Iterates through the map and paints all the tiles in that map in a screen object
     
         "map" should be a two-dimension Tile list.
@@ -92,7 +92,7 @@ def update_map(map, images, width, height):
         preferably the one generated bu the graphics.py load_graphics() function.
         "width" and "height" should be the dimensions of the map file png the program uses
     '''
-    map_screen_buffer = Surface() # TODO FIX ME Make this not a display but an empty surface
+    map_screen_buffer = Surface((len(map)*16, len(map[1])*16)) # TODO FIX ME Make this not a display but an empty surface
     
     map_screen_buffer.fill(BLACK)
     for i in range(len(map)):
