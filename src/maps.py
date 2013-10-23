@@ -14,6 +14,7 @@
 from constants import *
 from tiles import *
 import Image
+import pygame.Surface as Surface # TODO FIX ME
 
 class InvalidMapColorException(Exception):
     ''' Exception sub-class for fancy error messages
@@ -69,7 +70,7 @@ def pixel_type(pixel, x, y):
     # If no match was found, throw an InvalidMapColorException containing coordinates and the RGB value.
     raise InvalidMapColorException("The pixel at x:", x, "y:", y, "in the map file is not a valid color. The RGB is", str(pixel))
     
-def paint_map(screen, map, images):
+def paint_map(screen, map_screen_buffer):
     ''' Iterates through the map and paints all the tiles in that map on the screen.
         
         "screen" should be a pygame display.
@@ -82,3 +83,22 @@ def paint_map(screen, map, images):
         for j in range(len(map[i])):
             image = images[map[i][j].type].get()
             screen.blit(image, (i*16, j*16))
+            
+def update_map(map, images, width, height):
+    ''' Iterates through the map and paints all the tiles in that map in a screen object
+    
+        "map" should be a two-dimension Tile list.
+        "images" should be a dictionary of strings and Graphics objects,
+        preferably the one generated bu the graphics.py load_graphics() function.
+        "width" and "height" should be the dimensions of the map file png the program uses
+    '''
+    map_screen_buffer = Surface() # TODO FIX ME Make this not a display but an empty surface
+    
+    map_screen_buffer.fill(BLACK)
+    for i in range(len(map)):
+        for j in range(len(map[i])):
+            image = images[map[i][j].type].get()
+            map_screen_buffer.blit(image, (i*16, j*16))
+            
+    return map_screen_buffer
+

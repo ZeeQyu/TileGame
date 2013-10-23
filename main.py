@@ -37,7 +37,9 @@ def main():
     player = players.Player(player_start_x, player_start_y, images["player"].get().get_width(), images["player"].get().get_height())
     
     # Paint the screen once initally
-    maps.paint_map(screen, map, images)
+#     maps.paint_map(screen, map, images)
+    map_screen_buffer = maps.update_map(map, images, width, height)
+    screen.blit(map_screen_buffer, (0, 0))
     player.paint(screen, images["player"].get())
     pygame.display.flip()
     
@@ -74,7 +76,8 @@ def main():
         player.update(time_diff)
         
         if player.has_moved():
-            maps.paint_map(screen, map, images)
+            screen.fill(BLACK)
+            screen.blit(map_screen_buffer, (50, 50))
             player.paint(screen, images["player"].get())
             pygame.display.flip()
         
