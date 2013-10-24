@@ -45,7 +45,7 @@ def main():
     
     # Get time once initially and make time variables
     time_last_tick = time_count = time_prev = time.clock()
-    time_count = time_frames = 0
+    time_count = time_frames = time_updates = 0
     
     # Main loop
     while True:
@@ -62,9 +62,9 @@ def main():
         time_prev = time_now
         
         # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
-        time_frames = time_frames + 1
+        time_frames += 1
         if time_count + 1 < time_now:
-            print time_count, time_frames, "fps, frametime:", 1000.0/time_frames
+            print time_count, "seconds from start,",  time_frames, "cycles,", time_updates, "fps"
             time_frames = 0
             time_count = time_now
             
@@ -76,6 +76,7 @@ def main():
         player.update(time_diff)
         
         if player.has_moved():
+            time_updates += 1
             screen.fill(BLACK)
             screen.blit(map_screen_buffer, (0, 0))
             player.paint(screen, images["player"].get())

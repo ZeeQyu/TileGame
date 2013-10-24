@@ -25,6 +25,11 @@ class Graphics(object):
         '''
         return self.image
     
+    def get_size(self):
+        ''' returns a tuple containing the width and height of the image 
+        '''
+        return (self.get().get_width(), self.get().get_height())
+    
 def load_graphics():
     ''' Creates a dictionary with the keys from the constants.py IMAGES dictionary keys
         and a Graphics object created using that key.

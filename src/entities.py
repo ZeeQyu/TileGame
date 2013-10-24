@@ -13,10 +13,15 @@ class Entity(object):
     ''' Entity class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
     '''
     
-    def __init__(self, x, y, image):
+    def __init__(self, x, y, image, width, height = -1):
+
         ''' "x" and "y" should be ints.
-            "width" and "height" should be ints with the size of the sprite the entity is using 
+            "image" should be a Graphics object, for dimensions
+            "image_identifier" should be a string for 
         '''
+        if type(width) is type(("a", "tuple")):
+            
+        
         self.x = x
         self.y = y
         # Getting width and height from image file

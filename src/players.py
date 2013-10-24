@@ -14,12 +14,12 @@ class Player(Entity):
     ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
     '''
     
-    def __init__(self, x, y):
+    def __init__(self, x, y, width, height, image):
         ''' "x" and "y" should be ints.
             "image" should be the string identifier in IMAGES that the player should use
         '''
         image = "player"
-        super(Player, self).__init__(x, y, image)
+        super(Player, self).__init__(x, y, width, height, image)
         # Set movement speed
         self.movement_speed = PLAYER_MOVEMENT_SPEED
         
