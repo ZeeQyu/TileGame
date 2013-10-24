@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding=utf-8
 ''' Module /src/constants.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame

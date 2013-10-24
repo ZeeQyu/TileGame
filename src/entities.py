@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding=utf-8
 ''' Module /src/players.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame
@@ -9,24 +11,41 @@
 from constants import *
 from pygame.locals import *
 
+class InvalidCallParameterException(Exception):
+    ''' A fancy class name for if the programmer (me) somehow mistook what variables
+        should be passed to the __init__ function in the Entity class in entities.py 
+    ''' 
+    pass
+
 class Entity(object):
     ''' Entity class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
     '''
     
-    def __init__(self, x, y, image, width, height = -1):
+    def __init__(self, x, y, image, width_or_size, height = -1):
 
         ''' "x" and "y" should be ints.
-            "image" should be a Graphics object, for dimensions
-            "image_identifier" should be a string for 
+            "image" should be a string with the IMAGES identifier
+            "width_or_size" should either be an int denoting the width of the entity
+            or a tuple containing both width and height in that order.
+            In the latter case, height should be left untouched
         '''
-        if type(width) is type(("a", "tuple")):
-            
-        
+        # Check if width is a tuple
+        if type(width_or_size) is type(("this is a", "tuple")) and height is -1:
+            width, height = width_or_size
+        # Otherwise, check for if the programmer mixed the two ways of sending the size
+        # to the init function 
+        elif height > -1:
+            width = width_or_size
+        else:
+            # Something went wrong with the input of the parameters to the initalizer.
+            # Please check the call stack for invalid calls
+            raise InvalidCallParameterException("An invalid parameter (one of the last two)" +
+                                                "was passed to the __init__ function of entities")
         self.x = x
         self.y = y
         # Getting width and height from image file
-        self.width = IMAGES[image].get().get_width()
-        self.height = IMAGES[image].get().get_height()
+        self.width = height
+        self.height = height
         # Variables for checking if the entity should move.
         self.x_plus = False
         self.x_minus = False
@@ -37,6 +56,8 @@ class Entity(object):
         self.old_y = y
         # Set picture string
         self.image = image
+        # Make sure movement_speed is zero if it isn't in a subclass
+        self.movement_speed = 0
         # Creates four rectangles for collision checking
         self.update_collision_rects()
         
@@ -51,10 +72,10 @@ class Entity(object):
         # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
         delta = 0
         while delta_remainder > 0:
-            if delta > 1 / movement_speed:
-                delta_remainder = delta - (1 / movement_speed) 
-                print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/movement_speed
-                delta = 1 / movement_speed
+            if delta > 1 / self.movement_speed:
+                delta_remainder = delta - (1 / self.movement_speed) 
+                print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/self.movement_speed
+                delta = 1 / self.movement_speed
                 delta_remainder = delta_remainder - delta
             else:
                 delta = delta_remainder
@@ -62,13 +83,13 @@ class Entity(object):
             
             # Move the player in the direction the arrow key is pressed in.
             if self.x_plus:
-               self.x += movement_speed * delta
+               self.x += self.movement_speed * delta
             if self.x_minus:
-                self.x -= movement_speed * delta
+                self.x -= self.movement_speed * delta
             if self.y_plus:
-                self.y += movement_speed * delta
+                self.y += self.movement_speed * delta
             if self.y_minus:
-                self.y -= movement_speed * delta
+                self.y -= self.movement_speed * delta
                 
             # TODO Collision to be put here and in the maps file
     def update_collision_rects(self):

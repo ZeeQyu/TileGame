@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding=utf-8
 ''' Module /main.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame
@@ -34,7 +36,7 @@ def main():
     # Creates a windows just the size to fit all the tiles in the map file.
     screen = pygame.display.set_mode((width * 16, height * 16))
      
-    player = players.Player(player_start_x, player_start_y, images["player"].get().get_width(), images["player"].get().get_height())
+    player = players.Player(player_start_x, player_start_y, "player", images["player"].get().get_width(), images["player"].get().get_height())
     
     # Paint the screen once initally
 #     maps.paint_map(screen, map, images)
@@ -66,6 +68,7 @@ def main():
         if time_count + 1 < time_now:
             print time_count, "seconds from start,",  time_frames, "cycles,", time_updates, "fps"
             time_frames = 0
+            time_updates = 0
             time_count = time_now
             
         # What happens every tick?

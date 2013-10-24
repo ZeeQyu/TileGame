@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# coding=utf-8
 ''' Module /src/maps.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame
@@ -14,7 +16,7 @@
 from constants import *
 from tiles import *
 import Image
-from pygame import Surface # TODO FIX ME
+from pygame import Surface
 
 class InvalidMapColorException(Exception):
     ''' Exception sub-class for fancy error messages
@@ -92,7 +94,7 @@ def update_map(map, images):
         preferably the one generated bu the graphics.py load_graphics() function.
         "width" and "height" should be the dimensions of the map file png the program uses
     '''
-    map_screen_buffer = Surface((len(map)*16, len(map[1])*16)) # TODO FIX ME Make this not a display but an empty surface
+    map_screen_buffer = Surface((len(map)*16, len(map[1])*16))
     
     map_screen_buffer.fill(BLACK)
     for i in range(len(map)):
