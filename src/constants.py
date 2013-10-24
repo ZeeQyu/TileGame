@@ -12,7 +12,7 @@
 
 BLACK = (0, 0, 0)
 
-# The speed the player moves at. Any number greater than 0
+# The speed the player moves at. Any float greater than 0
 PLAYER_MOVEMENT_SPEED = 50.0
 
 # The frequency of the ticks in seconds (seconds between every tick)
@@ -57,9 +57,8 @@ IMAGES = {# Format : "image_name_in_code":
          "package": ["package.png", (255, 0, 0)],
          
          # entities
-         "player": ["player.png", 0]
+         "player": ["player.png", 0, 0]
                  }
 
 #List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
-

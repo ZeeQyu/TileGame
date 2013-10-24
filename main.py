@@ -35,11 +35,15 @@ def main():
     
     # Creates a windows just the size to fit all the tiles in the map file.
     screen = pygame.display.set_mode((width * 16, height * 16))
-     
-    player = players.Player(player_start_x, player_start_y, "player", images["player"].get().get_width(), images["player"].get().get_height())
+    
+    # Initiate player
+    player = players.Player(player_start_x, player_start_y, "player", images["player"].get_size())
+
+    # Initiate an entity list. Order of this list does not matter
+    entities = []
     
     # Paint the screen once initally
-#     maps.paint_map(screen, map, images)
+#     maps.paint_map(screen, map, images) # Old code, inefficient
     map_screen_buffer = maps.update_map(map, images)
     screen.blit(map_screen_buffer, (0, 0))
     player.paint(screen, images["player"].get())
