@@ -9,7 +9,7 @@
 '''
 
 # import normal modules
-import pygame, sys, os, Image, threading, time
+import pygame, sys, os, Image, time
 from pygame.locals import *
 
 # make sure the own modules in /src can be imported and import them.
