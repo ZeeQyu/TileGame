@@ -11,7 +11,7 @@
 BLACK = (0, 0, 0)
 
 # The speed the player moves at. Any number greater than 0
-PLAYER_MOVEMENT_SPEED = 50.0
+MOVEMENT_SPEED = 50.0
 
 # The frequency of the ticks in seconds (seconds between every tick)
 TICK_FREQ = 0.05
