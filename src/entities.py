@@ -188,5 +188,11 @@ class Entity(object):
                                1)
         
     def collision_check(self):
-        pass
+        ''' Method for checking if the entity has run into a tree or something
+        '''
+#         tile_pos = self.get_tile()
+#         for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
+#             for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
+#                 if 
+                
 

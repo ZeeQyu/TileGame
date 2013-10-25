@@ -20,7 +20,7 @@ PLAYER_MOVEMENT_SPEED = 50
 TICK_FREQ = 0.05
 
 # The amount of seconds the game should sleep each loop to not bog the processor too much
-SLEEP_TIME = 0.0005
+SLEEP_TIME = 0.001
 
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {# Format : "image_name_in_code": 
