@@ -11,6 +11,7 @@
 '''
 
 import pygame
+from constants import *
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -26,6 +27,9 @@ class Tile(object):
         self.type = type
         self.x = x
         self.y = y
+        
+    def rect(self):
+        return pygame.Rect(self.x * TILE_SIZE, self.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
         
     def __str__(self):
         ''' Returns tile type and location (all attributes)

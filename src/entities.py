@@ -24,7 +24,7 @@ class Entity(object):
     ''' Entity base class for all the other entities to build upon.
     '''
     
-    def __init__(self, x, y, image, movement_speed, rotates = True):
+    def __init__(self, x, y, image, movement_speed, collides = True, rotates = True):
 
         ''' "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
@@ -51,6 +51,8 @@ class Entity(object):
         self.movement_speed = float(movement_speed)
         # Creates four rectangles for collision checking
         self.update_collision_rects()
+        # Whether or not the entity collides with terrain
+        self.collides = collides
         # Whether or not the entity rotates when it changes direction
         self.rotates = rotates
         # The amount of degrees from facing down the unit should rotate and the angle of the last time 
@@ -86,7 +88,7 @@ class Entity(object):
             if self.y_minus:
                 self.y -= self.movement_speed * delta
                 
-            # TODO Collision to be put here and in the maps file
+            self.collision_check()
             
     def tick(self):
         ''' Dummy method for what happens every tick
@@ -162,7 +164,7 @@ class Entity(object):
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
-        return int(((self.x + self.width/2)) / float(TILE_SIZE)), int((self.y + self.height/2) / float(TILE_SIZE))
+        return int((self.x + self.width/2) / float(TILE_SIZE)), int((self.y + self.height/2) / float(TILE_SIZE))
         
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
@@ -190,12 +192,25 @@ class Entity(object):
     def collision_check(self):
         ''' Method for checking if the entity has run into a tree or something
         '''
+        # Make sure collision rectangles are up to date
+        self.update_collision_rects()
+        # Get the tile the entity is standing on
         tile_pos = self.get_tile()
+        checked_tiles = []
+        # Loop through a 3x3 tile square around the entity, to not check the entire map
         for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
             for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-                if globals.tiles[i][j] in COLLIDING_TILES:
-                    tile_rect = pygame.Rect((i*TILE_SIZE, j*TILE_SIZE), (TILE_SIZE, TILE_SIZE))
-                    
-                    
-                    
+                if globals.map[i][j].type in COLLIDING_TILES:
+                    checked_tiles.append(globals.map[i][j].rect())
+                
+        # Check if each of the zones collides with any of the tiles
+            if self.col_right.collidelist(checked_tiles):
+                self.x -= 1
+            if self.col_left.collidelist(checked_tiles):
+                self.x += 1
+            if self.col_top.collidelist(checked_tiles):
+                self.y += 1
+            if self.col_bottom.collidelist(checked_tiles):
+                self.y -= 1
+            
                 
