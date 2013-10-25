@@ -204,13 +204,13 @@ class Entity(object):
                     checked_tiles.append(globals.map[i][j].rect())
                 
         # Check if each of the zones collides with any of the tiles
-            if self.col_right.collidelist(checked_tiles):
+            if self.col_right.collidelist(checked_tiles) != -1:
                 self.x -= 1
-            if self.col_left.collidelist(checked_tiles):
+            if self.col_left.collidelist(checked_tiles) != -1:
                 self.x += 1
-            if self.col_top.collidelist(checked_tiles):
+            if self.col_top.collidelist(checked_tiles) != -1:
                 self.y += 1
-            if self.col_bottom.collidelist(checked_tiles):
+            if self.col_bottom.collidelist(checked_tiles) != -1:
                 self.y -= 1
             
                 
