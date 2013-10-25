@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# coding=utf-8
 ''' Module /src/graphics.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame
@@ -24,6 +26,11 @@ class Graphics(object):
         ''' returns the contained image
         '''
         return self.image
+    
+    def get_size(self):
+        ''' returns a tuple containing the width and height of the image 
+        '''
+        return (self.get().get_width(), self.get().get_height())
     
 def load_graphics():
     ''' Creates a dictionary with the keys from the constants.py IMAGES dictionary keys
