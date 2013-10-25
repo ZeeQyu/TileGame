@@ -20,7 +20,10 @@ class Graphics(object):
         ''' "name" should be one of the keys in the constants.py IMAGES dictionary
             Will load the corresponding image from the /res folder.
         '''
-        self.image = pygame.image.load("res\\" + IMAGES[name][0])
+        if type(name) == str:
+            self.image = pygame.image.load("res\\" + IMAGES[name][0])
+        elif type(name) == pygame.Surface:
+            self.image = name 
     
     def get(self):
         ''' returns the contained image
