@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/players.py
+''' Module /src/entities.py
     TileGame by ZeeQyu
     https://github.com/ZeeQyu/TileGame
     
@@ -18,16 +18,16 @@ class InvalidCallParameterException(Exception):
     pass
 
 class Entity(object):
-    ''' Entity class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
+    ''' Entity base class for all the other entities to build upon.
     '''
     
-    def __init__(self, x, y, image, width_or_size, height = -1):
+    def __init__(self, x, y, image, movement_speed, width_or_size, height = -1):
 
         ''' "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
             "width_or_size" should either be an int denoting the width of the entity
             or a tuple containing both width and height in that order.
-            In the latter case, height should be left untouched
+            In the latter case, height should be left empty
         '''
         # Check if width is a tuple
         if type(width_or_size) is type(("this is a", "tuple")) and height is -1:
@@ -56,32 +56,31 @@ class Entity(object):
         self.old_y = y
         # Set picture string
         self.image = image
-        # Make sure movement_speed is zero if it isn't in a subclass
-        self.movement_speed = 0
+        # The movement speed of the entity, specified by 1 / movement_speed
+        # seconds for each pixel
+        self.movement_speed = float(movement_speed)
         # Creates four rectangles for collision checking
         self.update_collision_rects()
         
     def update(self, delta_remainder):
-        ''' Updates the player location if any of the plus and minus variables are set to True using arrow key events
+        ''' Updates the entity location if any of the plus and minus variables are set to True
             delta should be the time since the last update in seconds.
             
             returns the remainder of the delta in seconds if the delta is too large 
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
-                because the player shouldn't move more than one pixel per update because of collision detection)
+                because the entity shouldn't move more than one pixel per update because of collision detection)
         '''
         # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
         delta = 0
         while delta_remainder > 0:
-            if delta > 1 / self.movement_speed:
-                delta_remainder = delta - (1 / self.movement_speed) 
-                print "Delta:", delta, "Delta_remainder:", delta_remainder, 1/self.movement_speed
+            if delta_remainder > 1 / self.movement_speed:
                 delta = 1 / self.movement_speed
                 delta_remainder = delta_remainder - delta
             else:
                 delta = delta_remainder
                 delta_remainder = 0
             
-            # Move the player in the direction the arrow key is pressed in.
+            # Move the entity in the direction the arrow key is pressed in.
             if self.x_plus:
                self.x += self.movement_speed * delta
             if self.x_minus:
@@ -92,6 +91,12 @@ class Entity(object):
                 self.y -= self.movement_speed * delta
                 
             # TODO Collision to be put here and in the maps file
+            
+    def tick(self):
+        ''' Dummy method for what happens every tick
+        '''
+        pass
+        
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
         '''
@@ -122,29 +127,6 @@ class Entity(object):
             "image" should be a pygame image object
         '''
         screen.blit(image, (int(self.x), int(self.y)))
-    
-    def event_check(self, event):
-        ''' Event checker. Checks if the event is a key press or release on the arrow keys.
-        '''
-        if event.type == KEYDOWN:
-            if event.key == K_RIGHT:
-                self.x_plus = True
-            elif event.key == K_LEFT:
-                self.x_minus = True
-            elif event.key == K_DOWN:
-                self.y_plus = True
-            elif event.key == K_UP:
-                self.y_minus = True
-                
-        if event.type == KEYUP:
-            if event.key == K_RIGHT:
-                self.x_plus = False
-            elif event.key == K_LEFT:
-                self.x_minus = False
-            elif event.key == K_DOWN:
-                self.y_plus = False
-            elif event.key == K_UP:
-                self.y_minus = False
                 
     def has_moved(self, update=1):
         ''' Compares an old x and y value with the current one. 
@@ -160,3 +142,8 @@ class Entity(object):
             return True
         else:
             return False
+    
+    def get_tile(self):
+        ''' Returns the coordinates of tile the entity is currently on (x and y) 
+        ''' 
+        return int(((x + width/2)) / 16.0), float((y + height/2) / 16.0)

@@ -16,7 +16,7 @@ from pygame.locals import *
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
-import tiles, graphics, players, maps
+import tiles, graphics, players, maps, units
 from constants import *
 
     
@@ -40,10 +40,12 @@ def main():
     player = players.Player(player_start_x, player_start_y, "player", images["player"].get_size())
 
     # Initiate an entity list. Order of this list does not matter
-    entities = []
+    entity_list = []
+    # Manually add a bunch of beetles
+    for i in range(50):
+        entity_list.append(units.Beetle(30 * 16, 25 * 16, images["beetle"].get_size()))
     
     # Paint the screen once initally
-#     maps.paint_map(screen, map, images) # Old code, inefficient
     map_screen_buffer = maps.update_map(map, images)
     screen.blit(map_screen_buffer, (0, 0))
     player.paint(screen, images["player"].get())
@@ -51,7 +53,7 @@ def main():
     
     # Get time once initially and make time variables
     time_last_tick = time_count = time_prev = time.clock()
-    time_count = time_frames = time_updates = 0
+    time_count = time_frames = time_updates = time_last_sleep = 0
     
     # Main loop
     while True:
@@ -78,15 +80,36 @@ def main():
         # What happens every tick?
         if time_last_tick + TICK_FREQ < time_now:
             time_last_tick = time_last_tick + TICK_FREQ
+            # Tick all the entites (let them do whatever they do every tick
+            for entity in entity_list:
+                entity.tick()
+            
+        # Make sure the loop doesn't go too quickly and bog the processor down
+        if time_last_sleep < SLEEP_TIME:
+            time.sleep(SLEEP_TIME -  time_last_sleep)
 
-        # update (move) the player and only repaint the screen if the player changed which pixel it's painted at.
+        # update (move) the player
         player.update(time_diff)
         
-        if player.has_moved():
+        # update all other entities
+        entity_has_moved = False
+        for entity in entity_list:
+            entity.update(time_diff)
+            # Check if any of them have moved
+            if entity.has_moved():
+                entity_has_moved = True
+        
+        # If any entity moved, redraw the screen
+        if player.has_moved() or entity_has_moved:
             time_updates += 1
             screen.fill(BLACK)
+            # Draw the map buffer on the screen
             screen.blit(map_screen_buffer, (0, 0))
+            # Draw the entities
+            for entity in entity_list:
+                entity.paint(screen, images[entity.image].get())
             player.paint(screen, images["player"].get())
+                
             pygame.display.flip()
         
 if __name__ == '__main__':

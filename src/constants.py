@@ -12,11 +12,15 @@
 
 BLACK = (0, 0, 0)
 
-# The speed the player moves at. Any float greater than 0
-PLAYER_MOVEMENT_SPEED = 50.0
+# The speed the player moves at. Any number greater than 0
+PLAYER_MOVEMENT_SPEED = 50
 
-# The frequency of the ticks in seconds (seconds between every tick)
+# The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
+# calculations that should be more periodical than cycles or frames
 TICK_FREQ = 0.05
+
+# The amount of seconds the game should sleep each loop to not bog the processor too much
+SLEEP_TIME = 0.003
 
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {# Format : "image_name_in_code": 
@@ -57,8 +61,17 @@ IMAGES = {# Format : "image_name_in_code":
          "package": ["package.png", (255, 0, 0)],
          
          # entities
-         "player": ["player.png", 0, 0]
+         "player": ["player.png"],
+         "beetle": ["beetle.png"]
                  }
 
 #List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
+
+# Entities
+# Movement speed of beetle
+BEETLE_MOVEMENT_SPEED = 70
+# Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
+BEETLE_MAX_TRAVEL_PX = 24
+
+BEETLE_TICK_MAX = int(float(BEETLE_MAX_TRAVEL_PX) / float(BEETLE_MOVEMENT_SPEED) / float(TICK_FREQ))
