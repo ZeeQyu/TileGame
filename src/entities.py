@@ -35,11 +35,7 @@ class Entity(object):
         self.x = x
         self.y = y
         # Getting width and height from image file
-<<<<<<< HEAD
-        self.width, self.height = images[image].get_size()
-=======
         self.width, self.height = globals.images[image].get_size()
->>>>>>> Detached some variables in main to be globals and started work on rotating entites
         # Variables for checking if the entity should move.
         self.x_plus = False
         self.x_minus = False
@@ -128,8 +124,9 @@ class Entity(object):
                     self.angle = 180
                 else:
                     self.angle = self.last_angle
+            # Remember the angle until next time
             self.last_angle = self.angle
-            self.angle -= 45
+            
             # Create a key with the current entity string and the angle
             key = self.image
             if self.angle != 0:
@@ -188,11 +185,8 @@ class Entity(object):
         self.col_bottom = Rect(self.x + 1,
                                self.y + self.height - 2,
                                self.width - 2,
-<<<<<<< HEAD
-                               1)
-=======
                                1)
         
     def collision_check(self):
         pass
->>>>>>> Detached some variables in main to be globals and started work on rotating entites
+

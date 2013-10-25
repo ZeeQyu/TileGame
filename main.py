@@ -16,7 +16,7 @@ from pygame.locals import *
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
-import tiles, graphics, players, maps, units
+import tiles, graphics, players, maps, units, globals
 from constants import *
 
     
@@ -25,27 +25,15 @@ def main():
         Should not be called any other way than running the file.
         Takes no parameters and returns nothing.
     '''
-    # initialize pygame and load graphics
+    # initialize pygame
     pygame.init()
-    images = graphics.load_graphics()
-    
-    # Load map using functions from maps.py and store into the map variable
-    # Get the size of the image as well as the player start point from the map.png file.
-    map, width, height, player_start_x, player_start_y = maps.generate_map("map.png")
-    
-    # Creates a windows just the size to fit all the tiles in the map file.
-    screen = pygame.display.set_mode((width * 16, height * 16))
-    
     # Initiate player
-    player = players.Player(player_start_x, player_start_y)
-
-    # Initiate an entity list. Order of this list does not matter
-    entity_list = []
+    player = players.Player(globals.player_start_x, globals.player_start_y)
     
     # Paint the screen once initally
-    map_screen_buffer = maps.update_map(map, images)
-    screen.blit(map_screen_buffer, (0, 0))
-    player.paint(screen, images["player"].get())
+    map_screen_buffer = maps.update_map()
+    globals.screen.blit(map_screen_buffer, (0, 0))
+    player.paint()
     pygame.display.flip()
     
     # Get time once initially and make time variables
@@ -60,7 +48,7 @@ def main():
                 sys.exit()
             if event.type == KEYDOWN or event.type == KEYUP:
                 if event.type == KEYDOWN and event.key == K_SPACE:
-                    entity_list.append(units.Beetle(player.x, player.y))
+                    globals.entity_list.append(units.Beetle(player.x, player.y))
                 else:
                     player.event_check(event)
                 
@@ -81,7 +69,7 @@ def main():
         if time_last_tick + TICK_FREQ < time_now:
             time_last_tick = time_last_tick + TICK_FREQ
             # Tick all the entites (let them do whatever they do every tick
-            for entity in entity_list:
+            for entity in globals.entity_list:
                 entity.tick()
             
         # Make sure the loop doesn't go too quickly and bog the processor down
@@ -93,7 +81,7 @@ def main():
         
         # update all other entities
         entity_has_moved = False
-        for entity in entity_list:
+        for entity in globals.entity_list:
             entity.update(time_diff)
             # Check if any of them have moved
             if entity.has_moved():
@@ -102,13 +90,13 @@ def main():
         # If any entity moved, redraw the screen
         if player.has_moved() or entity_has_moved:
             time_updates += 1
-            screen.fill(BLACK)
+            globals.screen.fill(BLACK)
             # Draw the map buffer on the screen
-            screen.blit(map_screen_buffer, (0, 0))
+            globals.screen.blit(map_screen_buffer, (0, 0))
             # Draw the entities
-            for entity in entity_list:
-                entity.paint(screen, images[entity.image].get())
-            player.paint(screen, images["player"].get())
+            for entity in globals.entity_list:
+                entity.paint()
+            player.paint()
                 
             pygame.display.flip()
         
