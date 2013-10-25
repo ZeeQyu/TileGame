@@ -77,7 +77,9 @@ class Entity(object):
             else:
                 delta = delta_remainder
                 delta_remainder = 0
-            
+            # Variables for checking if the entity changed pixel
+            prev_x = self.x
+            prev_y = self.y
             # Move the entity in the direction the variables denote it should be.
             if self.x_plus:
                self.x += self.movement_speed * delta
@@ -160,7 +162,7 @@ class Entity(object):
             return True
         else:
             return False
-    
+        
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
@@ -192,7 +194,7 @@ class Entity(object):
     def collision_check(self):
         ''' Method for checking if the entity has run into a tree or something
         '''
-        # Make sure collision rectangles are up to date
+        # Otherwise, make sure collision rectangles are up to date
         self.update_collision_rects()
         # Get the tile the entity is standing on
         tile_pos = self.get_tile()
@@ -204,13 +206,13 @@ class Entity(object):
                     checked_tiles.append(globals.map[i][j].rect())
                 
         # Check if each of the zones collides with any of the tiles
-            if self.col_right.collidelist(checked_tiles) != -1:
-                self.x -= 1
-            if self.col_left.collidelist(checked_tiles) != -1:
-                self.x += 1
-            if self.col_top.collidelist(checked_tiles) != -1:
-                self.y += 1
-            if self.col_bottom.collidelist(checked_tiles) != -1:
-                self.y -= 1
+        if self.col_right.collidelist(checked_tiles) != -1:
+            self.x -= 1
+        if self.col_left.collidelist(checked_tiles) != -1:
+            self.x += 1
+        if self.col_top.collidelist(checked_tiles) != -1:
+            self.y += 1
+        if self.col_bottom.collidelist(checked_tiles) != -1:
+            self.y -= 1
             
                 

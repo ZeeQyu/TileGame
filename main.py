@@ -97,7 +97,7 @@ def main():
             for entity in globals.entity_list:
                 entity.paint()
             player.paint()
-                
+            # Update the display
             pygame.display.flip()
         
 if __name__ == '__main__':
