@@ -68,8 +68,11 @@ IMAGES = {# Format : "image_name_in_code":
          "marker": ["tileMarker.png"]
                  }
 
-#List of tiles that should be used in collision detection
+# List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
+
+# The size of tiles. Probably will never be anything else than 16.
+TILE_SIZE = 16
 
 # Entities
 # Movement speed of beetle

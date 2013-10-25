@@ -41,7 +41,6 @@ def load_graphics():
         
         returns that dictionary
     '''
-    
     images = {}
     for key in IMAGES.keys():
         images[key] = Graphics(key)

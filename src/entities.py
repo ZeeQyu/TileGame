@@ -162,7 +162,7 @@ class Entity(object):
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
-        return int(((self.x + self.width/2)) / 16.0), int((self.y + self.height/2) / 16.0)
+        return int(((self.x + self.width/2)) / float(TILE_SIZE)), int((self.y + self.height/2) / float(TILE_SIZE))
         
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
@@ -190,9 +190,12 @@ class Entity(object):
     def collision_check(self):
         ''' Method for checking if the entity has run into a tree or something
         '''
-#         tile_pos = self.get_tile()
-#         for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
-#             for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-#                 if 
+        tile_pos = self.get_tile()
+        for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
+            for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
+                if globals.tiles[i][j] in COLLIDING_TILES:
+                    tile_rect = pygame.Rect((i*TILE_SIZE, j*TILE_SIZE), (TILE_SIZE, TILE_SIZE))
+                    
+                    
+                    
                 
-

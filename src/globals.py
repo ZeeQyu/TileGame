@@ -9,6 +9,7 @@
 from maps import generate_map
 import graphics
 import pygame
+from constants import *
 
 # Define all the concerned variables as global
 global map, width, height, player_start_x, player_start_y, images, entity_list, screen
@@ -24,5 +25,5 @@ entity_list = []
 images = graphics.load_graphics()
 
 # Creates a window just the size to fit all the tiles in the map file.
-screen = pygame.display.set_mode((width * 16, height * 16))
+screen = pygame.display.set_mode((width * TILE_SIZE, height * TILE_SIZE))
     

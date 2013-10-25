@@ -50,8 +50,8 @@ def generate_map(map_name):
             pixel = pixels[x, y] # The pixel variable is the pixel we're currently checking.
             type = pixel_type(pixel, x, y)
             if type == "start_tile":    # If the pixel is the player start tile, save the location of that pixel.
-                player_start_x = x * 16
-                player_start_y = y * 16
+                player_start_x = x * TILE_SIZE
+                player_start_y = y * TILE_SIZE
             
             # Make a new tile and add it to the map
             tile = Tile(type, x, y)
@@ -89,7 +89,7 @@ def paint_map(screen, map_screen_buffer):
     for i in range(len(map)):
         for j in range(len(map[i])):
             image = images[map[i][j].type].get()
-            screen.blit(image, (i*16, j*16))
+            screen.blit(image, (i*TILE_SIZE, j*TILE_SIZE))
             
 def update_map():
     ''' Iterates through the map and paints all the tiles in that map in a screen object
@@ -99,13 +99,13 @@ def update_map():
         preferably the one generated bu the graphics.py load_graphics() function.
         "width" and "height" should be the dimensions of the map file png the program uses
     '''
-    map_screen_buffer = Surface((len(globals.map)*16, len(globals.map[1])*16))
+    map_screen_buffer = Surface((len(globals.map)*TILE_SIZE, len(globals.map[1])*TILE_SIZE))
     
     map_screen_buffer.fill(BLACK)
     for i in range(len(globals.map)):
         for j in range(len(globals.map[i])):
             image = globals.images[globals.map[i][j].type].get()
-            map_screen_buffer.blit(image, (i*16, j*16))
+            map_screen_buffer.blit(image, (i*TILE_SIZE, j*TILE_SIZE))
             
     return map_screen_buffer
 
