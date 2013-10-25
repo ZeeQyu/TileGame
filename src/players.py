@@ -16,11 +16,10 @@ class Player(Entity):
     ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
     '''
     
-    def __init__(self, x, y, image, width_or_size, height = -1):
+    def __init__(self, x, y):
         ''' "x" and "y" should be ints.
-            "image" should be the string identifier in IMAGES that the player should use
         '''
-        super(Player, self).__init__(x, y, "player", PLAYER_MOVEMENT_SPEED, width_or_size, height)
+        super(Player, self).__init__(x, y, "player", PLAYER_MOVEMENT_SPEED)
         
     def event_check(self, event):
         ''' Event checker. Checks if the event is a key press or release on the arrow keys.

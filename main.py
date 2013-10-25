@@ -37,13 +37,10 @@ def main():
     screen = pygame.display.set_mode((width * 16, height * 16))
     
     # Initiate player
-    player = players.Player(player_start_x, player_start_y, "player", images["player"].get_size())
+    player = players.Player(player_start_x, player_start_y)
 
     # Initiate an entity list. Order of this list does not matter
     entity_list = []
-    # Manually add a bunch of beetles
-    for i in range(50):
-        entity_list.append(units.Beetle(30 * 16, 25 * 16, images["beetle"].get_size()))
     
     # Paint the screen once initally
     map_screen_buffer = maps.update_map(map, images)
@@ -62,7 +59,10 @@ def main():
             if event.type == QUIT:
                 sys.exit()
             if event.type == KEYDOWN or event.type == KEYUP:
-                player.event_check(event)
+                if event.type == KEYDOWN and event.key == K_SPACE:
+                    entity_list.append(units.Beetle(player.x, player.y))
+                else:
+                    player.event_check(event)
                 
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()

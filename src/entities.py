@@ -10,6 +10,7 @@
 
 from constants import *
 from pygame.locals import *
+from graphics import Graphics
 
 class InvalidCallParameterException(Exception):
     ''' A fancy class name for if the programmer (me) somehow mistook what variables
@@ -21,7 +22,7 @@ class Entity(object):
     ''' Entity base class for all the other entities to build upon.
     '''
     
-    def __init__(self, x, y, image, movement_speed, width_or_size, height = -1):
+    def __init__(self, x, y, image, movement_speed):
 
         ''' "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
@@ -29,23 +30,10 @@ class Entity(object):
             or a tuple containing both width and height in that order.
             In the latter case, height should be left empty
         '''
-        # Check if width is a tuple
-        if type(width_or_size) is type(("this is a", "tuple")) and height is -1:
-            width, height = width_or_size
-        # Otherwise, check for if the programmer mixed the two ways of sending the size
-        # to the init function 
-        elif height > -1:
-            width = width_or_size
-        else:
-            # Something went wrong with the input of the parameters to the initalizer.
-            # Please check the call stack for invalid calls
-            raise InvalidCallParameterException("An invalid parameter (one of the last two)" +
-                                                "was passed to the __init__ function of entities")
         self.x = x
         self.y = y
         # Getting width and height from image file
-        self.width = height
-        self.height = height
+        self.width, self.height = Graphics(image).get_size()
         # Variables for checking if the entity should move.
         self.x_plus = False
         self.x_minus = False
