@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /main.py
-    TileGame by ZeeQyu
+    TileGame
+    Code and lead design by ZeeQyu
+    Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Main module, run this to start the program. Ties all the other modules together.

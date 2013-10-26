@@ -1,10 +1,10 @@
-TODO list:
+ZeeQyu TODO list:
 
 1. Configurable keys
 2. Character that can edit terrain
 3. Mouse support
 
-Graphics:
+Pokemania00 Graphics TODO list:
 
 1. 20 Trees - some with double trees.
 2. Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).

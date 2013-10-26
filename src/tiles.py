@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/tiles.py
-    TileGame by ZeeQyu
+    TileGame
+    Code and lead design by ZeeQyu
+    Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module containing the tile class.
