@@ -69,8 +69,8 @@ def main():
                     temp_entity_list = []
                 # Key configuration
                 elif event.type == pgl.KEYDOWN and event.key == constants.CHANGE_KEYS_KEY:
+                    skip_cycle = True
                     interface.key_config()
-                    time.prev = time.clock()
                 # Otherwise, check for if the player should move
                 else:
                     globals.player.event_check(event)
@@ -79,6 +79,11 @@ def main():
         time_now = time.clock()
         time_diff = time_now - time_prev
         time_prev = time_now
+        
+        # Skip the rest of this cycle if a menu was accessed until now
+        if skip_cycle:
+            skip_cycle = False
+            continue
         
         # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
         time_frames += 1

@@ -45,6 +45,7 @@ def key_config():
         # If the user pressed a key
         if set_key != None:
             screen_updated = True
+            set_key = None
         
         # Only update screen if something updated
         if screen_updated:
