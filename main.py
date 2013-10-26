@@ -6,8 +6,10 @@
     
     Main module, run this to start the program. Ties all the other modules together.
     
-    TileGame is an experimental tile-based game which serves the purpose of letting me learn to use PyGame in a good way.
+    TileGame is an experimental tile-based game which serves the purpose of
+    letting me learn to use PyGame in a good way and evolving my programming capabilities.
     Features are added at an irregular basis. Check back now and then to the website written above.
+    Ideas and goals can be found in the concept.txt file
 '''
 
 # import normal modules
