@@ -49,6 +49,9 @@ def main():
             if event.type == KEYDOWN or event.type == KEYUP:
                 if event.type == KEYDOWN and event.key == K_SPACE:
                     globals.entity_list.append(units.Beetle(player.x, player.y))
+                elif event.type == KEYDOWN and event.key == K_m:
+                    print globals.images["player"].get_size()
+                    print globals.images["player135"].get_size()
                 else:
                     player.event_check(event)
                 
@@ -71,6 +74,7 @@ def main():
             # Tick all the entites (let them do whatever they do every tick
             for entity in globals.entity_list:
                 entity.tick()
+            player.tick()
             
         # Make sure the loop doesn't go too quickly and bog the processor down
         if time_last_sleep < SLEEP_TIME:

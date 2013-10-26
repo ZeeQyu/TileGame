@@ -1,6 +1,5 @@
 TODO list:
 
-1. Collision and tile properties.
-2. Random textures for grass and trees
-3. Character that can edit terrain
-4. Mouse support
+1. Random textures for grass and trees
+2. Character that can edit terrain
+3. Mouse support

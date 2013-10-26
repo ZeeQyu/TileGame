@@ -89,8 +89,8 @@ class Entity(object):
                 self.y += self.movement_speed * delta
             if self.y_minus:
                 self.y -= self.movement_speed * delta
-                
-            self.collision_check()
+            if self.collides:
+                self.collision_check()
             
     def tick(self):
         ''' Dummy method for what happens every tick
@@ -99,10 +99,7 @@ class Entity(object):
     
             
     def paint(self):
-        ''' Paints the player on the specified screen.
-            
-            "screen" should be a pygame display
-            "image" should be a pygame image object
+        ''' Paints the player on the screen
         '''
         if self.rotates:
             # Rotation logic, which direction is the entity facing and how many degrees should it rotate
@@ -206,13 +203,20 @@ class Entity(object):
                     checked_tiles.append(globals.map[i][j].rect())
                 
         # Check if each of the zones collides with any of the tiles
-        if self.col_right.collidelist(checked_tiles) != -1:
-            self.x -= 1
         if self.col_left.collidelist(checked_tiles) != -1:
             self.x += 1
+        if self.col_right.collidelist(checked_tiles) != -1:
+            self.x -= 1
         if self.col_top.collidelist(checked_tiles) != -1:
             self.y += 1
         if self.col_bottom.collidelist(checked_tiles) != -1:
             self.y -= 1
-            
+        
+        # Move the entity inside of the window (border collision)
+        entity_rect = Rect(self.x, self.y, self.width,self.height)
+        window_rect = Rect(0, 0, globals.width * TILE_SIZE, globals.height * TILE_SIZE)
+        if not window_rect.contains(entity_rect):
+            entity_rect.clamp_ip(window_rect)
+            self.x = entity_rect.left
+            self.y = entity_rect.top
                 

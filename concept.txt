@@ -25,12 +25,13 @@ List of goals to fulfill for the first version of the game (Will change with add
 X A map loader that loads from PNG files.
 X A tick system that lets the game run at the same speed regardless of FPS
 X A movable character
-  Collision
+X Collision
 X Optimizing
   A character that can alter the terrain
-  Modular entity system
+X Modular entity system
+  Random Grass and Tree textures
   Buildings
-  Friendly units
+X Friendly units
   HQ
   Enemies and combat
   Win condition
