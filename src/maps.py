@@ -54,7 +54,7 @@ def generate_map(map_name):
                 player_start_y = y * TILE_SIZE
             
             # Make a new tile and add it to the map
-            tile = tiles.Tile(type, x, y)
+            tile = tiles.makeTile(type, x, y)
             map[x].append(tile)
             
     # Return the map, image size (for size of windows) and player start point
