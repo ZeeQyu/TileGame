@@ -74,6 +74,7 @@ COLLIDING_TILES = ["rock", "tree", "hq"]
 # List of tiles that should have random textures. It will check the IMAGES dict for keys containing this value
 # IMAGES should contain a texture with this exact name, with an initialization color code (RGB)
 RANDOM_TILES = ["tree", "grass"]
+DEACTIVATE_RANDOM_TEXTURES = False
 
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16

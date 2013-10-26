@@ -11,7 +11,10 @@
 '''
 
 # import normal modules
-import pygame, sys, os, Image, time
+import sys, os, time
+
+# Third part modules
+import pygame, Image
 from pygame.locals import *
 
 # make sure the own modules in /src can be imported and import them.
@@ -29,10 +32,7 @@ def main():
     pygame.init()
     # Initiate player
     player = players.Player(globals.player_start_x, globals.player_start_y)
-    
-    for i in range(2500):
-        globals.entity_list.append(units.Beetle(200, 200, collides=False))
-    
+
     # Paint the screen once initally
     map_screen_buffer = maps.update_map()
     globals.screen.blit(map_screen_buffer, (0, 0))
@@ -50,8 +50,19 @@ def main():
             if event.type == QUIT:
                 sys.exit()
             if event.type == KEYDOWN or event.type == KEYUP:
+                # Create beetle with space
                 if event.type == KEYDOWN and event.key == K_SPACE:
                     globals.entity_list.append(units.Beetle(player.x, player.y))
+                # Duplicate all beetles with D
+                elif event.type == KEYDOWN and event.key == K_d:
+                    # Make an empty list to temporarily store the added beetles, so no infinite loop appears
+                    temp_entity_list = []
+                    for entity in globals.entity_list:
+                        if type(entity) == units.Beetle:
+                            temp_entity_list.append(units.Beetle(entity.x, entity.y))
+                    globals.entity_list.extend(temp_entity_list)
+                    temp_entity_list = []
+                # Otherwise, check for if the player should move
                 else:
                     player.event_check(event)
                 

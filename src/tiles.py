@@ -80,3 +80,20 @@ class RandomTile(Tile):
         ''' 
         return self.image
     
+def makeTile(type, x, y):
+    ''' Function to create a tile of the appropriate type (Standard, Random and, later, multi-tile)
+        Should be used instead of directly creating a specific tile unless it is certain which type
+        is needed.
+        
+        "type" should be a string identifier from IMAGES.
+        If it is a random tile, it should be the simplest form of the identifier
+        (for example, "tree" and not "tree1"
+        "x" and "y" are the indices of the tile in the "globals.map" array
+    '''
+    if not DEACTIVATE_RANDOM_TEXTURES:
+        if type in RANDOM_TILES:
+            return RandomTile(type, x, y)
+        else:
+            return Tile(type, x, y)
+    else:
+        return Tile(type, x, y)
