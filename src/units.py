@@ -13,10 +13,11 @@ from random import randint
 class Animal(Entity):
     ''' Base class for harmless entites that randomly roam about
     '''
-    def __init__(self, x, y, image, movement_speed, max_travel):
+    def __init__(self, x, y, image, movement_speed, max_travel, collides = True, rotates = True, wall_collides = True):
         ''' Calls the entity init and creates another variable
         '''
-        super(Animal, self).__init__(x, y, image, movement_speed)
+        super(Animal, self).__init__(x, y, image, movement_speed,collides=collides,
+                                     rotates=rotates, wall_collides=wall_collides)
         self.movement_timer = 0
         self.max_travel = max_travel
         
@@ -56,9 +57,10 @@ class Beetle(Animal):
     ''' Harmless roaming little beetle that will be able to be
         infected in the future by enemies to become some kind of zombie beetle
     ''' 
-    def __init__(self, x, y):
+    def __init__(self, x, y, collides = True, rotates = True, wall_collides = True):
         ''' Calls the entity init function with the proper movement speed and image
         '''
         super(Beetle, self).__init__(x, y, "beetle", BEETLE_MOVEMENT_SPEED,
-                                     BEETLE_MAX_TRAVEL_PX)
+                                     BEETLE_MAX_TRAVEL_PX, collides=collides,
+                                     rotates=rotates, wall_collides=wall_collides)
         

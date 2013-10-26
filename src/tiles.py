@@ -10,6 +10,7 @@
     corresponds to the constants.py IMAGES dictionary paths.
 '''
 
+from random import choice
 import pygame
 from constants import *
 
@@ -23,13 +24,24 @@ class Tile(object):
             "x" and "y" should be ints and can be used for finding out where a tile belongs if
             you copy the tile away from the map array in main.py. They are not normally used.
         '''
-        
+        # Type of tile, for identification purposes.
+        # Can be accessed directly, but not for image getting purposes
+        # get_image() should be used instead
         self.type = type
         self.x = x
         self.y = y
         
     def rect(self):
+        ''' Returns a pygame.Rect object with the same dimensions and location as the tile
+        '''
         return pygame.Rect(self.x * TILE_SIZE, self.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+    
+    def get_image(self):
+        ''' Returns the image string which relates to the globals.images dictionary.
+            Should be used when determining what image should be used.
+            Only exists to be overwritten by subclasses
+        '''
+        return self.type
         
     def __str__(self):
         ''' Returns tile type and location (all attributes)
@@ -45,3 +57,26 @@ class Tile(object):
         ''' Compares the type attribute
         '''
         return self.type != other.type
+    
+class RandomTile(Tile):
+    ''' Subclass of Tile with code for random texture selection and preserving
+    ''' 
+    def __init__(self, type, x, y):
+        ''' Initializes a tile with a random texture from the globals.images dict
+        ''' 
+        self.type = type
+        self.x = x
+        self.y = y
+        
+        # Randomly choose one of the textures with this name
+        image_keys = []
+        for key in IMAGES.keys():
+            if key.find(type) != -1:
+                image_keys.append(key)
+        self.image = choice(image_keys)
+
+    def get_image(self):
+        ''' Returns the random texture string.
+        ''' 
+        return self.image
+    

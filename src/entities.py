@@ -24,7 +24,7 @@ class Entity(object):
     ''' Entity base class for all the other entities to build upon.
     '''
     
-    def __init__(self, x, y, image, movement_speed, collides = True, rotates = True):
+    def __init__(self, x, y, image, movement_speed, rotates = True, collides = True, wall_collides = True):
 
         ''' "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
@@ -53,6 +53,7 @@ class Entity(object):
         self.update_collision_rects()
         # Whether or not the entity collides with terrain
         self.collides = collides
+        self.wall_collides = wall_collides
         # Whether or not the entity rotates when it changes direction
         self.rotates = rotates
         # The amount of degrees from facing down the unit should rotate and the angle of the last time 
@@ -89,8 +90,8 @@ class Entity(object):
                 self.y += self.movement_speed * delta
             if self.y_minus:
                 self.y -= self.movement_speed * delta
-            if self.collides:
-                self.collision_check()
+                    
+            self.collision_check()
             
     def tick(self):
         ''' Dummy method for what happens every tick
@@ -190,33 +191,36 @@ class Entity(object):
         
     def collision_check(self):
         ''' Method for checking if the entity has run into a tree or something
+            and move it back a pixel if it has
         '''
-        # Otherwise, make sure collision rectangles are up to date
-        self.update_collision_rects()
-        # Get the tile the entity is standing on
-        tile_pos = self.get_tile()
-        checked_tiles = []
-        # Loop through a 3x3 tile square around the entity, to not check the entire map
-        for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
-            for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-                if globals.map[i][j].type in COLLIDING_TILES:
-                    checked_tiles.append(globals.map[i][j].rect())
-                
-        # Check if each of the zones collides with any of the tiles
-        if self.col_left.collidelist(checked_tiles) != -1:
-            self.x += 1
-        if self.col_right.collidelist(checked_tiles) != -1:
-            self.x -= 1
-        if self.col_top.collidelist(checked_tiles) != -1:
-            self.y += 1
-        if self.col_bottom.collidelist(checked_tiles) != -1:
-            self.y -= 1
+        if self.collides:
+            # Make sure collision rectangles are up to date
+            self.update_collision_rects()
+            # Get the tile the entity is standing on
+            tile_pos = self.get_tile()
+            checked_tiles = []
+            # Loop through a 3x3 tile square around the entity, to not check the entire map
+            for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
+                for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
+                    if globals.map[i][j].type in COLLIDING_TILES:
+                        checked_tiles.append(globals.map[i][j].rect())
+                    
+            # Check if each of the zones collides with any of the tiles
+            if self.col_left.collidelist(checked_tiles) != -1:
+                self.x += 1
+            if self.col_right.collidelist(checked_tiles) != -1:
+                self.x -= 1
+            if self.col_top.collidelist(checked_tiles) != -1:
+                self.y += 1
+            if self.col_bottom.collidelist(checked_tiles) != -1:
+                self.y -= 1
         
-        # Move the entity inside of the window (border collision)
-        entity_rect = Rect(self.x, self.y, self.width,self.height)
-        window_rect = Rect(0, 0, globals.width * TILE_SIZE, globals.height * TILE_SIZE)
-        if not window_rect.contains(entity_rect):
-            entity_rect.clamp_ip(window_rect)
-            self.x = entity_rect.left
-            self.y = entity_rect.top
-                
+        if self.wall_collides:
+            # Move the entity inside of the window (border collision)
+            entity_rect = Rect(self.x, self.y, self.width,self.height)
+            window_rect = Rect(0, 0, globals.width * TILE_SIZE, globals.height * TILE_SIZE)
+            if not window_rect.contains(entity_rect):
+                entity_rect.clamp_ip(window_rect)
+                self.x = entity_rect.left
+                self.y = entity_rect.top
+                    

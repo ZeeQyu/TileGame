@@ -14,7 +14,7 @@
 '''
 
 from constants import *
-from tiles import *
+import tiles
 import Image
 from pygame import Surface
 import globals
@@ -54,7 +54,7 @@ def generate_map(map_name):
                 player_start_y = y * TILE_SIZE
             
             # Make a new tile and add it to the map
-            tile = Tile(type, x, y)
+            tile = tiles.Tile(type, x, y)
             map[x].append(tile)
             
     # Return the map, image size (for size of windows) and player start point
@@ -88,7 +88,7 @@ def paint_map(screen, map_screen_buffer):
     globals.screen.fill(BLACK)
     for i in range(len(map)):
         for j in range(len(map[i])):
-            image = images[map[i][j].type].get()
+            image = images[map[i][j].type()].get()
             screen.blit(image, (i*TILE_SIZE, j*TILE_SIZE))
             
 def update_map():
@@ -104,7 +104,7 @@ def update_map():
     map_screen_buffer.fill(BLACK)
     for i in range(len(globals.map)):
         for j in range(len(globals.map[i])):
-            image = globals.images[globals.map[i][j].type].get()
+            image = globals.images[globals.map[i][j].get_image()].get()
             map_screen_buffer.blit(image, (i*TILE_SIZE, j*TILE_SIZE))
             
     return map_screen_buffer

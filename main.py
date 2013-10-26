@@ -30,6 +30,9 @@ def main():
     # Initiate player
     player = players.Player(globals.player_start_x, globals.player_start_y)
     
+    for i in range(2500):
+        globals.entity_list.append(units.Beetle(200, 200, collides=False))
+    
     # Paint the screen once initally
     map_screen_buffer = maps.update_map()
     globals.screen.blit(map_screen_buffer, (0, 0))
@@ -49,9 +52,6 @@ def main():
             if event.type == KEYDOWN or event.type == KEYUP:
                 if event.type == KEYDOWN and event.key == K_SPACE:
                     globals.entity_list.append(units.Beetle(player.x, player.y))
-                elif event.type == KEYDOWN and event.key == K_m:
-                    print globals.images["player"].get_size()
-                    print globals.images["player135"].get_size()
                 else:
                     player.event_check(event)
                 
