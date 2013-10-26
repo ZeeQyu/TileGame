@@ -29,7 +29,7 @@ X Collision
 X Optimizing
   A character that can alter the terrain
 X Modular entity system
-  Random Grass and Tree textures
+X Random Grass and Tree textures
   Buildings
 X Friendly units
   HQ

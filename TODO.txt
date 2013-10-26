@@ -1,5 +1,14 @@
 TODO list:
 
-1. Random textures for grass and trees
+1. Configurable keys
 2. Character that can edit terrain
 3. Mouse support
+
+Graphics:
+
+1. 20 Trees - some with double trees.
+2. Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
+3. ~5 random ores with miners.
+4. Various projectiles with launcher.
+5. Mega missile, with launcher (launcher 32x32).
+6. Bullet factory.
