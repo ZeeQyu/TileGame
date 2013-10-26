@@ -34,5 +34,5 @@ nosetests.xml
 .project
 .pydevproject
 
-# thumbnails
-res\Thumbs.db
+# Thumbnails
+*Thumbs*
