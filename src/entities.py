@@ -9,9 +9,10 @@
 '''
 
 import pygame
+from pygame import Rect
+
 import globals
-from constants import *
-from pygame.locals import *
+import constants
 from graphics import Graphics
 
 class InvalidCallParameterException(Exception):
@@ -63,7 +64,7 @@ class Entity(object):
         
     def update(self, delta_remainder):
         ''' Updates the entity location if any of the plus and minus variables are set to True
-            delta should be the time since the last update in seconds.
+            "delta_remainder" should be the time since the last update in seconds.
             
             returns the remainder of the delta in seconds if the delta is too large 
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
@@ -164,7 +165,7 @@ class Entity(object):
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
-        return int((self.x + self.width/2) / float(TILE_SIZE)), int((self.y + self.height/2) / float(TILE_SIZE))
+        return int((self.x + self.width/2) / float(constants.TILE_SIZE)), int((self.y + self.height/2) / float(constants.TILE_SIZE))
         
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
@@ -202,7 +203,7 @@ class Entity(object):
             # Loop through a 3x3 tile square around the entity, to not check the entire map
             for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
                 for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-                    if globals.map[i][j].type in COLLIDING_TILES:
+                    if globals.map[i][j].type in constants.COLLIDING_TILES:
                         checked_tiles.append(globals.map[i][j].rect())
                     
             # Check if each of the zones collides with any of the tiles
@@ -218,7 +219,7 @@ class Entity(object):
         if self.wall_collides:
             # Move the entity inside of the window (border collision)
             entity_rect = Rect(self.x, self.y, self.width,self.height)
-            window_rect = Rect(0, 0, globals.width * TILE_SIZE, globals.height * TILE_SIZE)
+            window_rect = Rect(0, 0, globals.width * constants.TILE_SIZE, globals.height * constants.TILE_SIZE)
             if not window_rect.contains(entity_rect):
                 entity_rect.clamp_ip(window_rect)
                 self.x = entity_rect.left

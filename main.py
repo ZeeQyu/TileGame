@@ -7,7 +7,8 @@
     Main module, run this to start the program. Ties all the other modules together.
     
     TileGame is an experimental tile-based game which serves the purpose of
-    letting me learn to use PyGame in a good way and evolving my programming capabilities.
+        letting me learn to use PyGame in a good way and evolving my programming capabilities,
+        as well as teaching me how to manage multiple modules properly.
     Features are added at an irregular basis. Check back now and then to the website written above.
     Ideas and goals can be found in the concept.txt file
 '''
@@ -15,14 +16,14 @@
 # import normal modules
 import sys, os, time
 
-# Third part modules
+# Third party modules
 import pygame, Image
-from pygame.locals import *
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
-import tiles, graphics, players, maps, units, globals
-from constants import *
+import tiles, graphics, players, maps, units, globals, players
+import constants
+import pygame.locals as pgl
 
     
 def main():
@@ -34,7 +35,7 @@ def main():
     pygame.init()
     # Initiate player
     player = players.Player(globals.player_start_x, globals.player_start_y)
-
+    
     # Paint the screen once initally
     map_screen_buffer = maps.update_map()
     globals.screen.blit(map_screen_buffer, (0, 0))
@@ -49,14 +50,14 @@ def main():
     while True:
         # Event checker. Allows closing of the program and passes keypresses to the player instance
         for event in pygame.event.get():
-            if event.type == QUIT:
+            if event.type == pgl.QUIT:
                 sys.exit()
-            if event.type == KEYDOWN or event.type == KEYUP:
-                # Create beetle with space
-                if event.type == KEYDOWN and event.key == K_SPACE:
+            if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
+                # Create beetle with (default) space
+                if event.type == pgl.KEYDOWN and event.key == globals.key_config["spawn_beetle"]:
                     globals.entity_list.append(units.Beetle(player.x, player.y))
-                # Duplicate all beetles with D
-                elif event.type == KEYDOWN and event.key == K_d:
+                # Duplicate all beetles with (default) D
+                elif event.type == pgl.KEYDOWN and event.key == globals.key_config["duplicate_beetles"]:
                     # Make an empty list to temporarily store the added beetles, so no infinite loop appears
                     temp_entity_list = []
                     for entity in globals.entity_list:
@@ -82,16 +83,16 @@ def main():
             time_count = time_now
             
         # What happens every tick?
-        if time_last_tick + TICK_FREQ < time_now:
-            time_last_tick = time_last_tick + TICK_FREQ
+        if time_last_tick + constants.TICK_FREQ < time_now:
+            time_last_tick = time_last_tick + constants.TICK_FREQ
             # Tick all the entites (let them do whatever they do every tick
             for entity in globals.entity_list:
                 entity.tick()
             player.tick()
             
         # Make sure the loop doesn't go too quickly and bog the processor down
-        if time_last_sleep < SLEEP_TIME:
-            time.sleep(SLEEP_TIME -  time_last_sleep)
+        if time_last_sleep < constants.SLEEP_TIME:
+            time.sleep(constants.SLEEP_TIME -  time_last_sleep)
 
         # update (move) the player
         player.update(time_diff)
@@ -107,7 +108,7 @@ def main():
         # If any entity moved, redraw the screen
         if player.has_moved() or entity_has_moved:
             time_updates += 1
-            globals.screen.fill(BLACK)
+            globals.screen.fill(constants.BLACK)
             # Draw the map buffer on the screen
             globals.screen.blit(map_screen_buffer, (0, 0))
             # Draw the entities

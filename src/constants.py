@@ -9,6 +9,7 @@
     To add a new image, add a new line to the IMAGES dictionary containing the image name as the key, the filename of the image in the res folder
     and either a tuple containing a RGB value for loading maps or the number zero if that image shouldn't be used for loading the map.
 '''
+import pygame.locals as pgl
 
 BLACK = (0, 0, 0)
 
@@ -85,4 +86,5 @@ BEETLE_MOVEMENT_SPEED = 70
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 
-BEETLE_TICK_MAX = int(float(BEETLE_MAX_TRAVEL_PX) / float(BEETLE_MOVEMENT_SPEED) / float(TICK_FREQ))
+# Key for key configuration
+KEY_CHANGE_KEYS = pgl.K_m

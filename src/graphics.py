@@ -10,7 +10,8 @@
 
 import pygame
 import Image
-from constants import *
+
+import constants
    
 class Graphics(object):
     ''' Graphics object containing an image. Loads the image by itself.
@@ -21,7 +22,7 @@ class Graphics(object):
             Will load the corresponding image from the /res folder.
         '''
         if type(name) == str:
-            self.image = pygame.image.load("res\\" + IMAGES[name][0])
+            self.image = pygame.image.load("res\\" + constants.IMAGES[name][0])
         elif type(name) == pygame.Surface:
             self.image = name 
     
@@ -42,6 +43,6 @@ def load_graphics():
         returns that dictionary
     '''
     images = {}
-    for key in IMAGES.keys():
+    for key in constants.IMAGES.keys():
         images[key] = Graphics(key)
     return images

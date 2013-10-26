@@ -11,8 +11,10 @@
 '''
 
 from random import choice
+
 import pygame
-from constants import *
+
+import constants
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -34,7 +36,8 @@ class Tile(object):
     def rect(self):
         ''' Returns a pygame.Rect object with the same dimensions and location as the tile
         '''
-        return pygame.Rect(self.x * TILE_SIZE, self.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        return pygame.Rect(self.x * constants.TILE_SIZE, self.y * constants.TILE_SIZE,
+                           constants.TILE_SIZE, constants.TILE_SIZE)
     
     def get_image(self):
         ''' Returns the image string which relates to the globals.images dictionary.
@@ -70,7 +73,7 @@ class RandomTile(Tile):
         
         # Randomly choose one of the textures with this name
         image_keys = []
-        for key in IMAGES.keys():
+        for key in constants.IMAGES.keys():
             if key.find(type) != -1:
                 image_keys.append(key)
         self.image = choice(image_keys)
@@ -90,8 +93,8 @@ def makeTile(type, x, y):
         (for example, "tree" and not "tree1"
         "x" and "y" are the indices of the tile in the "globals.map" array
     '''
-    if not DEACTIVATE_RANDOM_TEXTURES:
-        if type in RANDOM_TILES:
+    if not constants.DEACTIVATE_RANDOM_TEXTURES:
+        if type in constants.RANDOM_TILES:
             return RandomTile(type, x, y)
         else:
             return Tile(type, x, y)

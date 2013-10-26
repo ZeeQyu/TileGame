@@ -7,7 +7,7 @@
     Units module, containing classes for all friendly and passive units.
 '''
 from entities import Entity
-from constants import *
+import constants
 from random import randint
 
 class Animal(Entity):
@@ -35,7 +35,7 @@ class Animal(Entity):
             # should be
             tick_max = int(float(self.max_travel) /
                float(self.movement_speed) /
-               float(TICK_FREQ))
+               float(constants.TICK_FREQ))
             # The amount of ticks until direction change, which is a random int
             # between half of tick_max and tick_max
             self.movement_timer =  randint(tick_max / 2, tick_max)
@@ -60,7 +60,7 @@ class Beetle(Animal):
     def __init__(self, x, y, collides = True, rotates = True, wall_collides = True):
         ''' Calls the entity init function with the proper movement speed and image
         '''
-        super(Beetle, self).__init__(x, y, "beetle", BEETLE_MOVEMENT_SPEED,
-                                     BEETLE_MAX_TRAVEL_PX, collides=collides,
+        super(Beetle, self).__init__(x, y, "beetle", constants.BEETLE_MOVEMENT_SPEED,
+                                     constants.BEETLE_MAX_TRAVEL_PX, collides=collides,
                                      rotates=rotates, wall_collides=wall_collides)
         
