@@ -12,6 +12,7 @@
 import pygame.locals as pgl
 
 BLACK = (0, 0, 0)
+KEY_CHANGE_FONT_COLOR = (255, 255, 255)
 
 # The speed the player moves at. Any number greater than 0
 PLAYER_MOVEMENT_SPEED = 50
@@ -87,4 +88,4 @@ BEETLE_MOVEMENT_SPEED = 70
 BEETLE_MAX_TRAVEL_PX = 24
 
 # Key for key configuration
-KEY_CHANGE_KEYS = pgl.K_m
+CHANGE_KEYS_KEY = pgl.K_INSERT

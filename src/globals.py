@@ -9,7 +9,7 @@
 import pygame
 import pygame.locals as pgl
 
-from maps import generate_map
+from maps import generate_map, update_map
 import graphics
 import constants
 
@@ -22,12 +22,17 @@ map, width, height, player_start_x, player_start_y = generate_map("map.png")
 # Making some variables that should be available for use in all modules
 images = {}
 
+player = None
+
 # Initiate an entity list. Order of this list does not matter
 entity_list = []
 images = graphics.load_graphics()
 
 # Creates a window just the size to fit all the tiles in the map file.
 screen = pygame.display.set_mode((width * constants.TILE_SIZE, height * constants.TILE_SIZE))
+pygame.display.set_caption("TileGame by ZeeQyu")
+map_screen_buffer = update_map()
+
 
 key_config = {
     "move_up": pgl.K_RIGHT,
@@ -45,4 +50,4 @@ key_config = {
     
     "spawn_beetle": pgl.K_SPACE,
     "duplicate_beetles": pgl.K_d
-}
+    }
