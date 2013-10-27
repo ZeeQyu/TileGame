@@ -1,10 +1,29 @@
 ZeeQyu TODO list:
 
-	Character that can edit terrain
+	Player placing tiles
+	Adding window icons/logo
+	Dragging packages
+	Structures
+	Multitile structures
+	HQ
+	Simple pathfinding (Going towards player) with robots?
+	Simple enemies that try to attack you
+	Health
+	Combat
+	Enemies attacking beetles
+	Beetle death animation
+	Healing
+	Enemy structure that spawns enemies
+	Projectiles (Entities moving f.ex 30 degrees) using some trigonometry function
+	Turrets shooting said projectiles at enemies
+	Projectile collision
+	
+	ZQ: (Happy now, Poke? Is my TODO long enough now??)
 
 Pokemania00 Graphics TODO list:
 
    	32x32 logo for the game for displaying in taskbar and top of screen
+   	5 Fallen trees, for when you chop down a tree 
    	3 Large flowers (flower.png)
    	A better aim.png (An indicator which tile you're removing)
     5 dirt tiles with grass in the corners
@@ -13,7 +32,8 @@ Pokemania00 Graphics TODO list:
     Make colliding tiles (trees and rocks) stretch further to the edges
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
+	2 32x32 megaores
 	A less dark miner than the current one
-	Bullet factory.
+	Bullet factory. (32x32)
 	Various projectiles with launcher.
 	Mega missile, with launcher (launcher 32x32).

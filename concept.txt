@@ -31,9 +31,10 @@ X Modular entity system
 X Random Grass and Tree textures
 X Reconfigurable keys (insert key)
 X Friendly units
-  A character that can alter the terrain
-  Buildings
-  Multiblock structures - HQ
+X A character that can alter the terrain
+  Dragging packages
+  Structures
+  Multitile structures - HQ
   Enemies and combat
   Win condition
   Random map generator
