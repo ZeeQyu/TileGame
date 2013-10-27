@@ -43,7 +43,6 @@ def update_key_dict():
     '''
     for item in key_list:
         key_dict[item[0]] = item[1:]
-        print item[0], "||", item[1:]
 
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
 # Should ask for the keys in a proper order.
@@ -66,7 +65,7 @@ key_list = [ # Custom keys. Format:
 #         ["place_tile", pgl.K_u, "The key for placing a tile on the spot the player is looking at."],
         
         ["spawn_beetle", pgl.K_SPACE, "spawning a beetle at the player's feet."],
-        ["duplicate_beetles", pgl.K_d, "activating the beetle's self-duplicating process."]
+        ["duplicate_beetles", pgl.K_d, "activating the beetles' self-duplicating process."]
     ]
 
 update_key_dict()

@@ -27,11 +27,12 @@ X A tick system that lets the game run at the same speed regardless of FPS
 X A movable character
 X Collision
 X Optimizing
-  A character that can alter the terrain
 X Modular entity system
 X Random Grass and Tree textures
-  Buildings
+X Reconfigurable keys (insert key)
 X Friendly units
+  A character that can alter the terrain
+  Buildings
   HQ
   Enemies and combat
   Win condition
