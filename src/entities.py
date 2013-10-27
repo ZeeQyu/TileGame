@@ -73,28 +73,29 @@ class Entity(object):
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         '''
         # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
-        delta = 0
-        while delta_remainder > 0:
-            if delta_remainder > 1 / self.movement_speed:
-                delta = 1 / self.movement_speed
-                delta_remainder = delta_remainder - delta
-            else:
-                delta = delta_remainder
-                delta_remainder = 0
-            # Variables for checking if the entity changed pixel
-            prev_x = self.x
-            prev_y = self.y
-            # Move the entity in the direction the variables denote it should be.
-            if self.x_plus:
-               self.x += self.movement_speed * delta
-            if self.x_minus:
-                self.x -= self.movement_speed * delta
-            if self.y_plus:
-                self.y += self.movement_speed * delta
-            if self.y_minus:
-                self.y -= self.movement_speed * delta
-                    
-            self.collision_check()
+        if self.movement_speed > 0:
+            delta = 0
+            while delta_remainder > 0:
+                if delta_remainder > 1 / self.movement_speed:
+                    delta = 1 / self.movement_speed
+                    delta_remainder = delta_remainder - delta
+                else:
+                    delta = delta_remainder
+                    delta_remainder = 0
+                # Variables for checking if the entity changed pixel
+                prev_x = self.x
+                prev_y = self.y
+                # Move the entity in the direction the variables denote it should be.
+                if self.x_plus:
+                   self.x += self.movement_speed * delta
+                if self.x_minus:
+                    self.x -= self.movement_speed * delta
+                if self.y_plus:
+                    self.y += self.movement_speed * delta
+                if self.y_minus:
+                    self.y -= self.movement_speed * delta
+                        
+                self.collision_check()
             
     def tick(self):
         ''' Dummy method for what happens every tick

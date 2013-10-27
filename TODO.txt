@@ -7,8 +7,8 @@ Pokemania00 Graphics TODO list:
    
     7 stumps from chopped down trees
     7 saplings
-    3 dirt tiles with grass int the corners
-    3 saplings on the dirt tiles
+    5 dirt tiles with grass int the corners
+    5 saplings on the dirt tiles
     10 rocks
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.

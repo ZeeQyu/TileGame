@@ -25,11 +25,10 @@ class Player(Entity):
         super(Player, self).__init__(x, y, "player", constants.PLAYER_MOVEMENT_SPEED)
         self.placing_tile = False
         self.removing_tile = False
-        self.aiming_tile = [0, 0]
+        self.relative_aiming_tile = [0, 0]
         
     def tick(self):
         super(Player, self).tick()
-        aiming_tile = 0
         if self.removing_tile and not self.placing_tile:
             pass
         
