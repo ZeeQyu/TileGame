@@ -59,7 +59,7 @@ def main():
                 if event.type == pgl.KEYDOWN and event.key == globals.key_dict["spawn_beetle"][0]:
                     globals.entity_list.append(units.Beetle(globals.player.x, globals.player.y))
                 # Duplicate all beetles with (default) D
-                if event.type == pgl.KEYDOWN and event.key == globals.key_dict["duplicate_beetles"][0]:
+                elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["duplicate_beetles"][0]:
                     # Make an empty list to temporarily store the added beetles, so no infinite loop appears
                     temp_entity_list = []
                     for entity in globals.entity_list:
@@ -68,7 +68,7 @@ def main():
                     globals.entity_list.extend(temp_entity_list)
                     temp_entity_list = []
                 # Key configuration
-                if event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
+                elif event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
                     skip_cycle = force_update = True
                     interface.key_reconfig()
                 # Otherwise, check for if the player should move
@@ -131,3 +131,4 @@ def main():
         
 if __name__ == '__main__':
     main()
+    

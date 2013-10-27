@@ -23,26 +23,27 @@ class Player(Entity):
         ''' "x" and "y" should be ints.
         '''
         super(Player, self).__init__(x, y, "player", constants.PLAYER_MOVEMENT_SPEED)
+        self.placing_tile = False
+        self.removing_tile = False
         
     def event_check(self, event):
         ''' Event checker. Checks if the event is a key press or release on the arrow keys.
         '''
-        if event.type == pgl.KEYDOWN:
-            if event.key == globals.key_dict["move_up"][0]:
-                self.y_minus = True
-            elif event.key == globals.key_dict["move_down"][0]:
-                self.y_plus = True
-            elif event.key == globals.key_dict["move_left"][0]:
-                self.x_minus = True
-            elif event.key == globals.key_dict["move_right"][0]:
-                self.x_plus = True
-                
-        if event.type == pgl.KEYUP:
-            if event.key == globals.key_dict["move_up"][0]:
-                self.y_minus = False
-            elif event.key == globals.key_dict["move_down"][0]:
-                self.y_plus = False
-            elif event.key == globals.key_dict["move_left"][0]:
-                self.x_minus = False
-            elif event.key == globals.key_dict["move_right"][0]:
-                self.x_plus = False
+        if event.key == globals.key_dict["move_up"][0]:
+            self.y_minus = if_down(event.type)
+        elif event.key == globals.key_dict["move_down"][0]:
+            self.y_plus = if_down(event.type)
+        elif event.key == globals.key_dict["move_left"][0]:
+            self.x_minus = if_down(event.type)
+        elif event.key == globals.key_dict["move_right"][0]:
+            self.x_plus = if_down(event.type)
+        
+        elif event.key == globals.key_dict["place_tile"][0]:
+            self.placing_tile = if_down(event.type)
+        elif event.key == globals.key_dict["remove_tile"][0]:
+            self.removing_tile = if_down(event.type)
+
+def if_down(down_or_up):
+    ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
+    '''
+    return down_or_up == pgl.KEYDOWN

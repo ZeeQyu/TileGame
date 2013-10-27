@@ -8,6 +8,7 @@ Pokemania00 Graphics TODO list:
     20 Trees - some with double trees.
     7 stumps from chopped down trees
     7 saplings
+    10 rocks
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
 	Bullet factory.

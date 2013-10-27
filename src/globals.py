@@ -56,16 +56,16 @@ key_list = [ # Custom keys. Format:
         ["move_right", pgl.K_RIGHT, "moving the player right."],
         ["move_left", pgl.K_LEFT, "moving the player left."],
     
-#         ["look_up", pgl.K_i, "The key for making the player aim upwards."],
-#         ["look_down", pgl.K_k, "The key for making the player aim dowmwards."],
-#         ["look_right", pgl.K_l, "The key for making the player aim to the right."],
-#         ["look_left", pgl.K_j, "The key for making the player aim to the left."],
-#         
-#         ["remove_tile", pgl.K_o, "The key for removing the tile the player is looking at."],
-#         ["place_tile", pgl.K_u, "The key for placing a tile on the spot the player is looking at."],
+#         ["look_up", pgl.K_i, "making the player aim upwards."],
+#         ["look_down", pgl.K_k, "making the player aim dowmwards."],
+#         ["look_right", pgl.K_l, "making the player aim to the right."],
+#         ["look_left", pgl.K_j, "making the player aim to the left."],
+
+        ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
+        ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
         
-        ["spawn_beetle", pgl.K_SPACE, "spawning a beetle at the player's feet."],
-        ["duplicate_beetles", pgl.K_d, "activating the beetles' self-duplicating process."]
+        ["spawn_beetle", pgl.K_s, "spawning a beetle at the player's feet."],
+        ["duplicate_beetles", pgl.K_a, "activating the beetles' self-duplicating process."]
     ]
 
 update_key_dict()
