@@ -78,12 +78,10 @@ def main():
         time_now = time.clock()
         time_diff = time_now - time_prev
         time_prev = time_now
-        
         # Skip the rest of this cycle if a menu was accessed until now
         if skip_cycle:
             skip_cycle = False
             continue
-        
         # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
         time_frames += 1
         if time_count + 1 < time_now:
@@ -91,7 +89,6 @@ def main():
             time_frames = 0
             time_updates = 0
             time_count = time_now
-            
         # What happens every tick?
         if time_last_tick + constants.TICK_FREQ < time_now:
             time_last_tick = time_last_tick + constants.TICK_FREQ
@@ -99,14 +96,16 @@ def main():
             for entity in globals.entity_list:
                 entity.tick()
             globals.player.tick()
-            
         # Make sure the loop doesn't go too quickly and bog the processor down
         if time_last_sleep < constants.SLEEP_TIME:
             time.sleep(constants.SLEEP_TIME -  time_last_sleep)
 
+        # Update map buffer if needed
+        if globals.update_map:
+            globals.update_map = False
+            globals.map_screen_buffer = maps.update_map()
         # update (move) the player
         globals.player.update(time_diff)
-        
         # update all other entities
         entity_has_moved = False
         for entity in globals.entity_list:
