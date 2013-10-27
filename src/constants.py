@@ -71,7 +71,7 @@ IMAGES = {# Format : "image_name_in_code":
          "tree18": ["tree18.png", 0],
          "tree19": ["tree19.png", 0],
          "tree20": ["tree20.png", 0],
-         "stump": ["stump.png", 0, [5, "grass"]],
+         "stump": ["stump.png", 0, [15, "grass"]],
          "stump2": ["stump2.png", 0],
          "stump3": ["stump3.png", 0],
          "hq": ["placeholder.png", (255, 106, 0)],

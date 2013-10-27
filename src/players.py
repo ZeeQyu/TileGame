@@ -33,6 +33,8 @@ class Player(Entity):
         # The last tile the player was aiming at
         self.last_relative_aim_tile = (0, 1)
         self.last_aim_tile = self.get_aim_tile()
+        # Refreshes the tile the player is aiming at if True, for rechecking after removing a tile
+        self.update_aim_tile = False
         
     def paint(self):
         ''' Paints the player and its aim indicator on the screen.
@@ -56,7 +58,8 @@ class Player(Entity):
         aim_tile = self.get_aim_tile()
         x, y = aim_tile
         # If the aim tile has changed
-        if aim_tile != self.last_aim_tile:
+        if aim_tile != self.last_aim_tile or self.update_aim_tile:
+            self.update_aim_tile = False
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
             if len(constants.IMAGES[globals.map[x][y].type]) > 2:
@@ -74,6 +77,7 @@ class Player(Entity):
                 # Get the second value in the third value of the related IMAGES index
                 globals.map[x][y] = tiles.makeTile(constants.IMAGES[globals.map[x][y].type][2][1], x, y)
                 globals.update_map = True
+                self.update_aim_tile = True
                 self.remove_timer = None
                 return
         
