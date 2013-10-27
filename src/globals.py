@@ -13,7 +13,7 @@ from collections import OrderedDict
 import pygame
 import pygame.locals as pgl
 
-from maps import generate_map, update_map
+from maps import generate_map
 import graphics
 import constants
 
@@ -35,7 +35,8 @@ images = graphics.load_graphics()
 # Creates a window just the size to fit all the tiles in the map file.
 screen = pygame.display.set_mode((width * constants.TILE_SIZE, height * constants.TILE_SIZE))
 pygame.display.set_caption("TileGame by ZeeQyu")
-map_screen_buffer = update_map()
+map_screen_buffer = None
+update_map = True
 
 def update_key_dict():
     ''' Copies the key_list list of lists and converts it to a dictionary, key_dict.

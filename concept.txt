@@ -33,7 +33,7 @@ X Reconfigurable keys (insert key)
 X Friendly units
   A character that can alter the terrain
   Buildings
-  HQ
+  Multiblock structures - HQ
   Enemies and combat
   Win condition
   Random map generator

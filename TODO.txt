@@ -4,7 +4,6 @@ ZeeQyu TODO list:
 	Mouse support
 
 Pokemania00 Graphics TODO list:
-
    
     7 stumps from chopped down trees
     7 saplings
