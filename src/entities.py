@@ -44,6 +44,7 @@ class Entity(object):
         self.x_minus = False
         self.y_plus = False
         self.y_minus = False
+        self.should_update = False
         # Variables for checking if the entity has moved.
         self.old_x = x
         self.old_y = y
@@ -96,16 +97,6 @@ class Entity(object):
                     self.y -= self.movement_speed * delta
                         
                 self.collision_check()
-            
-    def tick(self):
-        ''' Dummy method for what happens every tick
-        '''
-        pass
-    
-            
-    def paint(self):
-        ''' Paints the player on the screen
-        '''
         if self.rotates:
             # Rotation logic, which direction is the entity facing and how many degrees should it rotate
             # Uses last angle if the entity is not moving
@@ -130,9 +121,22 @@ class Entity(object):
                     self.angle = 180
                 else:
                     self.angle = self.last_angle
+            # Update the player if he's aiming in a new direction
+            if self.angle != self.last_angle:
+                self.should_update = True
             # Remember the angle until next time
             self.last_angle = self.angle
             
+    def tick(self):
+        ''' Dummy method for what happens every tick
+        '''
+        pass
+    
+            
+    def paint(self):
+        ''' Paints the player on the screen
+        '''
+        if self.rotates:
             # Create a key with the current entity string and the angle
             key = self.image
             if self.angle != 0:
@@ -169,8 +173,12 @@ class Entity(object):
                 self.old_y = int(self.y)
             return True
         else:
-            return False
-        
+            if self.should_update:
+                self.should_update = False
+                return True
+            else:
+                return False
+            
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 

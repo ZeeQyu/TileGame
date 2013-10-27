@@ -5,6 +5,7 @@ ZeeQyu TODO list:
 Pokemania00 Graphics TODO list:
 
    	32x32 logo for the game for displaying in taskbar and top of screen
+   	3 Large flowers (flower.png)
    	A better aim.png (An indicator which tile you're removing)
     5 dirt tiles with grass in the corners
     5 saplings on the dirt tiles

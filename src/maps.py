@@ -102,7 +102,7 @@ def update_map():
     '''
     map_screen_buffer = Surface((len(globals.map)*constants.TILE_SIZE, len(globals.map[1])*constants.TILE_SIZE))
     
-    map_screen_buffer.fill(constants.BLACK)
+    map_screen_buffer.fill(constants.BACKGROUND_COLOR)
     for i in range(len(globals.map)):
         for j in range(len(globals.map[i])):
             image = globals.images[globals.map[i][j].get_image()].get()

@@ -13,7 +13,7 @@
 '''
 import pygame.locals as pgl
 
-BLACK = (0, 0, 0)
+BACKGROUND_COLOR = (0, 0, 0)
 
 # The speed the player moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
@@ -27,7 +27,8 @@ SLEEP_TIME = 0.001
 
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {# Format : "image_name_in_code": 
-          # ["filename in res", (color code in map.png) or 0],
+          # ["filename in res", (color code in map.png) or 0,
+          # tile remove time in ticks or -1 for unremovable],
           
           # tiles
          "grass": ["grassTile1.png", (255, 255, 255)],
@@ -49,7 +50,7 @@ IMAGES = {# Format : "image_name_in_code":
          "dirt": ["dirtTile.png", 0],
          "rock": ["rocktile.png", (0, 0, 0)],
          "ore": ["oreTile.png", (255, 216, 0)],
-         "tree": ["tree1.png", (124, 124, 124)],
+         "tree": ["tree1.png", (124, 124, 124), 10],
          "tree2": ["tree2.png", 0],
          "tree3": ["tree3.png", 0],
          "tree4": ["tree4.png", 0],
@@ -69,7 +70,7 @@ IMAGES = {# Format : "image_name_in_code":
          "tree18": ["tree18.png", 0],
          "tree19": ["tree19.png", 0],
          "tree20": ["tree20.png", 0],
-         "stump": ["stump.png", 0],
+         "stump": ["stump.png", 0, 5],
          "stump2": ["stump2.png", 0],
          "stump3": ["stump3.png", 0],
          "hq": ["placeholder.png", (255, 106, 0)],
@@ -83,6 +84,9 @@ IMAGES = {# Format : "image_name_in_code":
          # other
          "aim": ["aim.png"]
         }
+
+# The identifier of the tile that should be used when another tile is removed 
+DEFAULT_TILE = "grass"
 
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]

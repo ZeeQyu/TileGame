@@ -35,7 +35,7 @@ def main():
     # initialize pygame
     pygame.init()
     # Initiate player
-    globals.player = players.Player(globals.player_start_x, globals.player_start_y)
+    globals.player = players.Player()
     
     # Paint the screen once initially
     force_update = True
@@ -126,7 +126,7 @@ def main():
         if globals.player.has_moved() or entity_has_moved or force_update or globals.update_map:
             force_update = False
             time_updates += 1
-            globals.screen.fill(constants.BLACK)
+            globals.screen.fill(constants.BACKGROUND_COLOR)
             # Draw the map buffer on the screen
             globals.screen.blit(globals.map_screen_buffer, (0, 0))
             # Draw the entities
