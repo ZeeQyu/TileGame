@@ -16,7 +16,7 @@ import pygame.locals as pgl
 BLACK = (0, 0, 0)
 
 # The speed the player moves at. Any number greater than 0
-PLAYER_MOVEMENT_SPEED = 0
+PLAYER_MOVEMENT_SPEED = 50
 
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
 # calculations that should be more periodical than cycles or frames

@@ -76,9 +76,9 @@ class Entity(object):
         if self.movement_speed > 0:
             delta = 0
             while delta_remainder > 0:
-                if delta_remainder > 1 / self.movement_speed:
-                    delta = 1 / self.movement_speed
-                    delta_remainder = delta_remainder - delta
+                if delta_remainder > (1 / self.movement_speed):
+                    delta = (1 / self.movement_speed)
+                    delta_remainder = (delta_remainder - delta)
                 else:
                     delta = delta_remainder
                     delta_remainder = 0
@@ -162,6 +162,7 @@ class Entity(object):
             
             returns True if the player has changed pixel and False if it hasn't
         '''
+
         if self.old_x != int(self.x) or self.old_y != int(self.y):
             if update:
                 self.old_x = int(self.x)
@@ -202,6 +203,15 @@ class Entity(object):
         ''' Method for checking if the entity has run into a tree or something
             and move it back a pixel if it has
         '''
+        if self.wall_collides:
+            # Move the entity inside of the window (border collision)
+            entity_rect = Rect(self.x, self.y, self.width,self.height)
+            window_rect = Rect(0, 0, globals.width * constants.TILE_SIZE, globals.height * constants.TILE_SIZE)
+            if not window_rect.contains(entity_rect):
+                entity_rect.clamp_ip(window_rect)
+                self.x = entity_rect.left
+                self.y = entity_rect.top
+
         if self.collides:
             # Make sure collision rectangles are up to date
             self.update_collision_rects()
@@ -211,8 +221,12 @@ class Entity(object):
             # Loop through a 3x3 tile square around the entity, to not check the entire map
             for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
                 for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-                    if globals.map[i][j].type in constants.COLLIDING_TILES:
-                        checked_tiles.append(globals.map[i][j].rect())
+                    try:
+                        if globals.map[i][j].type in constants.COLLIDING_TILES:
+                            checked_tiles.append(globals.map[i][j].rect())
+                    except:
+                        # That index was apparently outside of the map
+                        pass
                     
             # Check if each of the zones collides with any of the tiles
             if self.col_left.collidelist(checked_tiles) != -1:
@@ -224,12 +238,4 @@ class Entity(object):
             if self.col_bottom.collidelist(checked_tiles) != -1:
                 self.y -= 1
         
-        if self.wall_collides:
-            # Move the entity inside of the window (border collision)
-            entity_rect = Rect(self.x, self.y, self.width,self.height)
-            window_rect = Rect(0, 0, globals.width * constants.TILE_SIZE, globals.height * constants.TILE_SIZE)
-            if not window_rect.contains(entity_rect):
-                entity_rect.clamp_ip(window_rect)
-                self.x = entity_rect.left
-                self.y = entity_rect.top
                     

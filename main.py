@@ -45,7 +45,7 @@ def main():
     
     # Get time once initially and make time variables
     time_last_tick = time_count = time_prev = time.clock()
-    time_count = time_frames = time_updates = time_last_sleep = 0
+    time_count = time_cycles = time_updates = time_last_sleep = 0
     
     # Main loop
     while True:
@@ -83,10 +83,12 @@ def main():
             skip_cycle = False
             continue
         # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
-        time_frames += 1
+        time_cycles += 1
         if time_count + 1 < time_now:
-            print time_count, "seconds from start,",  time_frames, "cycles,", time_updates, "fps"
-            time_frames = 0
+            if time_updates == 1 and time_cycles == 1:
+                time_updates = 1.0 / (time_diff)
+            print time_count, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps"
+            time_cycles = 0
             time_updates = 0
             time_count = time_now
         # What happens every tick?
@@ -115,7 +117,7 @@ def main():
                 entity_has_moved = True
         
         # If any entity moved, redraw the screen
-        if globals.player.has_moved() or entity_has_moved or force_update:
+        if globals.player.has_moved() or entity_has_moved or force_update or globals.update_map:
             force_update = False
             time_updates += 1
             globals.screen.fill(constants.BLACK)
