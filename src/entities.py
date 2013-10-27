@@ -195,7 +195,7 @@ class Entity(object):
                             1)
         
         self.col_bottom = Rect(self.x + 1,
-                               self.y + self.height - 2,
+                               self.y + self.height - 1,
                                self.width - 2,
                                1)
         
@@ -233,9 +233,9 @@ class Entity(object):
                 self.x += 1
             if self.col_right.collidelist(checked_tiles) != -1:
                 self.x -= 1
-            if self.col_top.collidelist(checked_tiles) != -1:
-                self.y += 1
             if self.col_bottom.collidelist(checked_tiles) != -1:
                 self.y -= 1
+            if self.col_top.collidelist(checked_tiles) != -1:
+                self.y += 1
         
                     
