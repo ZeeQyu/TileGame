@@ -5,7 +5,7 @@ ZeeQyu TODO list:
 
 Pokemania00 Graphics TODO list:
 
-    20 Trees - some with double trees.
+   
     7 stumps from chopped down trees
     7 saplings
     10 rocks
