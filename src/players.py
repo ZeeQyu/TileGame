@@ -32,6 +32,27 @@ class Player(Entity):
         if self.removing_tile and not self.placing_tile:
             pass
         
+    def get_relative_aim_tile(self):
+        x = 0
+        y = 0
+        if self.x_plus:
+            x += 1
+        if self.x_minus:
+            x -= 1
+        if self.y_plus:
+            y += 1
+        if self.y_minus:
+            y -= 1
+        
+        return x, y
+    
+    def get_aim_tile(self):
+        x, y = self.get_relative_aim_tile()
+        x_add, y_add = self.get_tile()[0]
+        x += x_add
+        y += y_add
+        return x, y
+        
     def event_check(self, event):
         ''' Event checker. Checks if the event is a key press or release on the arrow keys.
         '''

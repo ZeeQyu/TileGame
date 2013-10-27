@@ -15,7 +15,7 @@ import pygame.locals as pgl
 
 BLACK = (0, 0, 0)
 
-# The speed the player moves at. Any number greater than 0
+# The speed the player moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
 
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
@@ -27,8 +27,7 @@ SLEEP_TIME = 0.001
 
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {# Format : "image_name_in_code": 
-          # ["filename in res", (color code in map.png) or 0,
-          # 1 for collision check 0 for not],
+          # ["filename in res", (color code in map.png) or 0],
           
           # tiles
          "grass": ["grassTile1.png", (255, 255, 255)],
@@ -82,8 +81,8 @@ IMAGES = {# Format : "image_name_in_code":
          "beetle": ["beetle.png"],
          
          # other
-         "marker": ["tileMarker.png"]
-                 }
+         "aim": ["aim.png"]
+        }
 
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
