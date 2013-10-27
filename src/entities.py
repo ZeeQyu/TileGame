@@ -148,8 +148,13 @@ class Entity(object):
             image = globals.images[self.image].get()
             
         # Actually paint the object
-        globals.screen.blit(image, (int(self.x), int(self.y)))
-                
+        if float(int(self.angle / 90.0)) == self.angle / 90.0:
+            # Compensate for rotated entities
+            globals.screen.blit(image, (int(self.x) + int(self.width/5.0),
+                                        int(self.y) + int(self.height/5.0)))
+        else:        
+            globals.screen.blit(image, (int(self.x), int(self.y)))
+        
     def has_moved(self, update=1):
         ''' Compares an old x and y value with the current one. 
             If the value has changed, the unit has moved to another pixel and should be redrawn.

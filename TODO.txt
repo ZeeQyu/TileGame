@@ -1,7 +1,6 @@
 ZeeQyu TODO list:
 
 	Character that can edit terrain
-	Mouse support
 
 Pokemania00 Graphics TODO list:
    
