@@ -44,8 +44,8 @@ def main():
     skip_cycle = False
     
     # Get time once initially and make time variables
-    time_last_tick = time_count = time_prev = time.clock()
-    time_count = time_cycles = time_updates = time_last_sleep = 0
+    time_last_tick = time_start = time_prev = time.clock()
+    time_start = time_cycles = time_updates = time_last_sleep = 0
     
     # Main loop
     while True:
@@ -67,6 +67,12 @@ def main():
                             temp_entity_list.append(units.Beetle(entity.x, entity.y))
                     globals.entity_list.extend(temp_entity_list)
                     temp_entity_list = []
+                # Remove all beetles
+                elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["remove_beetles"][0]:
+                    for i in range(len(globals.entity_list)-1, -1, -1):
+                        if type(globals.entity_list[i]) == units.Beetle:
+                            del globals.entity_list[i]
+                    force_update = True
                 # Key configuration
                 elif event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
                     skip_cycle = force_update = True
@@ -84,13 +90,13 @@ def main():
             continue
         # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
         time_cycles += 1
-        if time_count + 1 < time_now:
+        if time_start + 1 < time_now:
             if time_updates == 1 and time_cycles == 1:
                 time_updates = 1.0 / (time_diff)
-            print time_count, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps"
+            print time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps"
             time_cycles = 0
             time_updates = 0
-            time_count = time_now
+            time_start = time_now
         # What happens every tick?
         if time_last_tick + constants.TICK_FREQ < time_now:
             time_last_tick = time_last_tick + constants.TICK_FREQ
