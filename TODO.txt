@@ -4,8 +4,6 @@ ZeeQyu TODO list:
 
 Pokemania00 Graphics TODO list:
    
-    7 stumps from chopped down trees
-    7 saplings
     5 dirt tiles with grass int the corners
     5 saplings on the dirt tiles
     10 rocks
