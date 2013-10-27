@@ -28,21 +28,21 @@ class Player(Entity):
         ''' Event checker. Checks if the event is a key press or release on the arrow keys.
         '''
         if event.type == pgl.KEYDOWN:
-            if event.key == globals.key_config["move_up"]:
-                self.x_plus = True
-            elif event.key == globals.key_config["move_down"]:
-                self.x_minus = True
-            elif event.key == globals.key_config["move_right"]:
-                self.y_plus = True
-            elif event.key == globals.key_config["move_left"]:
+            if event.key == globals.key_dict["move_up"][0]:
                 self.y_minus = True
+            elif event.key == globals.key_dict["move_down"][0]:
+                self.y_plus = True
+            elif event.key == globals.key_dict["move_left"][0]:
+                self.x_minus = True
+            elif event.key == globals.key_dict["move_right"][0]:
+                self.x_plus = True
                 
         if event.type == pgl.KEYUP:
-            if event.key == globals.key_config["move_up"]:
-                self.x_plus = False
-            elif event.key == globals.key_config["move_down"]:
-                self.x_minus = False
-            elif event.key == globals.key_config["move_right"]:
-                self.y_plus = False
-            elif event.key == globals.key_config["move_left"]:
+            if event.key == globals.key_dict["move_up"][0]:
                 self.y_minus = False
+            elif event.key == globals.key_dict["move_down"][0]:
+                self.y_plus = False
+            elif event.key == globals.key_dict["move_left"][0]:
+                self.x_minus = False
+            elif event.key == globals.key_dict["move_right"][0]:
+                self.x_plus = False

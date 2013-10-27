@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/constants.py
-    TileGame by ZeeQyu
+    TileGame
+    Code and lead design by ZeeQyu
+    Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
-    Module containing various constants and the very important IMAGES dictionary that is used to load maps and images.
+    Module containing various constants and the important IMAGES dictionary that is used to load maps and images.
     
     To add a new image, add a new line to the IMAGES dictionary containing the image name as the key, the filename of the image in the res folder
     and either a tuple containing a RGB value for loading maps or the number zero if that image shouldn't be used for loading the map.
@@ -12,7 +14,6 @@
 import pygame.locals as pgl
 
 BLACK = (0, 0, 0)
-KEY_CHANGE_FONT_COLOR = (255, 255, 255)
 
 # The speed the player moves at. Any number greater than 0
 PLAYER_MOVEMENT_SPEED = 50
@@ -86,4 +87,11 @@ BEETLE_MOVEMENT_SPEED = 70
 BEETLE_MAX_TRAVEL_PX = 24
 
 # Key for key configuration
-CHANGE_KEYS_KEY = pgl.K_INSERT
+CONFIG_KEYS_KEY = pgl.K_INSERT
+# Messages for when you configure keys.
+CONFIG_KEYS_MESSAGE = "Reconfigure keys: Press insert to cancel."
+CONFIG_KEYS_TEXT_PREFIX = "Please press the key for "
+CONFIG_KEYS_ERROR_MESSAGE = "Sorry, you already used that key."
+CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
+# Time in (~)ticks for the "invalid key" text to be displayed each time
+CONFIG_KEYS_INVALID_TIMER = 15

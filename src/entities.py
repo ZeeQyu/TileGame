@@ -68,7 +68,7 @@ class Entity(object):
         ''' Updates the entity location if any of the plus and minus variables are set to True
             "delta_remainder" should be the time since the last update in seconds.
             
-            returns the remainder of the delta in seconds if the delta is too large 
+            moves the enitity one pixel at the time if the delta_remainder is too large
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         '''

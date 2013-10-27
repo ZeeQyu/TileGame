@@ -1,11 +1,15 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/globals.py
-    TileGame by ZeeQyu
+    TileGame
+    Code and lead design by ZeeQyu
+    Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
 
     Module for initating global variables that should be available in all modules
 '''
+from collections import OrderedDict
+
 import pygame
 import pygame.locals as pgl
 
@@ -33,21 +37,36 @@ screen = pygame.display.set_mode((width * constants.TILE_SIZE, height * constant
 pygame.display.set_caption("TileGame by ZeeQyu")
 map_screen_buffer = update_map()
 
+def update_key_dict():
+    ''' Copies the key_list list of lists and converts it to a dictionary, key_dict.
+        Uses the first index in each index as the key and the other values in a list as the value. 
+    '''
+    for item in key_list:
+        key_dict[item[0]] = item[1:]
+        print item[0], "||", item[1:]
 
-key_config = {
-    "move_up": pgl.K_RIGHT,
-    "move_down": pgl.K_LEFT,
-    "move_right": pgl.K_DOWN,
-    "move_left": pgl.K_UP,
+# Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
+# Should ask for the keys in a proper order.
+key_dict = {}
+key_list = [ # Custom keys. Format:
+              # "dict_key": [pgl.default_ley, "key config message"], 
+              # key config message (index 2) is displayed after
+              # the constants.CHANGE_KEYS_TEXT_PREFIX when reconfiguring keys
+        ["move_up", pgl.K_UP, "moving the player up."],
+        ["move_down", pgl.K_DOWN, "moving the player down."],
+        ["move_right", pgl.K_RIGHT, "moving the player right."],
+        ["move_left", pgl.K_LEFT, "moving the player left."],
+    
+#         ["look_up", pgl.K_i, "The key for making the player aim upwards."],
+#         ["look_down", pgl.K_k, "The key for making the player aim dowmwards."],
+#         ["look_right", pgl.K_l, "The key for making the player aim to the right."],
+#         ["look_left", pgl.K_j, "The key for making the player aim to the left."],
+#         
+#         ["remove_tile", pgl.K_o, "The key for removing the tile the player is looking at."],
+#         ["place_tile", pgl.K_u, "The key for placing a tile on the spot the player is looking at."],
+        
+        ["spawn_beetle", pgl.K_SPACE, "spawning a beetle at the player's feet."],
+        ["duplicate_beetles", pgl.K_d, "activating the beetle's self-duplicating process."]
+    ]
 
-    "look_up": pgl.K_i,
-    "look_down": pgl.K_k,
-    "look_right": pgl.K_l,
-    "look_left": pgl.K_j,
-    
-    "remove_tile": pgl.K_o,
-    "place_tile": pgl.K_u,
-    
-    "spawn_beetle": pgl.K_SPACE,
-    "duplicate_beetles": pgl.K_d
-    }
+update_key_dict()

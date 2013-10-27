@@ -56,10 +56,10 @@ def main():
                 sys.exit()
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
                 # Create beetle with (default) space
-                if event.type == pgl.KEYDOWN and event.key == globals.key_config["spawn_beetle"]:
+                if event.type == pgl.KEYDOWN and event.key == globals.key_dict["spawn_beetle"][0]:
                     globals.entity_list.append(units.Beetle(globals.player.x, globals.player.y))
                 # Duplicate all beetles with (default) D
-                elif event.type == pgl.KEYDOWN and event.key == globals.key_config["duplicate_beetles"]:
+                if event.type == pgl.KEYDOWN and event.key == globals.key_dict["duplicate_beetles"][0]:
                     # Make an empty list to temporarily store the added beetles, so no infinite loop appears
                     temp_entity_list = []
                     for entity in globals.entity_list:
@@ -68,12 +68,11 @@ def main():
                     globals.entity_list.extend(temp_entity_list)
                     temp_entity_list = []
                 # Key configuration
-                elif event.type == pgl.KEYDOWN and event.key == constants.CHANGE_KEYS_KEY:
-                    skip_cycle = True
-                    interface.key_config()
+                if event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
+                    skip_cycle = force_update = True
+                    interface.key_reconfig()
                 # Otherwise, check for if the player should move
-                else:
-                    globals.player.event_check(event)
+                globals.player.event_check(event)
                 
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
@@ -118,6 +117,7 @@ def main():
         
         # If any entity moved, redraw the screen
         if globals.player.has_moved() or entity_has_moved or force_update:
+            force_update = False
             time_updates += 1
             globals.screen.fill(constants.BLACK)
             # Draw the map buffer on the screen
