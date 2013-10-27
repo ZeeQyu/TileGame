@@ -66,7 +66,8 @@ key_list = [ # Custom keys. Format:
         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
         
         ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
-        ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."]
+        ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
+        ["remove_beetles", pgl.K_w, "removing all beetles."]
     ]
 
 update_key_dict()
