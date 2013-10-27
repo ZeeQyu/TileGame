@@ -28,7 +28,8 @@ SLEEP_TIME = 0.001
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {# Format : "image_name_in_code": 
           # ["filename in res", (color code in map.png) or 0,
-          # tile remove time in ticks or -1 for unremovable],
+          # [tile remove time in ticks or -1 for unremovable,
+          # "tile_that_should_be_used_if_this_is_removed]],
           
           # tiles
          "grass": ["grassTile1.png", (255, 255, 255)],
@@ -50,7 +51,7 @@ IMAGES = {# Format : "image_name_in_code":
          "dirt": ["dirtTile.png", 0],
          "rock": ["rocktile.png", (0, 0, 0)],
          "ore": ["oreTile.png", (255, 216, 0)],
-         "tree": ["tree1.png", (124, 124, 124), 10],
+         "tree": ["tree1.png", (124, 124, 124), [10, "stump"]],
          "tree2": ["tree2.png", 0],
          "tree3": ["tree3.png", 0],
          "tree4": ["tree4.png", 0],
@@ -70,7 +71,7 @@ IMAGES = {# Format : "image_name_in_code":
          "tree18": ["tree18.png", 0],
          "tree19": ["tree19.png", 0],
          "tree20": ["tree20.png", 0],
-         "stump": ["stump.png", 0, 5],
+         "stump": ["stump.png", 0, [5, "grass"]],
          "stump2": ["stump2.png", 0],
          "stump3": ["stump3.png", 0],
          "hq": ["placeholder.png", (255, 106, 0)],
@@ -85,15 +86,16 @@ IMAGES = {# Format : "image_name_in_code":
          "aim": ["aim.png"]
         }
 
-# The identifier of the tile that should be used when another tile is removed 
-DEFAULT_TILE = "grass"
+# The identifier of the tile that should be used
+# when the map.png decoding fails
+DEFAULT__TILE = "grass"
 
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
 
 # List of tiles that should have random textures. It will check the IMAGES dict for keys containing this value
 # IMAGES should contain a texture with this exact name, with an initialization color code (RGB)
-RANDOM_TILES = ["tree", "grass"]
+RANDOM_TILES = ["tree", "grass", "stump"]
 DEACTIVATE_RANDOM_TEXTURES = False
 
 # The size of tiles. Probably will never be anything else than 16.

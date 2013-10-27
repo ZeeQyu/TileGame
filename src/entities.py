@@ -44,7 +44,7 @@ class Entity(object):
         self.x_minus = False
         self.y_plus = False
         self.y_minus = False
-        self.should_update = False
+        
         # Variables for checking if the entity has moved.
         self.old_x = x
         self.old_y = y
@@ -123,7 +123,7 @@ class Entity(object):
                     self.angle = self.last_angle
             # Update the player if he's aiming in a new direction
             if self.angle != self.last_angle:
-                self.should_update = True
+                globals.force_update = True
             # Remember the angle until next time
             self.last_angle = self.angle
             
@@ -173,11 +173,7 @@ class Entity(object):
                 self.old_y = int(self.y)
             return True
         else:
-            if self.should_update:
-                self.should_update = False
-                return True
-            else:
-                return False
+            return False
             
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 

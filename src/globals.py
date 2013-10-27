@@ -27,6 +27,7 @@ map, width, height, player_start_x, player_start_y = generate_map("map.png")
 images = {}
 
 player = None
+force_update = True
 
 # Initiate an entity list. Order of this list does not matter
 entity_list = []

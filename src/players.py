@@ -29,7 +29,7 @@ class Player(Entity):
         # The last state self.removing_tile was in
         self.last_removing_tile = False
         # Time until the current tile is removed
-        self.remove_timer = 0
+        self.remove_timer = None
         # The last tile the player was aiming at
         self.last_relative_aim_tile = (0, 1)
         self.last_aim_tile = self.get_aim_tile()
@@ -42,40 +42,48 @@ class Player(Entity):
             globals.screen.blit(globals.images["aim"].get(),
                                 (self.last_aim_tile[0]*constants.TILE_SIZE,
                                  self.last_aim_tile[1]*constants.TILE_SIZE))
+            
+    def update(self, time_diff):
+        ''' Calls the superclass update and updates the state of the aim marker
+        '''
+        # Update screen whenever aim marker changes states
+        if self.removing_tile != self.last_removing_tile:
+            self.last_removing_tile = self.removing_tile
+            globals.force_update = True
+        super(Player, self).update(time_diff)
+        
+        # Get which tile the player is looking at
+        aim_tile = self.get_aim_tile()
+        x, y = aim_tile
+        # If the aim tile has changed
+        if aim_tile != self.last_aim_tile:
+            # Checks if the aim tile has a remove time (can be destroyed).
+            # If so, assign that value to self.remove_timer.
+            if len(constants.IMAGES[globals.map[x][y].type]) > 2:
+                self.remove_timer = constants.IMAGES[globals.map[x][y].type][2][0]
+            else:
+                self.remove_timer = None
+        self.last_aim_tile = aim_tile
+        
+        if self.removing_tile and not self.placing_tile:
+            # If the timer is None (not removable), return
+            if self.remove_timer == None:
+                return
+            # If remove_timer has reached 0 which means the countdown is done
+            if self.remove_timer < 1:
+                # Get the second value in the third value of the related IMAGES index
+                globals.map[x][y] = tiles.makeTile(constants.IMAGES[globals.map[x][y].type][2][1], x, y)
+                globals.update_map = True
+                self.remove_timer = None
+                return
         
     def tick(self):
         ''' What happens every tick. Counts down the remove block timer. 
         '''
         super(Player, self).tick()
-        # If the player is pressing remove
-        if self.removing_tile and not self.placing_tile:
-            # Get which tile the player is looking at
-            aim_tile = self.get_aim_tile()
-            x, y = aim_tile
-            # If the aim tile has changed
-            if aim_tile != self.last_aim_tile:
-                # Checks if the aim tile has a remove time (can be destroyed).
-                # If so, assign that value to self.remove_timer.
-                if len(constants.IMAGES[globals.map[x][y].type]) > 2:
-                    self.remove_timer = constants.IMAGES[globals.map[x][y].type][2]
-                else:
-                    self.remove_timer = -1
-            self.last_aim_tile = aim_tile
-            # 
-            if self.removing_tile != self.last_removing_tile:
-                self.should_update = True 
-            # If the timer is -1 (not removable), return
-            if self.remove_timer == -1:
-                return
-            # If remove_timer has reached 0 which means the countdown is done
-            if self.remove_timer == 0:
-                globals.map[x][y] = tiles.makeTile(constants.DEFAULT_TILE, x, y)
-                self.remove_timer = -1
-                globals.update_map = True
-                self.should_update = True
-                return
-            print self.remove_timer
+        if self.removing_tile and not self.placing_tile and self.remove_timer != None:
             self.remove_timer -= 1
+
         
     def get_relative_aim_tile(self):
         ''' Gets the tile the player is aiming at, relative to the player position.
@@ -95,6 +103,7 @@ class Player(Entity):
         if x == 0 and y == 0:
             return self.last_relative_aim_tile
         else:
+            self.last_relative_aim_tile = x, y
             return x, y
     
     def get_aim_tile(self):

@@ -38,7 +38,7 @@ def main():
     globals.player = players.Player()
     
     # Paint the screen once initially
-    force_update = True
+    #force_update = True
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
     skip_cycle = False
@@ -72,10 +72,10 @@ def main():
                     for i in range(len(globals.entity_list)-1, -1, -1):
                         if type(globals.entity_list[i]) == units.Beetle:
                             del globals.entity_list[i]
-                    force_update = True
+                    globals.force_update = True
                 # Key configuration
                 elif event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
-                    skip_cycle = force_update = True
+                    skip_cycle = globals.force_update = True
                     interface.key_reconfig()
                 # Otherwise, check for if the player should move
                 globals.player.event_check(event)
@@ -111,6 +111,7 @@ def main():
         # Update map buffer if needed
         if globals.update_map:
             globals.update_map = False
+            globals.force_update = True
             globals.map_screen_buffer = maps.update_map()
         # update (move) the player
         globals.player.update(time_diff)
@@ -123,8 +124,8 @@ def main():
                 entity_has_moved = True
         
         # If any entity moved, redraw the screen
-        if globals.player.has_moved() or entity_has_moved or force_update or globals.update_map:
-            force_update = False
+        if globals.player.has_moved() or entity_has_moved or globals.force_update:
+            globals.force_update = False
             time_updates += 1
             globals.screen.fill(constants.BACKGROUND_COLOR)
             # Draw the map buffer on the screen
