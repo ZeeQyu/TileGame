@@ -22,7 +22,7 @@ class Tile(object):
     ''' Tile object containing the type and location of the tile.
     '''
     
-    def __init__(self, type, x, y):
+    def __init__(self, type, x, y, timer=0):
         ''' Simple initalizer.
             "type" should be a string from the list of keys in the constants.py IMAGES dictionary.
             "x" and "y" should be ints and can be used for finding out where a tile belongs if
@@ -34,6 +34,10 @@ class Tile(object):
         self.type = type
         self.x = x
         self.y = y
+        # Variables only used for tiles that should change after a time
+        # For example, saplings
+        self.timer = timer
+        self.replace_tile = ""
         
     def rect(self):
         ''' Returns a pygame.Rect object with the same dimensions and location as the tile
@@ -47,6 +51,11 @@ class Tile(object):
             Only exists to be overwritten by subclasses
         '''
         return self.type
+    
+    def time_up(self):
+        ''' The function that should be called when self.timer has reached 0
+        '''
+        
         
     def __str__(self):
         ''' Returns tile type and location (all attributes)
