@@ -29,23 +29,24 @@ class Animal(Entity):
             half of the max travel and the max travel
         '''
 
-
-        # When the movement timer is done counting down, give the Animal a new
-        # random direction and duration to travel
-        if self.movement_timer <= 0:
-            # Calculate what value the maximum amount of ticks between direction changes
-            # should be
-            tick_max = int(float(self.max_travel) /
-               float(self.movement_speed) /
-               float(constants.TICK_FREQ))
-            # The amount of ticks until direction change, which is a random int
-            # between half of tick_max and tick_max
-            self.movement_timer =  randint(tick_max / 2, tick_max)
-            # Set a random direction
-            self.x_plus = bool(randint(0, 1))
-            self.x_minus = bool(randint(0, 1))
-            self.y_plus = bool(randint(0, 1))
-            self.y_minus = bool(randint(0, 1))
+        # If it moves at all
+        if self.movement_speed > 0:
+            # When the movement timer is done counting down, give the Animal a new
+            # random direction and duration to travel
+            if self.movement_timer <= 0:
+                # Calculate what value the maximum amount of ticks between direction changes
+                # should be
+                tick_max = int(float(self.max_travel) /
+                   float(self.movement_speed) /
+                   float(constants.TICK_FREQ))
+                # The amount of ticks until direction change, which is a random int
+                # between half of tick_max and tick_max
+                self.movement_timer =  randint(tick_max / 2, tick_max)
+                # Set a random direction
+                self.x_plus = bool(randint(0, 1))
+                self.x_minus = bool(randint(0, 1))
+                self.y_plus = bool(randint(0, 1))
+                self.y_minus = bool(randint(0, 1))
             
         super(Animal, self).update(delta_remainder)
         

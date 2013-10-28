@@ -71,6 +71,13 @@ IMAGES = {# Format : "image_name_in_code":
          "tree18": ["tree18.png", 0],
          "tree19": ["tree19.png", 0],
          "tree20": ["tree20.png", 0],
+         "sapling": ["sapling.png", 0, [0, "grass"]],
+         "sapling2": ["sapling2.png", 0],
+         "sapling3": ["sapling3.png", 0],
+         "sapling4": ["sapling4.png", 0],
+         "sapling5": ["sapling5.png", 0],
+         "sapling6": ["sapling6.png", 0],
+         "sapling7": ["sapling7.png", 0],
          "stump": ["stump.png", 0, [15, "grass"]],
          "stump2": ["stump2.png", 0],
          "stump3": ["stump3.png", 0],
@@ -88,14 +95,18 @@ IMAGES = {# Format : "image_name_in_code":
 
 # The identifier of the tile that should be used
 # when the map.png decoding fails
-DEFAULT__TILE = "grass"
+DEFAULT_TILE = "grass"
+# Tiles that can be overwritten by the players place button
+PLACEABLE_TILES = ["grass", "stump"]
+# The tile that is placed 
+PLACE_TILE = "sapling"
 
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
 
 # List of tiles that should have random textures. It will check the IMAGES dict for keys containing this value
 # IMAGES should contain a texture with this exact name, with an initialization color code (RGB)
-RANDOM_TILES = ["tree", "grass", "stump"]
+RANDOM_TILES = ["tree", "grass", "stump", "sapling"]
 DEACTIVATE_RANDOM_TEXTURES = False
 
 # The size of tiles. Probably will never be anything else than 16.
@@ -105,7 +116,7 @@ TILE_SIZE = 16
 # Movement speed of beetle
 BEETLE_MOVEMENT_SPEED = 70
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
-BEETLE_MAX_TRAVEL_PX = 24
+BEETLE_MAX_TRAVEL_PX = 30
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT
