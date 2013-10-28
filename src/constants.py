@@ -116,7 +116,7 @@ TILE_SIZE = 16
 # Movement speed of beetle
 BEETLE_MOVEMENT_SPEED = 70
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
-BEETLE_MAX_TRAVEL_PX = 30
+BEETLE_MAX_TRAVEL_PX = 24
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT
