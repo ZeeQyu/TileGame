@@ -27,7 +27,6 @@ Pokemania00 Graphics TODO list:
    	3 Large flowers (flower.png)
    	A better aim.png (An indicator which tile you're removing)
     5 dirt tiles with grass in the corners
-    5 saplings that don't look like cracks in the ground (small bushes)
     5 saplings on the dirt tiles
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges

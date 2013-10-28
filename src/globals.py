@@ -33,10 +33,6 @@ force_update = True
 entity_list = []
 images = graphics.load_graphics()
 
-# EvolvingTileList. List of tiles that should be downcounted every tick.
-# Should follow the format [[timerInt, x, y][timerInt, x, y]]
-evolving_tiles = []
-
 # Creates a window just the size to fit all the tiles in the map file.
 screen = pygame.display.set_mode((width * constants.TILE_SIZE, height * constants.TILE_SIZE))
 pygame.display.set_caption("TileGame by ZeeQyu")
@@ -68,7 +64,7 @@ key_list = [ # Custom keys. Format:
 #         ["look_left", pgl.K_j, "making the player aim to the left."],
 
         ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
-        ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
+#         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
         
         ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
         ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
