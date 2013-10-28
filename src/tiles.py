@@ -39,6 +39,12 @@ class Tile(object):
         self.timer = timer
         self.replace_tile = ""
         
+    def tick(self):
+        ''' Method for counting down the block replacement timer.
+            Should only be called if the tile is a transforming tile (for example, sapling)
+        '''
+        self.timer -= 1
+    
     def rect(self):
         ''' Returns a pygame.Rect object with the same dimensions and location as the tile
         '''
