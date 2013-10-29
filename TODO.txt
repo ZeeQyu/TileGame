@@ -20,14 +20,10 @@ ZeeQyu TODO list:
 
 Pokemania00 Graphics TODO list:
 
-   	A 8x8 icon for the top of the screen (The 32x32 just melds together.
-   		Try to run the latest version to see for yourself.)
+   	
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
-   	3 Large flowers (flower.png)
    	A better aim.png (An indicator which tile you're removing)
-    5 dirt tiles with grass in the corners
-    5 saplings that don't look like cracks in the ground (small bushes)
     5 saplings on the dirt tiles
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges
