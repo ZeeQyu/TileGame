@@ -82,7 +82,6 @@ def key_reconfig():
             # Draw entities
             for entity in globals.entity_list:
                 entity.paint()
-            globals.player.paint()
             # Darken the screen a bit
             globals.screen.blit(transparent_surface, (0, 0))
             # Draw text
