@@ -1,5 +1,6 @@
 ZeeQyu TODO list:
 	
+        Fix weird glitch with the new mini-logo //Poke (start the game and see for yourself)
 	Dragging packages
 	Structures
 	Multitile structures
