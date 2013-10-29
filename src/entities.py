@@ -226,11 +226,13 @@ class Entity(object):
             for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
                 for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
                     try:
-                        if globals.map[i][j].type in constants.COLLIDING_TILES:
+                        if constants.IMAGES[globals.map[i][j].type].collides:
                             checked_tiles.append(globals.map[i][j].rect())
-                    except:
+                    except IndexError:
                         # That index was apparently outside of the map
                         pass
+                    except:
+                        raise
                     
             # Check if each of the zones collides with any of the tiles
             if self.col_left.collidelist(checked_tiles) != -1:

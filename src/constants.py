@@ -13,20 +13,13 @@
 '''
 import pygame.locals as pgl
 
-BACKGROUND_COLOR = (0, 0, 0)
-
-# The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
-# calculations that should be more periodical than cycles or frames
-TICK_FREQ = 0.05
-
-# The amount of seconds the game should sleep each loop to not bog the processor too much
-SLEEP_TIME = 0.001
 
 class Img(object):
     ''' Small class for keeping track of data related to different images.
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     '''
-    def __init__(self, png, color_code=None, random=False, placeable=False, destroy=None, evolve=None):
+    def __init__(self, png, color_code=None, random=False, collides=False,
+                 placeable=False, destroy=None, evolve=None):
         ''' Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -38,6 +31,7 @@ class Img(object):
                 be simple(nothing other than png) and have the base identifier in the identifier
                 (example: if base is "grass", the others might be "grass5" and "other_grass")
                 Leave empty for false, (single texture tile)
+            "collides" should be True if this tile should collide with Entities.
             "placeable" should be True if this tile can be overwritten when something is placed,
                 for example, a tree. Leave blank if it shouldn't be removable.
             "destroy" should be a list containing the time in ticks for a tile to be destroyed
@@ -50,6 +44,7 @@ class Img(object):
         self.png = png
         self.color_code = color_code
         self.random = random
+        self.collides = collides
         self.placeable = placeable
         self.destroy = destroy
         self.evolve = evolve
@@ -75,9 +70,9 @@ IMAGES = {
          "grass15": Img("grassTile15.png"),
          "grass16": Img("grassTile16.png"),
          "dirt": Img("dirtTile.png"),
-         "rock": Img("rocktile.png", color_code=(0, 0, 0)),
+         "rock": Img("rocktile.png", color_code=(0, 0, 0), collides=True),
          "ore": Img("oreTile.png", color_code=(255, 216, 0)),
-         "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, destroy=[10, "stump"]),
+         "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[10, "stump"]),
          "tree2": Img("tree2.png"),
          "tree3": Img("tree3.png"),
          "tree4": Img("tree4.png"),
@@ -114,8 +109,16 @@ IMAGES = {
          "beetle": Img("beetle.png"),
          
          # other
+         "map": Img("map.png"),
          "aim": Img("aim.png")
         }
+
+BACKGROUND_COLOR = (0, 0, 0)
+# The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
+# calculations that should be more periodical than cycles or frames
+TICK_FREQ = 0.05
+# The amount of seconds the game should sleep each loop to not bog the processor too much
+SLEEP_TIME = 0.001
 
 # The identifier of the tile that should be used
 # when the map.png decoding fails
@@ -123,12 +126,8 @@ DEFAULT_TILE = "grass"
 # The tile that is placed 
 PLACE_TILE = "sapling"
 
-# List of tiles that should be used in collision detection
-COLLIDING_TILES = ["rock", "tree", "hq"]
-
 # Set to true if all textures should be non-random
 DEACTIVATE_RANDOM_TEXTURES = False
-
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16
 

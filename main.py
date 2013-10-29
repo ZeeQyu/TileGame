@@ -19,7 +19,7 @@
 import sys, os, time
 
 # Third party modules
-import pygame, Image
+import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")

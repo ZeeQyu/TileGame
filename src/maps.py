@@ -10,25 +10,13 @@
     The map is the multidimensional array of tiles 
     which is used for painting the game world on the screen.
     It can be edited easily by replacing an index with a new tile instance.
-    
-    This module uses PIL for loading the map.png and reading individual pixels.
-    Note that graphics.py uses the pygame built-in image library instead.
 '''
 
-import Image
-from pygame import Surface
+import pygame
 
 import constants
 import tiles
 import globals
-
-class InvalidMapColorException(Exception):
-    ''' Exception sub-class for fancy error messages
-    
-        Used when you have an invalid color in the map.png that isn't specified in the constants.py IMAGES dictionary.
-        Used in the pixel_type() function in this module.
-    '''
-    pass
 
 def generate_map(map_name):
     ''' Function that loads a PIL image and reads it, pixel by pixel, to decode it into a tile map. 
@@ -39,20 +27,21 @@ def generate_map(map_name):
         if no starting point is found, return 0, 0 as the starting point. 
     '''
     # Load the image and declare variables
-    map_image = Image.open("res\\" + map_name)
-    pixels = map_image.load()
+    map_image = pygame.image.load("res\\" + constants.IMAGES["map"].png)
     map = []
-    width, height = map_image.size
+    width, height = map_image.get_size()
     player_start_x = 0
     player_start_y = 0
     
     for x in range(width):
-        map.append([]) # Create a new vertical column for every pixel the image is wide.
-        
+        # Create a new vertical column for every pixel the image is wide.
+        map.append([])
         for y in range(height):
-            pixel = pixels[x, y] # The pixel variable is the pixel we're currently checking.
+            # The pixel variable is the pixel we're currently checking.
+            pixel = map_image.get_at((x, y))[:3]
             type = pixel_type(pixel, x, y)
-            if type == "start_tile":    # If the pixel is the player start tile, save the location of that pixel.
+            # If the pixel is the player start tile, save the location of that pixel.
+            if type == "start_tile":
                 player_start_x = x * constants.TILE_SIZE
                 player_start_y = y * constants.TILE_SIZE
             
@@ -99,7 +88,7 @@ def update_map():
         
         uses variables from the globals and constants files
     '''
-    map_screen_buffer = Surface((len(globals.map)*constants.TILE_SIZE, len(globals.map[1])*constants.TILE_SIZE))
+    map_screen_buffer = pygame.Surface((len(globals.map)*constants.TILE_SIZE, len(globals.map[1])*constants.TILE_SIZE))
     
     map_screen_buffer.fill(constants.BACKGROUND_COLOR)
     for i in range(len(globals.map)):

@@ -11,7 +11,6 @@
 '''
 
 import pygame
-import Image
 
 import constants
    
