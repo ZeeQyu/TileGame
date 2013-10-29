@@ -62,8 +62,8 @@ class Player(Entity):
             self.update_aim_tile = False
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
-            if len(constants.IMAGES[globals.map[x][y].type]) > 2:
-                self.remove_timer = constants.IMAGES[globals.map[x][y].type][2][0]
+            if constants.IMAGES[globals.map[x][y].type].destroy != None:
+                self.remove_timer = constants.IMAGES[globals.map[x][y].type].remove[0]
             else:
                 self.remove_timer = None
         self.last_aim_tile = aim_tile
@@ -71,7 +71,7 @@ class Player(Entity):
         # Placing tile
         if self.placing_tile and not self.removing_tile:
             if globals.map[x][y].type in constants.PLACEABLE_TILES:
-                globals.map[x][y] = tiles.makeTile(constants.PLACE_TILE, x, y)
+                globals.map[x][y] = tiles.make_tile(constants.PLACE_TILE, x, y)
                 globals.update_map = True
 
         if self.removing_tile and not self.placing_tile:

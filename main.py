@@ -34,6 +34,8 @@ def main():
     '''
     # initialize pygame
     pygame.init()
+    # Make map
+    globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
     # Initiate player
     globals.player = players.Player()
     

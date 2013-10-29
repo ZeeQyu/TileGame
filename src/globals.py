@@ -17,12 +17,9 @@ from maps import generate_map
 import graphics
 import constants
 
-# Define all the concerned variables as global
-global map, width, height, player_start_x, player_start_y, images, entity_list, screen
-
 # Load map using functions from maps.py and store into the map variable
 # Get the size of the image as well as the player start point from the map.png file.
-map, width, height, player_start_x, player_start_y = generate_map("map.png")
+map = width = height = player_start_x = player_start_y = screen = None
 # Making some variables that should be available for use in all modules
 images = {}
 
@@ -34,14 +31,14 @@ entity_list = []
 images = graphics.load_graphics()
 
 # List of tiles that should be ticked (tick function called).
-# This is because all Tiles shouldn't be ticked, for performance.
+# This is because all tiles shouldn't be ticked, for performance.
 # Should follow the format [[x, y][x, y]]
 tick_tiles = []
 
-# Creates a window just the size to fit all the tiles in the map file.
-screen = pygame.display.set_mode((width * constants.TILE_SIZE, height * constants.TILE_SIZE))
-pygame.display.set_caption("TileGame by ZeeQyu")
+# map_screen_buffer is a surface to which the map is painted when it is 
+# updated so that the screen isn't rerendered every frame 
 map_screen_buffer = None
+# If the map should be rerendered
 update_map = True
 
 def update_key_dict():

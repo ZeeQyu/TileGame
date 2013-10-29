@@ -183,6 +183,7 @@ class Entity(object):
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
         '''
+        print self.x, "||", self.width
         self.col_right = Rect(self.x + self.width - 1, 
                               self.y + 1,
                               1,
