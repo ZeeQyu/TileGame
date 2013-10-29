@@ -65,7 +65,10 @@ class Tile(object):
         ''' The function that should be called when self.timer has reached 0
             Exchanges this tile for 
         '''
-        if globals.player.get_tile() != (self.x, self.y):
+        entity_tiles = []
+        for entity in globals.entity_list:
+            entity_tiles.append(entity.get_tile())
+        if (self.x, self.y) not in entity_tiles:
             if self.replace_tile != "":
                 globals.map[self.x][self.y] = make_tile(self.replace_tile, self.x, self.y)
             globals.tick_tiles.remove([self.x, self.y])

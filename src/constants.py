@@ -15,9 +15,6 @@ import pygame.locals as pgl
 
 BACKGROUND_COLOR = (0, 0, 0)
 
-# The speed the player moves at. Any number greater than or equal to 0
-PLAYER_MOVEMENT_SPEED = 50
-
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
 # calculations that should be more periodical than cycles or frames
 TICK_FREQ = 0.05
@@ -29,7 +26,7 @@ class Img(object):
     ''' Small class for keeping track of data related to different images.
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     '''
-    def __init__(self, png, color_code=None, random=False, destroy=None, evolve=None):
+    def __init__(self, png, color_code=None, random=False, placeable=False, destroy=None, evolve=None):
         ''' Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -41,6 +38,8 @@ class Img(object):
                 be simple(nothing other than png) and have the base identifier in the identifier
                 (example: if base is "grass", the others might be "grass5" and "other_grass")
                 Leave empty for false, (single texture tile)
+            "placeable" should be True if this tile can be overwritten when something is placed,
+                for example, a tree. Leave blank if it shouldn't be removable.
             "destroy" should be a list containing the time in ticks for a tile to be destroyed
                 and which tile it should turn into. (example: [15, "grass"]) Leave blank for 
             "evolve" should be a list containing the minimum time it takes for the tile
@@ -51,6 +50,7 @@ class Img(object):
         self.png = png
         self.color_code = color_code
         self.random = random
+        self.placeable = placeable
         self.destroy = destroy
         self.evolve = evolve
         
@@ -58,7 +58,7 @@ class Img(object):
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {
           # tiles
-         "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True),
+         "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
          "grass2": Img("grassTile2.png"),
          "grass3": Img("grassTile3.png"),
          "grass4": Img("grassTile4.png"),
@@ -102,7 +102,7 @@ IMAGES = {
          "sapling3": Img("sapling3.png"),
          "sapling4": Img("sapling4.png"),
          "sapling5": Img("sapling5.png"),
-         "stump": Img("stump.png", random=True, destroy=[15, "grass"]),
+         "stump": Img("stump.png", random=True, placeable=True, destroy=[15, "grass"]),
          "stump2": Img("stump2.png"),
          "stump3": Img("stump3.png"),
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
@@ -120,8 +120,6 @@ IMAGES = {
 # The identifier of the tile that should be used
 # when the map.png decoding fails
 DEFAULT_TILE = "grass"
-# Tiles that can be overwritten by the players place button
-PLACEABLE_TILES = ["grass", "stump"]
 # The tile that is placed 
 PLACE_TILE = "sapling"
 
@@ -135,6 +133,8 @@ DEACTIVATE_RANDOM_TEXTURES = False
 TILE_SIZE = 16
 
 # Entities
+# The speed the player moves at. Any number greater than or equal to 0
+PLAYER_MOVEMENT_SPEED = 50
 # Movement speed of beetle
 BEETLE_MOVEMENT_SPEED = 70
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)

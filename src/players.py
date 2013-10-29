@@ -71,7 +71,7 @@ class Player(Entity):
         
         # Placing tile
         if self.placing_tile and not self.removing_tile:
-            if globals.map[x][y].type in constants.PLACEABLE_TILES:
+            if constants.IMAGES[globals.map[x][y].type].placeable:
                 globals.map[x][y] = tiles.make_tile(constants.PLACE_TILE, x, y)
                 globals.update_map = True
 

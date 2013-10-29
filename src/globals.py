@@ -23,10 +23,9 @@ map = width = height = player_start_x = player_start_y = screen = None
 # Making some variables that should be available for use in all modules
 images = {}
 
-player = None
 force_update = True
 
-# Initiate an entity list. Order of this list does not matter
+# Initiate an entity list. Contains all entities. The player is in index 0
 entity_list = []
 images = graphics.load_graphics()
 
