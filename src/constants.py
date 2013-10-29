@@ -58,7 +58,6 @@ class Img(object):
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {
           # tiles
-<<<<<<< HEAD
          "grass": ["grassTile1.png", (255, 255, 255)],
          "grass2": ["grassTile2.png", 0],
          "grass3": ["grassTile3.png", 0],
@@ -104,7 +103,6 @@ IMAGES = {
          "hq": ["placeholder.png", (255, 106, 0)],
          "start_tile": ["grassTile1.png", (178, 0, 255)],
          "package": ["package.png", (255, 0, 0)],
-=======
          "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
          "grass2": Img("grassTile2.png"),
          "grass3": Img("grassTile3.png"),
@@ -155,7 +153,6 @@ IMAGES = {
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
          "start_tile": Img("grassTile1.png", color_code=(178, 0, 255)),
          "package": Img("package.png", color_code=(255, 0, 0)),
->>>>>>> origin/developing
          
          # entities
          "player": Img("player.png"),
@@ -167,24 +164,18 @@ IMAGES = {
 
 # The identifier of the tile that should be used
 # when the map.png decoding fails
-<<<<<<< HEAD
 DEFAULT__TILE = "grass"
-=======
 DEFAULT_TILE = "grass"
 # The tile that is placed 
 PLACE_TILE = "sapling"
->>>>>>> origin/developing
 
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
 
-<<<<<<< HEAD
 # List of tiles that should have random textures. It will check the IMAGES dict for keys containing this value
 # IMAGES should contain a texture with this exact name, with an initialization color code (RGB)
 RANDOM_TILES = ["tree", "grass", "stump"]
-=======
 # Set to true if all textures should be non-random
->>>>>>> origin/developing
 DEACTIVATE_RANDOM_TEXTURES = False
 
 # The size of tiles. Probably will never be anything else than 16.
