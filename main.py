@@ -34,10 +34,17 @@ def main():
     '''
     # initialize pygame
     pygame.init()
+    
     # Make map
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
-    # Initiate player
-    globals.player = players.Player()
+    print globals.player_start_x, globals.player_start_y
+    # Initiaate player
+    globals.player = players.Player(globals.player_start_x, globals.player_start_y)
+
+    # Creates a window just the size to fit all the tiles in the map file.
+    pygame.display.set_caption("TileGame by ZeeQyu")
+    globals.screen = pygame.display.set_mode((globals.width * constants.TILE_SIZE,
+                                              globals.height * constants.TILE_SIZE))
     
     # Paint the screen once initially
     #force_update = True
@@ -106,6 +113,8 @@ def main():
             for entity in globals.entity_list:
                 entity.tick()
             globals.player.tick()
+            for tile in globals.tick_tiles:
+                globals.map[tile[0]][tile[1]].tick()
         # Make sure the loop doesn't go too quickly and bog the processor down
         if time_last_sleep < constants.SLEEP_TIME:
             time.sleep(constants.SLEEP_TIME -  time_last_sleep)

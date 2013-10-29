@@ -16,7 +16,7 @@ from random import choice, randint
 
 import pygame
 
-import constants
+import constants, globals
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -44,6 +44,8 @@ class Tile(object):
         ''' Method for counting down the block replacement timer.
             Should only be called if the tile is a transforming tile (for example, sapling)
         '''
+        if self.timer < 0:
+            self.time_up()
         self.timer -= 1
     
     def rect(self):
@@ -61,8 +63,13 @@ class Tile(object):
     
     def time_up(self):
         ''' The function that should be called when self.timer has reached 0
+            Exchanges this tile for 
         '''
-        globals.map[self.x][self.y] = makeTile(self.replace_tile, self.x, self.y)
+        if globals.player.get_tile() != (self.x, self.y):
+            if self.replace_tile != "":
+                globals.map[self.x][self.y] = make_tile(self.replace_tile, self.x, self.y)
+            globals.tick_tiles.remove([self.x, self.y])
+            globals.update_map = True
         
     def __str__(self):
         ''' Returns tile type and location (all attributes)
@@ -114,9 +121,10 @@ def make_tile(type, x, y):
     replace_tile = ""
     # If the tile evolves, get a random timer for that and a replace_tile
     if constants.IMAGES[type].evolve != None:
-        tick_tiles.append([x, y])
+        coordinates = [x, y]
+        globals.tick_tiles.append(coordinates)
         timer = randint(*constants.IMAGES[type].evolve[:2])
-        replace_tile = contstants.IMAGES[type].evolve[2]
+        replace_tile = constants.IMAGES[type].evolve[2]
     # Random tiles
     if not constants.DEACTIVATE_RANDOM_TEXTURES:
         if constants.IMAGES[type].random:

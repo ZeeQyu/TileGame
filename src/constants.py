@@ -41,7 +41,7 @@ class Img(object):
                 be simple(nothing other than png) and have the base identifier in the identifier
                 (example: if base is "grass", the others might be "grass5" and "other_grass")
                 Leave empty for false, (single texture tile)
-            "destroy" should be amine list containing the time in ticks for a tile to be destroyed
+            "destroy" should be a list containing the time in ticks for a tile to be destroyed
                 and which tile it should turn into. (example: [15, "grass"]) Leave blank for 
             "evolve" should be a list containing the minimum time it takes for the tile
                 to evolve (change into another tile) and which tile it should evolve to

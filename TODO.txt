@@ -1,6 +1,5 @@
 ZeeQyu TODO list:
 
-	Player placing tiles
 	Adding window icons/logo
 	Dragging packages
 	Structures
@@ -23,6 +22,7 @@ ZeeQyu TODO list:
 Pokemania00 Graphics TODO list:
 
    	32x32 logo for the game for displaying in taskbar and top of screen
+   	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
    	3 Large flowers (flower.png)
    	A better aim.png (An indicator which tile you're removing)
