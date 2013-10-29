@@ -17,6 +17,10 @@ ZeeQyu TODO list:
 	Projectile collision
 	
 	ZQ: (Happy now, Poke? Is my TODO long enough now??)
+        
+        I'm sorry, I can't find any way to add roots to the stumps without it looking odd..
+        Hope they work as they are!
+           //Poke
 
 Pokemania00 Graphics TODO list:
 
@@ -24,12 +28,10 @@ Pokemania00 Graphics TODO list:
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
    	A better aim.png (An indicator which tile you're removing)
-    5 saplings on the dirt tiles
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
-	roots on stumps (out to the sides)
 	2 32x32 megaores
 	A less dark miner than the current one
 	Bullet factory. (32x32)
