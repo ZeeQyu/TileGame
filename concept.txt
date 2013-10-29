@@ -32,6 +32,8 @@ X Random Grass and Tree textures
 X Reconfigurable keys (insert key)
 X Friendly units
 X A character that can alter the terrain
+/ Adding window icon (Picture won't display in taskbar,
+	  this might not be fixable until packaging into installer.
   Dragging packages
   Structures
   Multitile structures - HQ

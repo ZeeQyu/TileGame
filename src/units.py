@@ -65,5 +65,10 @@ class Beetle(Animal):
         '''
         super(Beetle, self).__init__(x, y, "beetle", constants.BEETLE_MOVEMENT_SPEED,
                                      constants.BEETLE_MAX_TRAVEL_PX, collides=collides,
-                                     rotates=rotates, wall_collides=wall_collides)
+                                     rotates=rotates, wall_collides=wall_collides) 
+        
+class Package(Entity):
+    ''' The detached version of the package, used as building parts for buildings.
+        Supposed to 
+    '''
         

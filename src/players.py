@@ -22,7 +22,6 @@ class Player(Entity):
     def __init__(self, x=globals.player_start_x, y=globals.player_start_y):
         ''' "x" and "y" should be ints.
         '''
-        print x, "x,", y, "y"
         super(Player, self).__init__(x, y, "player", constants.PLAYER_MOVEMENT_SPEED)
         # If the player is currently placing or removing a tile
         self.placing_tile = False

@@ -37,17 +37,16 @@ def main():
     
     # Make map
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
-    print globals.player_start_x, globals.player_start_y
     # Initiaate player
     globals.entity_list.append(players.Player(globals.player_start_x, globals.player_start_y))
 
     # Creates a window just the size to fit all the tiles in the map file.
-    pygame.display.set_caption("TileGame by ZeeQyu")
+    pygame.display.set_icon(globals.images["icon"].get())
+    pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
     globals.screen = pygame.display.set_mode((globals.width * constants.TILE_SIZE,
                                               globals.height * constants.TILE_SIZE))
+
     
-    # Paint the screen once initially
-    #force_update = True
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
     skip_cycle = False

@@ -69,7 +69,11 @@ IMAGES = {
          "grass14": Img("grassTile14.png"),
          "grass15": Img("grassTile15.png"),
          "grass16": Img("grassTile16.png"),
-         "dirt": Img("dirtTile.png"),
+         "dirt": Img("dirtTile.png", random=True, placeable=True, evolve=[75, 100, "grass"]),
+         "dirt2": Img("dirtTile2.png"),
+         "dirt3": Img("dirtTile3.png"),
+         "dirt4": Img("dirtTile4.png"),
+         "dirt5": Img("dirtTile5.png"),
          "rock": Img("rocktile.png", color_code=(0, 0, 0), collides=True),
          "ore": Img("oreTile.png", color_code=(255, 216, 0)),
          "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[10, "stump"]),
@@ -92,12 +96,12 @@ IMAGES = {
          "tree18": Img("tree18.png"),
          "tree19": Img("tree19.png"),
          "tree20": Img("tree20.png"),
-         "sapling": Img("sapling.png", random=True, destroy=[0, "grass"], evolve=[30, 60, "tree"]),
+         "sapling": Img("sapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
          "sapling2": Img("sapling2.png"),
          "sapling3": Img("sapling3.png"),
          "sapling4": Img("sapling4.png"),
          "sapling5": Img("sapling5.png"),
-         "stump": Img("stump.png", random=True, placeable=True, destroy=[15, "grass"]),
+         "stump": Img("stump.png", random=True, placeable=True, destroy=[15, "dirt"]),
          "stump2": Img("stump2.png"),
          "stump3": Img("stump3.png"),
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
@@ -110,7 +114,8 @@ IMAGES = {
          
          # other
          "map": Img("map.png"),
-         "aim": Img("aim.png")
+         "aim": Img("aim.png"),
+         "icon": Img("logo.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
