@@ -22,6 +22,7 @@ class Player(Entity):
     def __init__(self, x=globals.player_start_x, y=globals.player_start_y):
         ''' "x" and "y" should be ints.
         '''
+        print x, "x,", y, "y"
         super(Player, self).__init__(x, y, "player", constants.PLAYER_MOVEMENT_SPEED)
         # If the player is currently placing or removing a tile
         self.placing_tile = False
@@ -62,12 +63,21 @@ class Player(Entity):
             self.update_aim_tile = False
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
-            if len(constants.IMAGES[globals.map[x][y].type]) > 2:
-                self.remove_timer = constants.IMAGES[globals.map[x][y].type][2][0]
+            if constants.IMAGES[globals.map[x][y].type].destroy != None:
+                self.remove_timer = constants.IMAGES[globals.map[x][y].type].destroy[0]
             else:
                 self.remove_timer = None
         self.last_aim_tile = aim_tile
         
+<<<<<<< HEAD
+=======
+        # Placing tile
+        if self.placing_tile and not self.removing_tile:
+            if constants.IMAGES[globals.map[x][y].type].placeable:
+                globals.map[x][y] = tiles.make_tile(constants.PLACE_TILE, x, y)
+                globals.update_map = True
+
+>>>>>>> origin/developing
         if self.removing_tile and not self.placing_tile:
             # If the timer is None (not removable), return
             if self.remove_timer == None:
@@ -75,7 +85,7 @@ class Player(Entity):
             # If remove_timer has reached 0 which means the countdown is done
             if self.remove_timer < 1:
                 # Get the second value in the third value of the related IMAGES index
-                globals.map[x][y] = tiles.makeTile(constants.IMAGES[globals.map[x][y].type][2][1], x, y)
+                globals.map[x][y] = tiles.make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)
                 globals.update_map = True
                 self.update_aim_tile = True
                 self.remove_timer = None

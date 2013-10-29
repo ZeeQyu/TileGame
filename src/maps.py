@@ -57,7 +57,7 @@ def generate_map(map_name):
                 player_start_y = y * constants.TILE_SIZE
             
             # Make a new tile and add it to the map
-            tile = tiles.makeTile(type, x, y)
+            tile = tiles.make_tile(type, x, y)
             map[x].append(tile)
             
     # Return the map, image size (for size of windows) and player start point
@@ -72,14 +72,13 @@ def pixel_type(pixel, x, y):
     '''
     for key in constants.IMAGES:
         # if the RGB value actually exists (and as such it is a tile)
-        if len(constants.IMAGES[key]) > 1:
-            # if the RGB value in TILES actually has a value
-            if constants.IMAGES[key][1] != 0:
-                # if the RGB value was found, return the key of that entry.
-                if pixel == constants.IMAGES[key][1]:
-                    return key
-    # If no match was found, throw an InvalidMapColorException containing coordinates and the RGB value.
-    raise InvalidMapColorException("The pixel at x:", x, "y:", y, "in the map file is not a valid color. The RGB is", str(pixel))
+        if constants.IMAGES[key].color_code != None:
+            # if the RGB value was found, return the key of that entry.
+            if pixel == constants.IMAGES[key].color_code:
+                return key
+    # If no match was found, make the spot the standard tile and print a message containing the RGB 
+    print "The pixel at x:", x, "y:", y, "in the map file is not a valid color. The RGB is", str(pixel)
+    return constants.DEFAULT_TILE
     
 def paint_map(screen):
     ''' Iterates through the map and paints all the tiles in that map on the screen.
