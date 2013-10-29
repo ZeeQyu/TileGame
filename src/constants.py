@@ -58,51 +58,6 @@ class Img(object):
 # Dictionary containing image data. Read module docstring above for more details.
 IMAGES = {
           # tiles
-         "grass": ["grassTile1.png", (255, 255, 255)],
-         "grass2": ["grassTile2.png", 0],
-         "grass3": ["grassTile3.png", 0],
-         "grass4": ["grassTile4.png", 0],
-         "grass5": ["grassTile5.png", 0],
-         "grass6": ["grassTile6.png", 0],
-         "grass7": ["grassTile7.png", 0],
-         "grass8": ["grassTile8.png", 0],
-         "grass9": ["grassTile9.png", 0],
-         "grass10": ["grassTile10.png", 0],
-         "grass11": ["grassTile11.png", 0],
-         "grass12": ["grassTile12.png", 0],
-         "grass13": ["grassTile13.png", 0],
-         "grass14": ["grassTile14.png", 0],
-         "grass15": ["grassTile15.png", 0],
-         "grass16": ["grassTile16.png", 0],
-         "dirt": ["dirtTile.png", 0],
-         "rock": ["rocktile.png", (0, 0, 0)],
-         "ore": ["oreTile.png", (255, 216, 0)],
-         "tree": ["tree1.png", (124, 124, 124), [10, "stump"]],
-         "tree2": ["tree2.png", 0],
-         "tree3": ["tree3.png", 0],
-         "tree4": ["tree4.png", 0],
-         "tree5": ["tree5.png", 0],
-         "tree6": ["tree6.png", 0],
-         "tree7": ["tree7.png", 0],
-         "tree8": ["tree8.png", 0],
-         "tree9": ["tree9.png", 0],
-         "tree10": ["tree10.png", 0],
-         "tree11": ["tree11.png", 0],
-         "tree12": ["tree12.png", 0],
-         "tree13": ["tree13.png", 0],
-         "tree14": ["tree14.png", 0],
-         "tree15": ["tree15.png", 0],
-         "tree16": ["tree16.png", 0],
-         "tree17": ["tree17.png", 0],
-         "tree18": ["tree18.png", 0],
-         "tree19": ["tree19.png", 0],
-         "tree20": ["tree20.png", 0],
-         "stump": ["stump.png", 0, [15, "grass"]],
-         "stump2": ["stump2.png", 0],
-         "stump3": ["stump3.png", 0],
-         "hq": ["placeholder.png", (255, 106, 0)],
-         "start_tile": ["grassTile1.png", (178, 0, 255)],
-         "package": ["package.png", (255, 0, 0)],
          "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
          "grass2": Img("grassTile2.png"),
          "grass3": Img("grassTile3.png"),
@@ -164,7 +119,6 @@ IMAGES = {
 
 # The identifier of the tile that should be used
 # when the map.png decoding fails
-DEFAULT__TILE = "grass"
 DEFAULT_TILE = "grass"
 # The tile that is placed 
 PLACE_TILE = "sapling"
@@ -172,9 +126,6 @@ PLACE_TILE = "sapling"
 # List of tiles that should be used in collision detection
 COLLIDING_TILES = ["rock", "tree", "hq"]
 
-# List of tiles that should have random textures. It will check the IMAGES dict for keys containing this value
-# IMAGES should contain a texture with this exact name, with an initialization color code (RGB)
-RANDOM_TILES = ["tree", "grass", "stump"]
 # Set to true if all textures should be non-random
 DEACTIVATE_RANDOM_TEXTURES = False
 

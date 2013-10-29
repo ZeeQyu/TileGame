@@ -49,11 +49,11 @@ class Player(Entity):
     def update(self, time_diff):
         ''' Calls the superclass update and updates the state of the aim marker
         '''
+        super(Player, self).update(time_diff)
         # Update screen whenever aim marker changes states
         if self.removing_tile != self.last_removing_tile:
             self.last_removing_tile = self.removing_tile
             globals.force_update = True
-        super(Player, self).update(time_diff)
         
         # Get which tile the player is looking at
         aim_tile = self.get_aim_tile()
@@ -72,8 +72,6 @@ class Player(Entity):
                 self.remove_timer = None
         self.last_aim_tile = aim_tile
         
-<<<<<<< HEAD
-=======
         # Placing tile
         if self.placing_tile and not self.removing_tile:
             try:
@@ -83,7 +81,6 @@ class Player(Entity):
             except:
                 pass
 
->>>>>>> origin/developing
         if self.removing_tile and not self.placing_tile:
             # If the timer is None (not removable), return
             if self.remove_timer == None:
@@ -148,8 +145,8 @@ class Player(Entity):
         elif event.key == globals.key_dict["move_right"][0]:
             self.x_plus = if_down(event.type)
         
-#         elif event.key == globals.key_dict["place_tile"][0]:
-#             self.placing_tile = if_down(event.type)
+        elif event.key == globals.key_dict["place_tile"][0]:
+            self.placing_tile = if_down(event.type)
         elif event.key == globals.key_dict["remove_tile"][0]:
             self.removing_tile = if_down(event.type)
 
