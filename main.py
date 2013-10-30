@@ -92,6 +92,10 @@ def main():
         time_now = time.clock()
         time_diff = time_now - time_prev
         time_prev = time_now
+        # If the time has been more than half an hour, the game has probably been paused
+        # and a cycle should be skipped so that the game doesn't freeze
+        if time_start + 1800 < time_now:
+            skip_cycle = True 
         # Skip the rest of this cycle if a menu was accessed until now
         if skip_cycle:
             skip_cycle = False
