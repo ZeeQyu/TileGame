@@ -59,10 +59,10 @@ key_list = [ # Custom keys. Format:
         ["move_right", pgl.K_RIGHT, "moving the player right."],
         ["move_left", pgl.K_LEFT, "moving the player left."],
     
-#         ["look_up", pgl.K_i, "making the player aim upwards."],
-#         ["look_down", pgl.K_k, "making the player aim dowmwards."],
-#         ["look_right", pgl.K_l, "making the player aim to the right."],
-#         ["look_left", pgl.K_j, "making the player aim to the left."],
+#        ["look_up", pgl.K_i, "making the player aim upwards."],
+#        ["look_down", pgl.K_k, "making the player aim dowmwards."],
+#        ["look_right", pgl.K_l, "making the player aim to the right."],
+#        ["look_left", pgl.K_j, "making the player aim to the left."],
 
         ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],

@@ -1,6 +1,7 @@
 ZeeQyu TODO list:
 	
         Fix weird glitch with the new mini-logo //Poke (start the game and see for yourself)
+        	FIX IT YOURSELF! (Make logo 16x16)
 	Dragging packages
 	Structures
 	Multitile structures
@@ -17,23 +18,32 @@ ZeeQyu TODO list:
 	Turrets shooting said projectiles at enemies
 	Projectile collision
 	
-        I'm sorry, I can't find any way to add roots to the stumps without it looking odd..
-        Hope they work as they are!
-           //Poke
-           
-       Well, could you make them look less like poles in the ground? 
+		I'm sorry, I can't find any way to add roots to the stumps without it looking odd..
+		Hope they work as they are!
+			//Poke
+			
+		Well, could you make the stumps look less like poles in the ground?
+		Perhaps making very very small roots? I don't know, try to make it look decent at least.
+			//ZQ
+       
 
 Pokemania00 Graphics TODO list:
-
+	
+	Make logo 16x16, to see if that fixes the graphical bug in the corner.
+		And give it another background than white.
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
-   	A better aim.png (An indicator which tile you're removing)
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
 	2 32x32 megaores
+	(With miner)
 	A less dark miner than the current one
 	Bullet factory. (32x32)
-	Various projectiles with launcher.
+	Various projectiles with launcher. Go wild when it comes to ideas
 	Mega missile, with launcher (launcher 32x32).
+	
+	If you get extra time and are bored, come up with a bunch of resources
+		and products that you could make out of those, and combinations of resources.
+		Basically ideas for the resource network that the end game will build on.

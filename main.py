@@ -10,7 +10,7 @@
     
     TileGame is an experimental tile-based game which serves the purpose of
         letting me learn to use PyGame in a good way and evolving my programming capabilities,
-        as well as teaching me how to manage multiple modules properly.
+        as well as teaching me how to manage own code in multiple modules properly.
     Features are added at an irregular basis. Check back now and then to the website written above.
     Ideas and goals can be found in the concept.txt file
 '''
@@ -45,7 +45,6 @@ def main():
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
     globals.screen = pygame.display.set_mode((globals.width * constants.TILE_SIZE,
                                               globals.height * constants.TILE_SIZE))
-
     
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
@@ -77,6 +76,7 @@ def main():
                     temp_entity_list = []
                 # Remove all beetles
                 elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["remove_beetles"][0]:
+                    # Loop backwards through the globals.entity_list
                     for i in range(len(globals.entity_list)-1, -1, -1):
                         if type(globals.entity_list[i]) == units.Beetle:
                             del globals.entity_list[i]
