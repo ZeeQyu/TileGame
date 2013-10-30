@@ -17,15 +17,14 @@ ZeeQyu TODO list:
 	Turrets shooting said projectiles at enemies
 	Projectile collision
 	
-	ZQ: (Happy now, Poke? Is my TODO long enough now??)
-        
         I'm sorry, I can't find any way to add roots to the stumps without it looking odd..
         Hope they work as they are!
            //Poke
+           
+       Well, could you make them look less like poles in the ground? 
 
 Pokemania00 Graphics TODO list:
 
-   	
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
    	A better aim.png (An indicator which tile you're removing)
