@@ -179,6 +179,25 @@ class Entity(object):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
         return int((self.x + self.width/2) / float(constants.TILE_SIZE)), int((self.y + self.height/2) / float(constants.TILE_SIZE))
+    
+    def corner_in_tile(self, tile):
+        ''' Checks if any of the entities corners are inside of the specified tile.
+            "tile" should be a tiles.Tile object
+        '''
+        # Get the corners of the entity
+        corners = [(self.x, self.y),
+                   (self.x+self.width, self.y),
+                   (self.x, self.y+self.height),
+                   (self.x+self.width, self.y+self.height)]
+        # And get rects for those corners
+        corner_rects = []
+        for corner in corners:
+            corner_rects.append(Rect(corner, (1, 1)))
+        
+        if tile.rect().collidelist(corner_rects) != -1:
+            return True
+        else:
+            return False
         
     def update_collision_rects(self):
         ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 

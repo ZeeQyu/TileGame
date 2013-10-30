@@ -7,9 +7,6 @@
     https://github.com/ZeeQyu/TileGame
     
     Module containing various constants and the important IMAGES dictionary that is used to load maps and images.
-    
-    To add a new image, add a new line to the IMAGES dictionary containing the image name as the key, the filename of the image in the res folder
-    and either a tuple containing a RGB value for loading maps or the number zero if that image shouldn't be used for loading the map.
 '''
 import pygame.locals as pgl
 
@@ -29,7 +26,7 @@ class Img(object):
             "random" should be True if the tile should be randomized. If it is, only the first
                 image should have random=True. All other textures that should be used should
                 be simple(nothing other than png) and have the base identifier in the identifier
-                (example: if base is "grass", the others might be "grass5" and "other_grass")
+                (example: if base is "grass", the others might be "grass5" and "grass7")
                 Leave empty for false, (single texture tile)
             "collides" should be True if this tile should collide with Entities.
             "placeable" should be True if this tile can be overwritten when something is placed,
@@ -48,9 +45,8 @@ class Img(object):
         self.placeable = placeable
         self.destroy = destroy
         self.evolve = evolve
-        
 
-# Dictionary containing image data. Read module docstring above for more details.
+# Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
           # tiles
          "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
@@ -69,11 +65,11 @@ IMAGES = {
          "grass14": Img("grassTile14.png"),
          "grass15": Img("grassTile15.png"),
          "grass16": Img("grassTile16.png"),
-         "dirt": Img("dirtTile.png", random=True, placeable=True, evolve=[75, 100, "grass"]),
-         "dirt2": Img("dirtTile2.png"),
-         "dirt3": Img("dirtTile3.png"),
-         "dirt4": Img("dirtTile4.png"),
-         "dirt5": Img("dirtTile5.png"),
+         "dirt": Img("dirt.png", random=True, placeable=True, evolve=[75, 100, "grass"]),
+         "dirt2": Img("dirt2.png"),
+         "dirt3": Img("dirt3.png"),
+         "dirt4": Img("dirt4.png"),
+         "dirt5": Img("dirt5.png"),
          "rock": Img("rocktile.png", color_code=(0, 0, 0), collides=True),
          "ore": Img("oreTile.png", color_code=(255, 216, 0)),
          "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[10, "stump"]),
@@ -101,7 +97,12 @@ IMAGES = {
          "sapling3": Img("sapling3.png"),
          "sapling4": Img("sapling4.png"),
          "sapling5": Img("sapling5.png"),
-         "stump": Img("stump.png", random=True, placeable=True, destroy=[15, "dirt"]),
+         "dirt-sapling": Img("dirtSapling.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
+         "dirt-sapling2": Img("dirtSapling2.png"),
+         "dirt-sapling3": Img("dirtSapling3.png"),
+         "dirt-sapling4": Img("dirtSapling4.png"),
+         "dirt-sapling5": Img("dirtSapling5.png"),
+         "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
          "stump2": Img("stump2.png"),
          "stump3": Img("stump3.png"),
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
@@ -128,8 +129,9 @@ SLEEP_TIME = 0.001
 # The identifier of the tile that should be used
 # when the map.png decoding fails
 DEFAULT_TILE = "grass"
-# The tile that is placed 
-PLACE_TILE = "sapling"
+# The tile that is placed
+SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 
+DEFAULT_PLACE_TILE = "sapling"
 
 # Set to true if all textures should be non-random
 DEACTIVATE_RANDOM_TEXTURES = False

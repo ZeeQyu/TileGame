@@ -2,6 +2,7 @@ TileGame
 ========
 An experimental tile-based game
 
+Requires Python 2.7.5 and Pygame.
 INSTALL.txt has installation instructions.
 
 Generates a game world and lets you move a character with collision and turning.

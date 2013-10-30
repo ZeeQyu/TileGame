@@ -75,10 +75,16 @@ class Player(Entity):
         if self.placing_tile and not self.removing_tile:
             try:
                 if constants.IMAGES[globals.map[x][y].type].placeable:
-                    globals.map[x][y] = tiles.make_tile(constants.PLACE_TILE, x, y)
+                    # If there is a special case for placing tiles, use that. Otherwise, use the default
+                    if globals.map[x][y].type in constants.SPECIAL_PLACE_TILES.keys():
+                        globals.map[x][y] = tiles.make_tile(constants.SPECIAL_PLACE_TILES[globals.map[x][y].type], x, y)
+                    else:
+                        globals.map[x][y] = tiles.make_tile(constants.DEFAULT_PLACE_TILE, x, y)
                     globals.update_map = True
-            except:
+            except IndexError:
                 pass
+            except:
+                raise
 
         if self.removing_tile and not self.placing_tile:
             # If the timer is None (not removable), return
