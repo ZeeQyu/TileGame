@@ -8,8 +8,10 @@
     
     Units module, containing classes for all friendly and passive units.
 '''
+import math
+
 from entities import Entity
-import constants
+import constants, globals
 from random import randint
 
 class Animal(Entity):
@@ -60,7 +62,7 @@ class Beetle(Animal):
     ''' Harmless roaming little beetle that will be able to be
         infected in the future by enemies to become some kind of zombie beetle
     ''' 
-    def __init__(self, x, y, collides = True, rotates = True, wall_collides = True):
+    def __init__(self, x, y, collides=True, rotates=True, wall_collides=True):
         ''' Calls the entity init function with the proper movement speed and image
         '''
         super(Beetle, self).__init__(x, y, "beetle", constants.BEETLE_MOVEMENT_SPEED,
@@ -72,4 +74,47 @@ class Package(Entity):
         Supposed to be placed where you want to build a building and be a package of
         resources to build with.
     '''
+    def __init__(self, x, y):
+        super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED, rotates=False)
+        
+    def update(self, time_diff):
+        super(Package, self).update(time_diff)
+        
+        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list["player"].x +
+                                               globals.special_entity_list["player"].width) / 2)
+        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list["player"].y +
+                                                globals.special_entity_list["player"].height) / 2)
+        
+        print x_dist, y_dist
+        dist = math.hypot(self.x - globals.special_entity_list["player"].x,
+                          self.y - globals.special_entity_list["player"].y)
+        print dist
+        if dist < constants.PACKAGE_PULL_MAX * 1.5:
+            if (constants.PACKAGE_PULL_MIN < x_dist < constants.PACKAGE_PULL_MAX or
+                -constants.PACKAGE_PULL_MIN > x_dist > -constants.PACKAGE_PULL_MAX):
+                if x_dist > 0:
+                    self.x_minus = True
+                    self.x_plus = False
+                else:
+                    self.x_plus = True
+                    self.x_minus = False
+            else:
+                self.x_plus = self.x_minus = False
+                
+            if (constants.PACKAGE_PULL_MIN < y_dist < constants.PACKAGE_PULL_MAX or
+                -constants.PACKAGE_PULL_MIN > y_dist > -constants.PACKAGE_PULL_MAX):
+                if y_dist > 0:
+                    self.y_minus = True
+                    self.y_plus = False
+                else:
+                    self.y_plus = True
+                    self.y_minus = False
+            else:
+                self.y_plus = self.y_minus = False
+        else:
+            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
+        
+    
+        
+        
         

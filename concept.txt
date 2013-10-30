@@ -45,4 +45,6 @@ X A character that can alter the terrain
   Sound
   Tutorial
   Polishing and optimizing
+  	Animated tiles
+  	Different keyboard layouts handling
   Publishing via a Website?

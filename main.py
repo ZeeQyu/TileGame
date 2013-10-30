@@ -30,7 +30,7 @@ import pygame.locals as pgl
 def main():
     ''' Main function, initalizes various variables and contains the main program loop.
         Should not be called any other way than running the file.
-        Takes no parameters and returns nothing.
+        Takes no arguments and returns nothing.
     '''
     # initialize pygame
     pygame.init()
@@ -38,8 +38,9 @@ def main():
     # Make map
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
     # Initiaate player
-    globals.entity_list.append(players.Player(globals.player_start_x, globals.player_start_y))
-
+    globals.special_entity_list["player"] = players.Player(globals.player_start_x, globals.player_start_y)
+    globals.special_entity_list[constants.PACKAGE_NAME] = units.Package(globals.player_start_x,
+                                                                        globals.player_start_y)
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(globals.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
@@ -56,6 +57,9 @@ def main():
     
     # Main loop
     while True:
+        # Make the screen update every frame
+        if constants.FORCE_UPDATE:
+            globals.force_update = True
         # Event checker. Allows closing of the program and passes keypresses to the player instance
         for event in pygame.event.get():
             # Quit codef
@@ -64,7 +68,8 @@ def main():
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
                 # Create beetle with (default) space
                 if event.type == pgl.KEYDOWN and event.key == globals.key_dict["spawn_beetle"][0]:
-                    globals.entity_list.append(units.Beetle(globals.entity_list[0].x, globals.entity_list[0].y))
+                    globals.entity_list.append(units.Beetle(globals.special_entity_list["player"].x,
+                                                            globals.special_entity_list["player"].y))
                 # Duplicate all beetles with (default) D
                 elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["duplicate_beetles"][0]:
                     # Make an empty list to temporarily store the added beetles, so no infinite loop appears
@@ -86,7 +91,7 @@ def main():
                     skip_cycle = globals.force_update = True
                     interface.key_reconfig()
                 # Otherwise, check for if the player should move
-                globals.entity_list[0].event_check(event)
+                globals.special_entity_list["player"].event_check(event)
                 
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
@@ -113,9 +118,11 @@ def main():
         if time_last_tick + constants.TICK_FREQ < time_now:
             time_last_tick = time_last_tick + constants.TICK_FREQ
             # Tick all the entites (let them do whatever they do every tick
-            for entity in globals.entity_list:
+            for i in range(len(globals.entity_list)-1, -1, -1):
+                entity = globals.entity_list[i]
                 entity.tick()
-            globals.entity_list[0].tick()
+            for entity in globals.special_entity_list.values():
+                entity.tick()
             for tile in globals.tick_tiles:
                 globals.map[tile[0]][tile[1]].tick()
         # Make sure the loop doesn't go too quickly and bog the processor down
@@ -127,13 +134,24 @@ def main():
             globals.update_map = False
             globals.force_update = True
             globals.map_screen_buffer = maps.update_map()
-        # update all other entities
+        # update all entities
         entity_has_moved = False
-        for entity in globals.entity_list:
-            entity.update(time_diff)
-            # Check if any of them have moved
-            if entity.has_moved():
-                entity_has_moved = True
+        if globals.entity_list:
+            for i in range(len(globals.entity_list)-1, -1, -1):
+                entity = globals.entity_list[i]
+                entity.update(time_diff)
+                # Check if any of them have moved
+                print 1
+                if entity.has_moved():
+                    entity_has_moved = True
+                    print 2
+        if globals.special_entity_list:
+            for entity in globals.special_entity_list.values():
+                entity.update(time_diff)
+                print 3
+                if entity.has_moved():
+                    entity_has_moved = True
+                    print 4
         
         # If any entity moved, redraw the screen
         if entity_has_moved or globals.force_update:
@@ -143,7 +161,11 @@ def main():
             # Draw the map buffer on the screen
             globals.screen.blit(globals.map_screen_buffer, (0, 0))
             # Draw the entities
-            for entity in globals.entity_list:
+            for i in range(len(globals.entity_list)-1, -1, -1):
+                entity = globals.entity_list[i]
+                entity.paint()
+            for i in range(len(globals.special_entity_list.values())-1, -1, -1):
+                entity = globals.special_entity_list.values()[i]
                 entity.paint()
             # Update the display
             pygame.display.flip()

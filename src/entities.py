@@ -159,7 +159,7 @@ class Entity(object):
         else:
             globals.screen.blit(image, (int(self.x), int(self.y)))
         
-    def has_moved(self, update=1):
+    def has_moved(self, update=True):
         ''' Compares an old x and y value with the current one. 
             If the value has changed, the unit has moved to another pixel and should be redrawn.
             update should be 1 if you want to update the checking to a new pixel and 0 if you don't
@@ -268,6 +268,9 @@ def free_of_entities(tile):
     '''
     free_of_entities = True
     for entity in globals.entity_list:
+        if entity.corner_in_tile(tile):
+            free_of_entities = False
+    for entity in globals.special_entity_list.values():
         if entity.corner_in_tile(tile):
             free_of_entities = False
     return free_of_entities

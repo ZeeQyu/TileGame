@@ -23,14 +23,16 @@ ZeeQyu TODO list:
 			//Poke
 			
 		Well, could you make the stumps look less like poles in the ground?
-		Perhaps making very very small roots? I don't know, try to make it look decent at least.
+		Perhaps making very very small roots? I don't know, try to make roots look okay,
+		they don't have to be perfect.
 			//ZQ
        
 
 Pokemania00 Graphics TODO list:
 	
 	Make logo 16x16, to see if that fixes the graphical bug in the corner.
-		And give it another background than white.
+		And give it another background than white
+	Make Package 12x12 (both entity and tile(tile should be 16x16 but should match the entity))
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	5 Fallen trees, for when you chop down a tree 
     10 rocks

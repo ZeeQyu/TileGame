@@ -10,6 +10,8 @@
 '''
 import pygame.locals as pgl
 
+# Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
+FORCE_UPDATE = False
 
 class Img(object):
     ''' Small class for keeping track of data related to different images.
@@ -124,7 +126,10 @@ BACKGROUND_COLOR = (0, 0, 0)
 # calculations that should be more periodical than cycles or frames
 TICK_FREQ = 0.05
 # The amount of seconds the game should sleep each loop to not bog the processor too much
-SLEEP_TIME = 0.001
+if FORCE_UPDATE:
+    SLEEP_TIME = 0.00001
+else:
+    SLEEP_TIME = 0.001
 
 # The identifier of the tile that should be used
 # when the map.png decoding fails
@@ -139,18 +144,24 @@ DEACTIVATE_RANDOM_TEXTURES = False
 TILE_SIZE = 16
 
 # Entities
-# The speed the player moves at. Any number greater than or equal to 0
+# Names of special entities
+PLAYER_NAME = "player"
+PACKAGE_NAME = "package"
+# The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
-# Movement speed of beetle
 BEETLE_MOVEMENT_SPEED = 70
+PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
+# The range of distance the package can be from the player while still being pulled in pixels
+PACKAGE_PULL_MIN = 6
+PACKAGE_PULL_MAX = 16
 
-# Key for key configuration
+# Key for key configurIation
 CONFIG_KEYS_KEY = pgl.K_INSERT
 # Messages for when you configure keys.
 CONFIG_KEYS_MESSAGE = "Reconfigure keys: Press insert to cancel."
-CONFIG_KEYS_TEXT_PREFIX = "Please press the key for "
+CONFIG_KEYS_TEXT_PREFIX = "Please press the key you want to use for "
 CONFIG_KEYS_ERROR_MESSAGE = "Sorry, you already used that key."
 CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 # Time in (~)ticks for the "invalid key" text to be displayed each time

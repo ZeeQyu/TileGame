@@ -10,10 +10,9 @@
     Also handles key press events for movement of the player.
 '''
 
-import constants
+import constants, units, globals, tiles
 import pygame.locals as pgl
 from entities import Entity
-import globals, tiles
 
 class Player(Entity):
     ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
@@ -26,6 +25,7 @@ class Player(Entity):
         # If the player is currently placing or removing a tile
         self.placing_tile = False
         self.removing_tile = False
+        self.toggle_grab = False
         # The last state self.removing_tile was in
         self.last_removing_tile = False
         # Time until the current tile is removed
@@ -46,7 +46,8 @@ class Player(Entity):
                                  self.last_aim_tile[1]*constants.TILE_SIZE))
             
     def update(self, time_diff):
-        ''' Calls the superclass update and updates the state of the aim marker
+        ''' Calls the superclass update and updates the state of the aim marker.
+            Manages if the player is placing or destroying a block.
         '''
         super(Player, self).update(time_diff)
         # Update screen whenever aim marker changes states
@@ -81,6 +82,7 @@ class Player(Entity):
                     else:
                         globals.map[x][y] = tiles.make_tile(constants.DEFAULT_PLACE_TILE, x, y)
                     globals.update_map = True
+            # Ignore IndexErrors because the indices might be outside of the map
             except IndexError:
                 pass
             except:
@@ -98,6 +100,22 @@ class Player(Entity):
                 self.update_aim_tile = True
                 self.remove_timer = None
                 return
+            
+        if self.toggle_grab:
+            self.toggle_grab = False
+            if globals.special_entity_list.has_key(constants.PACKAGE_NAME):
+                x, y = globals.special_entity_list[constants.PACKAGE_NAME].get_tile()
+                if constants.IMAGES[globals.map[x][y].type].placeable:
+                    del globals.special_entity_list[constants.PACKAGE_NAME]
+                    globals.map[x][y] = tiles.make_tile(constants.PACKAGE_NAME, x, y)
+                    globals.update_map = True
+            else:
+                x, y = self.get_aim_tile()
+                if globals.map[x][y].type == constants.PACKAGE_NAME:
+                    globals.map[x][y] = tiles.make_tile(constants.DEFAULT_TILE, x, y)
+                    globals.update_map = True
+                    globals.special_entity_list[constants.PACKAGE_NAME] = units.Package(x*constants.TILE_SIZE,
+                                                                                  y*constants.TILE_SIZE)
         
     def tick(self):
         ''' What happens every tick. Counts down the remove block timer. 
@@ -154,7 +172,10 @@ class Player(Entity):
             self.placing_tile = if_down(event.type)
         elif event.key == globals.key_dict["remove_tile"][0]:
             self.removing_tile = if_down(event.type)
-
+        elif (event.key == globals.key_dict["pick_up_tile"][0] and
+            event.type == pgl.KEYDOWN):
+            self.toggle_grab = True
+            
 def if_down(down_or_up):
     ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
     '''
