@@ -152,11 +152,11 @@ class Entity(object):
             image = globals.images[self.image].get()
             
         # Actually paint the object
-        if float(int(self.angle / 90.0)) == self.angle / 90.0:
+        if float(int(self.angle / 90.0)) != self.angle / 90.0:
             # Compensate for rotated entities
-            globals.screen.blit(image, (int(self.x) + int(self.width/5.0),
-                                        int(self.y) + int(self.height/5.0)))
-        else:        
+            globals.screen.blit(image, (int(self.x) - int(self.width/5.0),
+                                        int(self.y) - int(self.height/5.0)))
+        else:
             globals.screen.blit(image, (int(self.x), int(self.y)))
         
     def has_moved(self, update=1):
@@ -262,5 +262,13 @@ class Entity(object):
                 self.y -= 1
             if self.col_top.collidelist(checked_tiles) != -1:
                 self.y += 1
-        
+
+def free_of_entities(tile):
+    ''' A function to check if any of the entities has any of its corners inside the specified tile.
+    '''
+    free_of_entities = True
+    for entity in globals.entity_list:
+        if entity.corner_in_tile(tile):
+            free_of_entities = False
+    return free_of_entities
                     

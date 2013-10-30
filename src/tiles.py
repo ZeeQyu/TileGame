@@ -16,7 +16,7 @@ from random import choice, randint
 
 import pygame
 
-import constants, globals
+import constants, globals, entities
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -66,12 +66,11 @@ class Tile(object):
         '''
         # Check if the entity evolves
         if constants.IMAGES[self.type].evolve != None:
-            entity_is_on_tile = False
+            has_entities = False
             # Check if any entity is on that tile
-            for entity in globals.entity_list:
-                if entity.corner_in_tile(self):
-                    entity_is_on_tile = True
-            if not entity_is_on_tile:
+            if constants.IMAGES[constants.IMAGES[self.type].evolve[2]].collides:
+                has_entities = not entities.free_of_entities(self)
+            if not has_entities:
                 globals.map[self.x][self.y] = make_tile(constants.IMAGES[self.type].evolve[2], self.x, self.y)
                 globals.update_map = True
                 globals.tick_tiles.remove([self.x, self.y])

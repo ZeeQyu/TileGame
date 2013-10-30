@@ -69,6 +69,7 @@ class Beetle(Animal):
         
 class Package(Entity):
     ''' The detached version of the package, used as building parts for buildings.
-        Supposed to 
+        Supposed to be placed where you want to build a building and be a package of
+        resources to build with.
     '''
         

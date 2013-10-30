@@ -58,7 +58,7 @@ def main():
     while True:
         # Event checker. Allows closing of the program and passes keypresses to the player instance
         for event in pygame.event.get():
-            # Quit code
+            # Quit codef
             if event.type == pgl.QUIT:
                 sys.exit()
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
