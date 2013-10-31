@@ -18,7 +18,7 @@ class Img(object):
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     '''
     def __init__(self, png, color_code=None, random=False, collides=False,
-                 placeable=False, destroy=None, evolve=None):
+                 placeable=False, destroy=None, evolve=None, grabbable=None):
         ''' Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -27,9 +27,9 @@ class Img(object):
                 (example: (0, 255, 0)) Leave empty for no loading from map.png
             "random" should be True if the tile should be randomized. If it is, only the first
                 image should have random=True. All other textures that should be used should
-                be simple(nothing other than png) and have the base identifier in the identifier
-                (example: if base is "grass", the others might be "grass5" and "grass7")
-                Leave empty for false, (single texture tile)
+                be simple(nothing other than png) and have the base identifier in the identifier,
+                followed by a number (example: if base is "grass", the others might be
+                "grass5" and "grass7") Leave empty for false, (single texture tile).
             "collides" should be True if this tile should collide with Entities.
             "placeable" should be True if this tile can be overwritten when something is placed,
                 for example, a tree. Leave blank if it shouldn't be removable.
@@ -37,7 +37,10 @@ class Img(object):
                 and which tile it should turn into. (example: [15, "grass"]) Leave blank for 
             "evolve" should be a list containing the minimum time it takes for the tile
                 to evolve (change into another tile) and which tile it should evolve to
-                (example: [30, 60, "tree"]) Leave blank if it doesn't evolve. 
+                (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
+            "grabbable" should be a string with the class name of the entity it should become
+                if the grab key is used on that Tile. (example: Package) Leave as None if
+                it shouldn't be grabbable.
         '''
         self.type = type
         self.png = png
@@ -47,6 +50,7 @@ class Img(object):
         self.placeable = placeable
         self.destroy = destroy
         self.evolve = evolve
+        self.grabbable = grabbable
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
@@ -109,7 +113,8 @@ IMAGES = {
          "stump3": Img("stump3.png"),
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
          "start_tile": Img("grassTile1.png", color_code=(178, 0, 255)),
-         "package": Img("package.png", color_code=(255, 0, 0)),
+         "package_tile": Img("package.png", color_code=(255, 0, 0)),
+         "package": Img("packageNograss.png"),
          
          # entities
          "player": Img("player.png"),
@@ -138,7 +143,7 @@ DEFAULT_TILE = "grass"
 SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 
 DEFAULT_PLACE_TILE = "sapling"
 
-# Set to true if all textures should be non-random
+# Set to true if all textures should be non-random.
 DEACTIVATE_RANDOM_TEXTURES = False
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16
@@ -154,7 +159,7 @@ PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
-PACKAGE_PULL_MIN = 6
+PACKAGE_PULL_MIN = 5
 PACKAGE_PULL_MAX = 16
 
 # Key for key configurIation

@@ -107,11 +107,11 @@ class Player(Entity):
                 x, y = globals.special_entity_list[constants.PACKAGE_NAME].get_tile()
                 if constants.IMAGES[globals.map[x][y].type].placeable:
                     del globals.special_entity_list[constants.PACKAGE_NAME]
-                    globals.map[x][y] = tiles.make_tile(constants.PACKAGE_NAME, x, y)
+                    globals.map[x][y] = tiles.make_tile(constants.PACKAGE_NAME+"_tile", x, y)
                     globals.update_map = True
             else:
                 x, y = self.get_aim_tile()
-                if globals.map[x][y].type == constants.PACKAGE_NAME:
+                if globals.map[x][y].type == constants.PACKAGE_NAME+"_tile":
                     globals.map[x][y] = tiles.make_tile(constants.DEFAULT_TILE, x, y)
                     globals.update_map = True
                     globals.special_entity_list[constants.PACKAGE_NAME] = units.Package(x*constants.TILE_SIZE,

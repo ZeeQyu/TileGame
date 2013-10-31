@@ -68,14 +68,66 @@ class Beetle(Animal):
         super(Beetle, self).__init__(x, y, "beetle", constants.BEETLE_MOVEMENT_SPEED,
                                      constants.BEETLE_MAX_TRAVEL_PX, collides=collides,
                                      rotates=rotates, wall_collides=wall_collides) 
+
+class FollowingEntity(Entity):
+    ''' A subclass of Entity that attaches itself to another entity and follows it around.
+        Made for packages, could potentially be reused.
+    '''     
+    def __init__(self, x, y, image, movement_speed, attached_entity, rotates=True, collides=True, wall_collides=True):
+        ''' Initalizes the FollowingEntity. 
+        '''
+        super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,
+                                              rotates=rotates, collides=collides, wall_collides=wall_collides)
         
-class Package(Entity):
+    def update(self, time_diff):
+        super(FollowingEntity, self).update(time_diff)
+        
+        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list["player"].x +
+                                               globals.special_entity_list["player"].width) / 2)
+        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list["player"].y +
+                                                globals.special_entity_list["player"].height) / 2)
+        
+        print x_dist, y_dist
+        dist = math.hypot(self.x - globals.special_entity_list["player"].x,
+                          self.y - globals.special_entity_list["player"].y)
+        print dist
+        if dist < constants.PACKAGE_PULL_MAX * 1.5:
+            if (constants.PACKAGE_PULL_MIN < x_dist < constants.PACKAGE_PULL_MAX or
+                -constants.PACKAGE_PULL_MIN > x_dist > -constants.PACKAGE_PULL_MAX):
+                if x_dist > 0:
+                    self.x_minus = True
+                    self.x_plus = False
+                else:
+                    self.x_plus = True
+                    self.x_minus = False
+            else:
+                self.x_plus = self.x_minus = False
+                
+            if (constants.PACKAGE_PULL_MIN < y_dist < constants.PACKAGE_PULL_MAX or
+                -constants.PACKAGE_PULL_MIN > y_dist > -constants.PACKAGE_PULL_MAX):
+                if y_dist > 0:
+                    self.y_minus = True
+                    self.y_plus = False
+                else:
+                    self.y_plus = True
+                    self.y_minus = False
+            else:
+                self.y_plus = self.y_minus = False
+        else:
+            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
+
+class Package(FollowingEntity):
     ''' The detached version of the package, used as building parts for buildings.
         Supposed to be placed where you want to build a building and be a package of
         resources to build with.
     '''
     def __init__(self, x, y):
+        ''' 
+        '''
         super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED, rotates=False)
+        # Compensate for the package being smaller than package_tile
+        self.x = self.x + (constants.TILE_SIZE - self.width) / 2
+        self.y = self.y + (constants.TILE_SIZE - self.height) / 2
         
     def update(self, time_diff):
         super(Package, self).update(time_diff)
@@ -113,7 +165,7 @@ class Package(Entity):
                 self.y_plus = self.y_minus = False
         else:
             self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
-        
+
     
         
         
