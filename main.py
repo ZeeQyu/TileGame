@@ -37,7 +37,7 @@ def main():
     
     # Make map
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
-    # Initiaate player
+    # Initiate player
     globals.special_entity_list["player"] = players.Player(globals.player_start_x, globals.player_start_y)
     
     # Creates a window just the size to fit all the tiles in the map file.
@@ -95,11 +95,10 @@ def main():
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
         time_diff = time_now - time_prev
+        # If the time has been more than two seconds, movement might jerk out, so a cycle should be skipped
+        if time_prev + 2 < time_now:
+            skip_cycle = True
         time_prev = time_now
-        # If the time has been more than half an hour, the game has probably been paused
-        # and a cycle should be skipped so that the game doesn't freeze
-        if time_start + 1800 < time_now:
-            skip_cycle = True 
         # Skip the rest of this cycle if a menu was accessed until now
         if skip_cycle:
             skip_cycle = False
@@ -144,7 +143,10 @@ def main():
                     entity_has_moved = True
         if globals.special_entity_list:
             for entity in globals.special_entity_list.values():
-                entity.update(time_diff)
+                # Update all enties and check for if any of them is a package that just finished moving.
+                # If so, skip the has_moved check.
+                if entity.update(time_diff) == "deleted":
+                    continue
                 if entity.has_moved():
                     entity_has_moved = True
         

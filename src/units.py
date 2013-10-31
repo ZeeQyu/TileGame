@@ -11,13 +11,14 @@
 import math
 
 from entities import Entity
-import constants, globals
+import constants, globals, tiles
 from random import randint
 
 class Animal(Entity):
     ''' Base class for harmless entites that randomly roam about
     '''
-    def __init__(self, x, y, image, movement_speed, max_travel, collides = True, rotates = True, wall_collides = True):
+    def __init__(self, x, y, image, movement_speed, max_travel, collides = True,
+                 rotates = True, wall_collides = True):
         ''' Calls the entity init and creates another variable
         '''
         super(Animal, self).__init__(x, y, image, movement_speed,collides=collides,
@@ -84,46 +85,57 @@ class FollowingEntity(Entity):
         self.attached_entity = attached_entity
         self.pull_min = pull_min
         self.pull_max = pull_max
+        # The coordinates the entity currently is travelling towards.
+        # Should be None if it's currently following the attached_entity.
+        # Otherwise, it should be pixel coordinates (example: (45, 120)) 
+        self.target_coords = None
         globals.special_entity_list[attached_entity + "-" + image] = self
         
     def update(self, time_diff):
         super(FollowingEntity, self).update(time_diff)
-        
-        # The horizontal and vertical distances between the middle of FollowingEntity
-        # and the middle of attached_entity.
-        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list[self.attached_entity].x +
-                                               globals.special_entity_list[self.attached_entity].width) / 2)
-        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list[self.attached_entity].y +
-                                                globals.special_entity_list[self.attached_entity].height) / 2)
-                
-        # The diagonal distance between the entities.
-        dist = math.hypot(self.x - globals.special_entity_list[self.attached_entity].x,
-                          self.y - globals.special_entity_list[self.attached_entity].y)
-        
+        if self.target_coords == None:
+            # The horizontal and vertical distances between the middle of FollowingEntity
+            # and the middle of attached_entity.
+            x_dist = (self.x + self.width/2) - (globals.special_entity_list[self.attached_entity].x +
+                                                   globals.special_entity_list[self.attached_entity].width / 2)
+            y_dist = (self.y + self.height/2) - (globals.special_entity_list[self.attached_entity].y +
+                                                    globals.special_entity_list[self.attached_entity].height / 2)        
+            # The diagonal distance between the entities.
+            dist = math.hypot(self.x - globals.special_entity_list[self.attached_entity].x,
+                              self.y - globals.special_entity_list[self.attached_entity].y)
+            pull_max = self.pull_max
+            pull_min = self.pull_min
+        else:
+            # The entity is currently travelling towards some coordinates.
+            x_dist = self.x - self.target_coords[0]
+            y_dist = self.y - self.target_coords[1]
+            # The diagonal distance between the entities.
+            dist = math.hypot(x_dist, y_dist)            
+            pull_min = 0
+            pull_max = globals.width*constants.TILE_SIZE + globals.height*constants.TILE_SIZE
         # If the diagonal distance isn't too far
-        if dist < self.pull_max * 1.5:
-            # Check the horizontal distance
-            if (self.pull_min < x_dist < self.pull_max or
-                -self.pull_min > x_dist > -self.pull_max):
-                # Check if the distance is negative or positive and start moving that direction.
-                if x_dist > 0:
-                    self.x_minus = True
-                    self.x_plus = False
-                else:
-                    self.x_plus = True
-                    self.x_minus = False
+        if dist < pull_max * 1.5:
+            # If it's positive, move left
+            if pull_min < x_dist < pull_max:
+                self.x_minus = True
+                self.x_plus = False
+            # If it's negative, move right
+            elif -pull_min > x_dist > -pull_max:
+                self.x_plus = True
+                self.x_minus = False
             # If it is outside the range, stop moving
             else:
                 self.x_plus = self.x_minus = False
-            # Check the vertical distance and do the same as above
-            if (self.pull_min < y_dist < self.pull_max or
-                -self.pull_min > y_dist > -self.pull_max):
-                if y_dist > 0:
-                    self.y_minus = True
-                    self.y_plus = False
-                else:
-                    self.y_plus = True
-                    self.y_minus = False
+                
+            # If it's positive, move up
+            if pull_min < y_dist < pull_max:
+                self.y_minus = True
+                self.y_plus = False
+            # If it's negative, move down
+            elif -pull_min > y_dist > -pull_max:
+                self.y_plus = True
+                self.y_minus = False
+            # If it is outside the range, stop moving
             else:
                 self.y_plus = self.y_minus = False
         else:
@@ -135,7 +147,7 @@ class Package(FollowingEntity):
         resources to build with.
     '''
     def __init__(self, x, y, attached_entity):
-        ''' 
+        ''' Initalizes a FollowingEntity with some package-specific variables.
         '''
         super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED,
                                       attached_entity=attached_entity, pull_min=constants.PACKAGE_PULL_MIN,
@@ -145,6 +157,25 @@ class Package(FollowingEntity):
         self.y = self.y + (constants.TILE_SIZE - self.height) / 2
         # The kind of tile this package will become if placed
         self.tile = "package_tile"
+        # Variable used only for checking if the Package just got target coords
+        self.had_target_coords = False
+        
+    def update(self, time_diff):
+        ''' Calls the super update function as well as check for if the package should be turned into a tile.
+        '''
+        if self.target_coords and not self.had_target_coords:
+            self.had_target_coords = True
+            self.target_coords[0] = self.target_coords[0] + (constants.TILE_SIZE - self.width) / 2
+            self.target_coords[1] = self.target_coords[1] + (constants.TILE_SIZE - self.height) / 2
+            
+        if self.target_coords == [int(self.x), int(self.y)]:
+            x, y = self.get_tile()
+            globals.map[x][y] = tiles.make_tile(self.tile, x, y)
+            globals.update_map = True
+            globals.special_entity_list[self.attached_entity].following_entity = None
+            del globals.special_entity_list[self.attached_entity + "-" + self.image]
+            return "deleted"
+        super(Package, self).update(time_diff)
         
         
         

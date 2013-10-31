@@ -104,13 +104,12 @@ class Player(Entity):
         if self.toggle_grab:
             # If the grab button is pressed
             self.toggle_grab = False
+            print self.following_entity
             if self.following_entity != None:
                 x, y = globals.special_entity_list[self.following_entity].get_tile()
                 if constants.IMAGES[globals.map[x][y].type].placeable:
-                    globals.map[x][y] = tiles.make_tile(globals.special_entity_list[self.following_entity].tile, x, y)
-                    globals.update_map = True
-                    del globals.special_entity_list[self.following_entity]
-                    self.following_entity = None
+                    globals.special_entity_list[self.following_entity].target_coords = [x*constants.TILE_SIZE,
+                                                                                        y*constants.TILE_SIZE]
             else:
                 if globals.map[x][y].type == constants.PACKAGE_TILE_NAME:
                     globals.map[x][y] = tiles.make_tile(constants.DEFAULT_TILE, x, y)
