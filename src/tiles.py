@@ -114,14 +114,25 @@ class RandomTile(Tile):
         return self.image
 
 class MultiTileHead(Tile):
+    ''' The top-left tile of any multi-tile. Contains all the actual metadata and paints the actual image
+    '''
     def __init__(self, x, y, type, width, height):
-        pass
+        super(MultiTileHead, self).__init__(type, x, y)
+    
 class MultiTilePointer(Tile):
-    def __init__(self, x, y, head_x, head_Y):
-        self.type = "pointer"
+    ''' The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel and points any
+        operation towards the multi-tile head.
+    '''
+    def __init__(self, x, y, head_x, head_y):
+        super(MultiTilePointer, self).__init__("pointer", x, y)
+        self.head_x = head_x
+        self.head_y = head_y
         
     def get_image(self):
-        return
+        ''' Gets the empty pixel identifier, so that nothing is actually drawn on the screen
+            when the pointers are painted.
+        '''
+        return "empty_pixel"
         
     
     
@@ -135,6 +146,9 @@ def make_tile(type, x, y):
         (for example, "tree" and not "tree1"
         "x" and "y" are the indices of the tile in the "globals.map" array
     '''
+    # If it is a multi-tile
+    if constants.IMAGES[type].multi_tile:
+        pass
     timer = 0
     # If the tile evolves, get a random timer for that
     if constants.IMAGES[type].evolve != None:

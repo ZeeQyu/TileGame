@@ -18,7 +18,8 @@ class Img(object):
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     '''
     def __init__(self, png, color_code=None, random=False, collides=False,
-                 placeable=False, destroy=None, evolve=None, grabbable=None):
+                 placeable=False, destroy=None, evolve=None, grabbable=None,
+                 multi_tile=None):
         ''' Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -41,6 +42,8 @@ class Img(object):
             "grabbable" should be a string with the class name of the entity it should become
                 if the grab key is used on that Tile. (example: Package) Leave as None if
                 it shouldn't be grabbable.
+            "multi_tile" should be a tuple of the width and height in tiles of the tile if
+                it is a multi-tile. (example: (3, 3))
         '''
         self.type = type
         self.png = png
@@ -51,6 +54,7 @@ class Img(object):
         self.destroy = destroy
         self.evolve = evolve
         self.grabbable = grabbable
+        self.multi_tile = multi_tile
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
@@ -111,7 +115,7 @@ IMAGES = {
          "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
          "stump2": Img("stump2.png"),
          "stump3": Img("stump3.png"),
-         "hq": Img("placeholder.png", color_code=(255, 106, 0)),
+         "hq": Img("placeholder.png", color_code=(255, 106, 0), multi_tile=(2, 2)),
          "start_tile": Img("grassTile1.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
          
