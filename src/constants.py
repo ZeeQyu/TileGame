@@ -124,7 +124,7 @@ IMAGES = {
          # other
          "map": Img("map.png"),
          "aim": Img("aim.png"),
-         "icon": Img("logoBig.png")
+         "icon": Img("logo.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
