@@ -64,6 +64,8 @@ class Entity(object):
         # paint was called
         self.angle = 0
         self.last_angle = 0
+        # The name in globals.special_entity_list of the FollowingEntity following this entity.
+        self.following_entity = None
         
     def update(self, delta_remainder):
         ''' Updates the entity location if any of the plus and minus variables are set to True
@@ -267,9 +269,11 @@ def free_of_entities(tile):
     ''' A function to check if any of the entities has any of its corners inside the specified tile.
     '''
     free_of_entities = True
+    # Loop through all normal entities.
     for entity in globals.entity_list:
         if entity.corner_in_tile(tile):
             free_of_entities = False
+    # Loop through all special entites
     for entity in globals.special_entity_list.values():
         if entity.corner_in_tile(tile):
             free_of_entities = False

@@ -73,38 +73,51 @@ class FollowingEntity(Entity):
     ''' A subclass of Entity that attaches itself to another entity and follows it around.
         Made for packages, could potentially be reused.
     '''     
-    def __init__(self, x, y, image, movement_speed, attached_entity, rotates=True, collides=True, wall_collides=True):
+    def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
+                 rotates=True, collides=True, wall_collides=True):
         ''' Initalizes the FollowingEntity. 
         '''
         super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,
                                               rotates=rotates, collides=collides, wall_collides=wall_collides)
+        if globals.special_entity_list[attached_entity].following_entity == None:
+            globals.special_entity_list[attached_entity].following_entity = attached_entity + "-" + image 
+        self.attached_entity = attached_entity
+        self.pull_min = pull_min
+        self.pull_max = pull_max
+        globals.special_entity_list[attached_entity + "-" + image] = self
         
     def update(self, time_diff):
         super(FollowingEntity, self).update(time_diff)
         
-        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list["player"].x +
-                                               globals.special_entity_list["player"].width) / 2)
-        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list["player"].y +
-                                                globals.special_entity_list["player"].height) / 2)
+        # The horizontal and vertical distances between the middle of FollowingEntity
+        # and the middle of attached_entity.
+        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list[self.attached_entity].x +
+                                               globals.special_entity_list[self.attached_entity].width) / 2)
+        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list[self.attached_entity].y +
+                                                globals.special_entity_list[self.attached_entity].height) / 2)
+                
+        # The diagonal distance between the entities.
+        dist = math.hypot(self.x - globals.special_entity_list[self.attached_entity].x,
+                          self.y - globals.special_entity_list[self.attached_entity].y)
         
-        print x_dist, y_dist
-        dist = math.hypot(self.x - globals.special_entity_list["player"].x,
-                          self.y - globals.special_entity_list["player"].y)
-        print dist
-        if dist < constants.PACKAGE_PULL_MAX * 1.5:
-            if (constants.PACKAGE_PULL_MIN < x_dist < constants.PACKAGE_PULL_MAX or
-                -constants.PACKAGE_PULL_MIN > x_dist > -constants.PACKAGE_PULL_MAX):
+        # If the diagonal distance isn't too far
+        if dist < self.pull_max * 1.5:
+            # Check the horizontal distance
+            if (self.pull_min < x_dist < self.pull_max or
+                -self.pull_min > x_dist > -self.pull_max):
+                # Check if the distance is negative or positive and start moving that direction.
                 if x_dist > 0:
                     self.x_minus = True
                     self.x_plus = False
                 else:
                     self.x_plus = True
                     self.x_minus = False
+            # If it is outside the range, stop moving
             else:
                 self.x_plus = self.x_minus = False
-                
-            if (constants.PACKAGE_PULL_MIN < y_dist < constants.PACKAGE_PULL_MAX or
-                -constants.PACKAGE_PULL_MIN > y_dist > -constants.PACKAGE_PULL_MAX):
+            # Check the vertical distance and do the same as above
+            if (self.pull_min < y_dist < self.pull_max or
+                -self.pull_min > y_dist > -self.pull_max):
                 if y_dist > 0:
                     self.y_minus = True
                     self.y_plus = False
@@ -121,52 +134,17 @@ class Package(FollowingEntity):
         Supposed to be placed where you want to build a building and be a package of
         resources to build with.
     '''
-    def __init__(self, x, y):
+    def __init__(self, x, y, attached_entity):
         ''' 
         '''
-        super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED, rotates=False)
-        # Compensate for the package being smaller than package_tile
+        super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED,
+                                      attached_entity=attached_entity, pull_min=constants.PACKAGE_PULL_MIN,
+                                      pull_max=constants.PACKAGE_PULL_MAX, rotates=False)
+        # Compensate for the package image being smaller than package_tile image
         self.x = self.x + (constants.TILE_SIZE - self.width) / 2
         self.y = self.y + (constants.TILE_SIZE - self.height) / 2
-        
-    def update(self, time_diff):
-        super(Package, self).update(time_diff)
-        
-        x_dist = ((self.x+self.width) / 2) - ((globals.special_entity_list["player"].x +
-                                               globals.special_entity_list["player"].width) / 2)
-        y_dist = ((self.y+self.height) / 2) - ((globals.special_entity_list["player"].y +
-                                                globals.special_entity_list["player"].height) / 2)
-        
-        print x_dist, y_dist
-        dist = math.hypot(self.x - globals.special_entity_list["player"].x,
-                          self.y - globals.special_entity_list["player"].y)
-        print dist
-        if dist < constants.PACKAGE_PULL_MAX * 1.5:
-            if (constants.PACKAGE_PULL_MIN < x_dist < constants.PACKAGE_PULL_MAX or
-                -constants.PACKAGE_PULL_MIN > x_dist > -constants.PACKAGE_PULL_MAX):
-                if x_dist > 0:
-                    self.x_minus = True
-                    self.x_plus = False
-                else:
-                    self.x_plus = True
-                    self.x_minus = False
-            else:
-                self.x_plus = self.x_minus = False
-                
-            if (constants.PACKAGE_PULL_MIN < y_dist < constants.PACKAGE_PULL_MAX or
-                -constants.PACKAGE_PULL_MIN > y_dist > -constants.PACKAGE_PULL_MAX):
-                if y_dist > 0:
-                    self.y_minus = True
-                    self.y_plus = False
-                else:
-                    self.y_plus = True
-                    self.y_minus = False
-            else:
-                self.y_plus = self.y_minus = False
-        else:
-            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
-
-    
+        # The kind of tile this package will become if placed
+        self.tile = "package_tile"
         
         
         

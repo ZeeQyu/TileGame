@@ -102,20 +102,20 @@ class Player(Entity):
                 return
             
         if self.toggle_grab:
+            # If the grab button is pressed
             self.toggle_grab = False
-            if globals.special_entity_list.has_key(constants.PACKAGE_NAME):
-                x, y = globals.special_entity_list[constants.PACKAGE_NAME].get_tile()
+            if self.following_entity != None:
+                x, y = globals.special_entity_list[self.following_entity].get_tile()
                 if constants.IMAGES[globals.map[x][y].type].placeable:
-                    del globals.special_entity_list[constants.PACKAGE_NAME]
-                    globals.map[x][y] = tiles.make_tile(constants.PACKAGE_NAME+"_tile", x, y)
+                    globals.map[x][y] = tiles.make_tile(globals.special_entity_list[self.following_entity].tile, x, y)
                     globals.update_map = True
+                    del globals.special_entity_list[self.following_entity]
+                    self.following_entity = None
             else:
-                x, y = self.get_aim_tile()
-                if globals.map[x][y].type == constants.PACKAGE_NAME+"_tile":
+                if globals.map[x][y].type == constants.PACKAGE_TILE_NAME:
                     globals.map[x][y] = tiles.make_tile(constants.DEFAULT_TILE, x, y)
                     globals.update_map = True
-                    globals.special_entity_list[constants.PACKAGE_NAME] = units.Package(x*constants.TILE_SIZE,
-                                                                                  y*constants.TILE_SIZE)
+                    units.Package(x*constants.TILE_SIZE, y*constants.TILE_SIZE, "player")
         
     def tick(self):
         ''' What happens every tick. Counts down the remove block timer. 

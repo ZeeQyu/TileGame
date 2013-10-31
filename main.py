@@ -16,7 +16,7 @@
 '''
 
 # import normal modules
-import sys, os, time
+import sys, os, time, copy
 
 # Third party modules
 import pygame
@@ -39,8 +39,7 @@ def main():
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
     # Initiaate player
     globals.special_entity_list["player"] = players.Player(globals.player_start_x, globals.player_start_y)
-    globals.special_entity_list[constants.PACKAGE_NAME] = units.Package(globals.player_start_x,
-                                                                        globals.player_start_y)
+    
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(globals.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
@@ -141,17 +140,13 @@ def main():
                 entity = globals.entity_list[i]
                 entity.update(time_diff)
                 # Check if any of them have moved
-                print 1
                 if entity.has_moved():
                     entity_has_moved = True
-                    print 2
         if globals.special_entity_list:
             for entity in globals.special_entity_list.values():
                 entity.update(time_diff)
-                print 3
                 if entity.has_moved():
                     entity_has_moved = True
-                    print 4
         
         # If any entity moved, redraw the screen
         if entity_has_moved or globals.force_update:

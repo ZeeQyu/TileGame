@@ -114,11 +114,11 @@ IMAGES = {
          "hq": Img("placeholder.png", color_code=(255, 106, 0)),
          "start_tile": Img("grassTile1.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
-         "package": Img("packageNograss.png"),
          
          # entities
          "player": Img("player.png"),
          "beetle": Img("beetle.png"),
+         "package": Img("packageNograss.png"),
          
          # other
          "map": Img("map.png"),
@@ -139,7 +139,7 @@ else:
 # The identifier of the tile that should be used
 # when the map.png decoding fails
 DEFAULT_TILE = "grass"
-# The tile that is placed
+# The tile that is placed with the players place key
 SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 
 DEFAULT_PLACE_TILE = "sapling"
 
@@ -151,7 +151,7 @@ TILE_SIZE = 16
 # Entities
 # Names of special entities
 PLAYER_NAME = "player"
-PACKAGE_NAME = "package"
+PACKAGE_TILE_NAME = "package_tile"
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
 BEETLE_MOVEMENT_SPEED = 70
