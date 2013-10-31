@@ -119,6 +119,7 @@ IMAGES = {
          "player": Img("player.png"),
          "beetle": Img("beetle.png"),
          "package": Img("packageNograss.png"),
+         "ufo": Img("enemyUfo.png"),
          
          # other
          "map": Img("map.png"),

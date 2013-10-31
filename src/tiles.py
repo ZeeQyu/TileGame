@@ -112,6 +112,18 @@ class RandomTile(Tile):
         ''' Returns the random texture string.
         ''' 
         return self.image
+
+class MultiTileHead(Tile):
+    def __init__(self, x, y, type, width, height):
+        pass
+class MultiTilePointer(Tile):
+    def __init__(self, x, y, head_x, head_Y):
+        self.type = "pointer"
+        
+    def get_image(self):
+        return
+        
+    
     
 def make_tile(type, x, y):
     ''' Function to create a tile of the appropriate type (Standard, Random and, later, multi-tile)

@@ -16,7 +16,7 @@
 '''
 
 # import normal modules
-import sys, os, time, copy
+import sys, os, time
 
 # Third party modules
 import pygame
@@ -39,7 +39,6 @@ def main():
     globals.map, globals.width, globals.height, globals.player_start_x, globals.player_start_y = maps.generate_map("map.png")
     # Initiate player
     globals.special_entity_list["player"] = players.Player(globals.player_start_x, globals.player_start_y)
-    
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(globals.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")

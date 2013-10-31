@@ -178,4 +178,3 @@ class Package(FollowingEntity):
         super(Package, self).update(time_diff)
         
         
-        
