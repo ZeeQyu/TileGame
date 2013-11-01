@@ -44,7 +44,7 @@ def main():
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
     globals.screen = pygame.display.set_mode((globals.width * constants.TILE_SIZE,
                                               globals.height * constants.TILE_SIZE))
-    
+        
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
     skip_cycle = False

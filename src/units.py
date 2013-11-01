@@ -75,13 +75,14 @@ class FollowingEntity(Entity):
         Made for packages, could potentially be reused.
     '''     
     def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
-                 rotates=True, collides=True, wall_collides=True):
+                 rotates=True, collides=True, wall_collides=True, custom_name=None):
         ''' Initalizes the FollowingEntity. 
         '''
         super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,
                                               rotates=rotates, collides=collides, wall_collides=wall_collides)
-        if globals.special_entity_list[attached_entity].following_entity == None:
-            globals.special_entity_list[attached_entity].following_entity = attached_entity + "-" + image 
+        if attached_entity != None:
+            if globals.special_entity_list[attached_entity].following_entity == None:
+                globals.special_entity_list[attached_entity].following_entity = attached_entity + "-" + image 
         self.attached_entity = attached_entity
         self.pull_min = pull_min
         self.pull_max = pull_max
@@ -89,11 +90,14 @@ class FollowingEntity(Entity):
         # Should be None if it's currently following the attached_entity.
         # Otherwise, it should be pixel coordinates (example: (45, 120)) 
         self.target_coords = None
-        globals.special_entity_list[attached_entity + "-" + image] = self
+        if custom_name:
+            globals.special_entity_list[custom_name] = self
+        else:
+            globals.special_entity_list[attached_entity + "-" + image] = self
         
     def update(self, time_diff):
         super(FollowingEntity, self).update(time_diff)
-        if self.target_coords == None:
+        if self.target_coords == None and self.attached_entity != None:
             # The horizontal and vertical distances between the middle of FollowingEntity
             # and the middle of attached_entity.
             x_dist = (self.x + self.width/2) - (globals.special_entity_list[self.attached_entity].x +
@@ -105,7 +109,7 @@ class FollowingEntity(Entity):
                               self.y - globals.special_entity_list[self.attached_entity].y)
             pull_max = self.pull_max
             pull_min = self.pull_min
-        else:
+        elif self.target_coords != None:
             # The entity is currently travelling towards some coordinates.
             x_dist = self.x - self.target_coords[0]
             y_dist = self.y - self.target_coords[1]
@@ -113,6 +117,8 @@ class FollowingEntity(Entity):
             dist = math.hypot(x_dist, y_dist)            
             pull_min = 0
             pull_max = globals.width*constants.TILE_SIZE + globals.height*constants.TILE_SIZE
+        else:
+            return
         # If the diagonal distance isn't too far
         if dist < pull_max * 1.5:
             # If it's positive, move left
@@ -146,12 +152,12 @@ class Package(FollowingEntity):
         Supposed to be placed where you want to build a building and be a package of
         resources to build with.
     '''
-    def __init__(self, x, y, attached_entity):
+    def __init__(self, x, y, attached_entity=None, custom_name=None):
         ''' Initalizes a FollowingEntity with some package-specific variables.
         '''
         super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED,
                                       attached_entity=attached_entity, pull_min=constants.PACKAGE_PULL_MIN,
-                                      pull_max=constants.PACKAGE_PULL_MAX, rotates=False)
+                                      pull_max=constants.PACKAGE_PULL_MAX, rotates=False, custom_name=custom_name)
         # Compensate for the package image being smaller than package_tile image
         self.x = self.x + (constants.TILE_SIZE - self.width) / 2
         self.y = self.y + (constants.TILE_SIZE - self.height) / 2
@@ -172,7 +178,8 @@ class Package(FollowingEntity):
             x, y = self.get_tile()
             globals.map[x][y] = tiles.make_tile(self.tile, x, y)
             globals.update_map = True
-            globals.special_entity_list[self.attached_entity].following_entity = None
+            if self.attached_entity != None:
+                globals.special_entity_list[self.attached_entity].following_entity = None
             del globals.special_entity_list[self.attached_entity + "-" + self.image]
             return "deleted"
         super(Package, self).update(time_diff)

@@ -16,7 +16,7 @@ from random import choice, randint
 
 import pygame
 
-import constants, globals, entities
+import constants, globals, entities, units
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -134,7 +134,25 @@ class MultiTilePointer(Tile):
         '''
         return "empty_pixel"
         
-    
+def area_is_free(x, y, width, height):
+    ''' Checks an area for if a multitile can be placed there
+        "x" and "y" is the top left corner tile in the area.
+        "width" and "height" is the width and height of the area 
+            to be checked. 
+    '''
+    is_free = True
+#     for key in globals.special_entity_list.keys():
+#         if "areapackage" in key:
+#             del globals.special_entity_list[key]
+    for i in range(x, x+width):
+        for j in range(y, y+height):
+            # If any of the tiles aren't placeable, it isn't free.
+            if not constants.IMAGES[globals.map[i][j].type].placeable:
+                is_free = False
+            else:
+                # units.Package(i * constants.TILE_SIZE, j * constants.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))
+                pass
+    return is_free
     
 def make_tile(type, x, y):
     ''' Function to create a tile of the appropriate type (Standard, Random and, later, multi-tile)

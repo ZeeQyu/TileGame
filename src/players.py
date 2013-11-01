@@ -174,6 +174,9 @@ class Player(Entity):
         elif (event.key == globals.key_dict["pick_up_tile"][0] and
             event.type == pgl.KEYDOWN):
             self.toggle_grab = True
+        elif (event.key == pgl.K_q):
+            x, y = self.get_tile()
+            print tiles.area_is_free(x, y, 3, 3)
             
 def if_down(down_or_up):
     ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
