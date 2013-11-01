@@ -80,8 +80,6 @@ IMAGES = {
          "dirt3": Img("dirt3.png"),
          "dirt4": Img("dirt4.png"),
          "dirt5": Img("dirt5.png"),
-         "rock": Img("rocktile.png", color_code=(0, 0, 0), collides=True),
-         "ore": Img("oreTile.png", color_code=(255, 216, 0)),
          "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[10, "stump"]),
          "tree2": Img("tree2.png"),
          "tree3": Img("tree3.png"),
@@ -102,6 +100,10 @@ IMAGES = {
          "tree18": Img("tree18.png"),
          "tree19": Img("tree19.png"),
          "tree20": Img("tree20.png"),
+         "megatree": Img("multiTree.png", destroy=[50, "dirt"], multi_tile=()),
+         "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
+         "stump2": Img("stump2.png"),
+         "stump3": Img("stump3.png"),
          "sapling": Img("sapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
          "sapling2": Img("sapling2.png"),
          "sapling3": Img("sapling3.png"),
@@ -112,12 +114,17 @@ IMAGES = {
          "dirt-sapling3": Img("dirtSapling3.png"),
          "dirt-sapling4": Img("dirtSapling4.png"),
          "dirt-sapling5": Img("dirtSapling5.png"),
-         "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
-         "stump2": Img("stump2.png"),
-         "stump3": Img("stump3.png"),
-         "hq": Img("placeholder.png", color_code=(255, 106, 0), multi_tile=(2, 2)),
+         "rock": Img("rocktile.png", color_code=(0, 0, 0), collides=True),
+         "ore": Img("oreTile.png", color_code=(255, 216, 0)),
+         "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
+         "large_ore2": Img("large_ore2.png"),
+         "large_ore3": Img("large_ore3.png"),
+         "hq": Img("hq.png", color_code=(255, 106, 0), multi_tile=(2, 2)),
          "start_tile": Img("grassTile1.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
+         
+         "pointer": Img("emptyPixel.png"),
+         "collide_pointer": Img("emptyPixel.png", collides=True),
          
          # entities
          "player": Img("player.png"),
@@ -142,7 +149,7 @@ else:
     SLEEP_TIME = 0.001
 
 # The identifier of the tile that should be used
-# when the map.png decoding fails
+# when the map.png decoding fails. This tile should always have placeable=True.
 DEFAULT_TILE = "grass"
 # The tile that is placed with the players place key
 SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 

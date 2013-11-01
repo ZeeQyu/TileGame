@@ -1,8 +1,5 @@
 ZeeQyu TODO list:
 	
-        Fix weird glitch with the new mini-logo //Poke (start the game and see for yourself)
-        	FIX IT YOURSELF! (Make logo 16x16)
-	Dragging packages
 	Structures
 	Multitile structures
 	HQ
@@ -33,17 +30,21 @@ Pokemania00 Graphics TODO list:
 	Make logo 16x16, to see if that fixes the graphical bug in the corner.
 		And give it another background than white
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
+   	3x3 tile (48*48px) HQ that has an opening where packages can come out. 
    	5 Fallen trees, for when you chop down a tree 
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
-	2 32x32 megaores
-	(With miner)
-	A less dark miner than the current one
+	3 32x32 megaores
+	6 16x32/32x32/48x32 megatrees
+	(With miners)
+	Make logo background green with grass texture
+	A less dark robot than the current one
 	Bullet factory. (32x32)
 	Various projectiles with launcher. Go wild when it comes to ideas
 	Mega missile, with launcher (launcher 32x32).
+	Large UFO
 	
 	If you get extra time and are bored, come up with a bunch of resources
 		and products that you could make out of those, and combinations of resources.

@@ -11,12 +11,17 @@
     They have a texture associated, the type attribute 
     corresponds to the constants.py IMAGES dictionary paths.
 '''
-
 from random import choice, randint
 
 import pygame
 
 import constants, globals, entities, units
+
+class AreaNotFreeException(Exception):
+    ''' Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
+        make_tile() is called.
+    '''
+    pass
 
 class Tile(object):
     ''' Tile object containing the type and location of the tile.
@@ -38,6 +43,15 @@ class Tile(object):
         # Timer until some tiles "evolve"
         self.timer = timer
         
+        if constants.IMAGES[type].random:
+            image_keys = []
+            for image in constants.IMAGES.keys():
+                if image.startswith(type) and (image[len(type):].isdigit() or len(image) == len(type)):
+                    image_keys.append(image)
+            self.image = choice(image_keys)
+        else:
+            self.image = self.type 
+        
     def tick(self):
         ''' Method for counting down the block replacement timer.
             Should only be called if the tile is a transforming tile (for example, sapling)
@@ -54,11 +68,10 @@ class Tile(object):
                            constants.TILE_SIZE, constants.TILE_SIZE)
     
     def get_image(self):
-        ''' Returns the image string which relates to the globals.images dictionary.
-            Should be used when determining what image should be used.
-            Only exists to be overwritten by subclasses like RandomTile.
-        '''
-        return self.type
+        ''' Returns the random texture string or just the image
+        ''' 
+        return self.image
+
     
     def time_up(self):
         ''' The function that should be called when self.timer has reached 0
@@ -92,47 +105,24 @@ class Tile(object):
         ''' Compares the type attribute
         '''
         return self.type != other.type
-    
-class RandomTile(Tile):
-    ''' Subclass of Tile with code for random texture selection and preserving
-    ''' 
-    def __init__(self, type, x, y, timer=0):
-        ''' Initializes a tile with one of the textures whose identifier contains
-            the type, for more varied visual impression.
-        ''' 
-        super(RandomTile, self).__init__(type, x, y, timer)
-
-        image_keys = []
-        for image in constants.IMAGES.keys():
-            if image.startswith(type) and (image[len(type):].isdigit() or len(image) == len(type)):
-                image_keys.append(image)
-        self.image = choice(image_keys) 
-
-    def get_image(self):
-        ''' Returns the random texture string.
-        ''' 
-        return self.image
 
 class MultiTileHead(Tile):
-    ''' The top-left tile of any multi-tile. Contains all the actual metadata and paints the actual image
+    ''' The top-left tile of any multi-tile. Paints the actual image
     '''
-    def __init__(self, x, y, type, width, height):
+    def __init__(self, type, x, y, width, height):
         super(MultiTileHead, self).__init__(type, x, y)
     
 class MultiTilePointer(Tile):
     ''' The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel and points any
         operation towards the multi-tile head.
     '''
-    def __init__(self, x, y, head_x, head_y):
-        super(MultiTilePointer, self).__init__("pointer", x, y)
+    def __init__(self, type, x, y, head_x, head_y):
+        super(MultiTilePointer, self).__init__(type, x, y)
         self.head_x = head_x
         self.head_y = head_y
         
-    def get_image(self):
-        ''' Gets the empty pixel identifier, so that nothing is actually drawn on the screen
-            when the pointers are painted.
-        '''
-        return "empty_pixel"
+    def tick(self):
+        super(MultiTilePointer, self).tick()
         
 def area_is_free(x, y, width, height):
     ''' Checks an area for if a multitile can be placed there
@@ -147,38 +137,55 @@ def area_is_free(x, y, width, height):
     for i in range(x, x+width):
         for j in range(y, y+height):
             # If any of the tiles aren't placeable, it isn't free.
-            if not constants.IMAGES[globals.map[i][j].type].placeable:
+            if constants.IMAGES[globals.map[i][j].type].placeable == False:
                 is_free = False
             else:
-                # units.Package(i * constants.TILE_SIZE, j * constants.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))
+#                 units.Package(i * constants.TILE_SIZE, j * constants.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))
                 pass
     return is_free
     
-def make_tile(type, x, y):
+def make_tile(type, x, y, target=None):
     ''' Function to create a tile of the appropriate type (Standard, Random and, later, multi-tile)
         Should be used instead of directly creating a specific tile unless it is certain which type
         is needed.
         
         "type" should be a string identifier from IMAGES.
-        If it is a random tile, it should be the base form of the identifier
-        (for example, "tree" and not "tree1"
+            If it is a random tile, it should be the base form of the identifier
+            (for example, "tree" and not "tree1"
         "x" and "y" are the indices of the tile in the "globals.map" array
     '''
     # If it is a multi-tile
-    if constants.IMAGES[type].multi_tile:
-        pass
+    if constants.IMAGES[type].multi_tile != None:
+        width, height = constants.IMAGES[type].multi_tile
+        if not area_is_free(x, y, width, height):
+            raise AreaNotFreeException("The area at x " + x + ", y " + y +
+                                       ", with the width " + width + " and the height " +
+                                       height + " was not placeable. Please check the area " +
+                                       "before attempting to create a multi-tile.")
+        # Create pointers
+        for i in range(x, x + width):
+            for j in range(y, y + height):
+                # If it's the top-left tile, skip it
+                if x == i and y == j:
+                    continue
+                if constants.IMAGES[type].collides:
+                    globals.map[i][j] = make_tile("collide_pointer", i, j, (x, y))
+                else:
+                    globals.map[i][j] = make_tile("pointer", i, j, (x, y))
+                    
+        return MultiTileHead(type, x, y, width, height)
+    
     timer = 0
     # If the tile evolves, get a random timer for that
     if constants.IMAGES[type].evolve != None:
         coordinates = [x, y]
         globals.tick_tiles.append(coordinates)
         timer = randint(*constants.IMAGES[type].evolve[:2])
-        replace_tile = constants.IMAGES[type].evolve[2]
-    # Random tiles
-    if not constants.DEACTIVATE_RANDOM_TEXTURES:
-        if constants.IMAGES[type].random:
-            return RandomTile(type, x, y, timer)
+    
+        if target != None:
+            return MultiTilePointer(type, x, y, *target)
         else:
             return Tile(type, x, y, timer)
     else:
         return Tile(type, x, y, timer)
+    

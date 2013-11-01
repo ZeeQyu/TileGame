@@ -11,6 +11,7 @@
     which is used for painting the game world on the screen.
     It can be edited easily by replacing an index with a new tile instance.
 '''
+import pdb
 
 import pygame
 
@@ -18,17 +19,19 @@ import constants
 import tiles
 import globals
 
-def generate_map(map_name):
+def generate_map():
     ''' Function that loads a PIL image and reads it, pixel by pixel, to decode it into a tile map. 
         
-        "map_name" should be a file name in the res folder.
-        returns a map (two-dimensional list of Tiles), the width and height of the image loaded 
-        and the player starting point, x and y, from the file. (5 items)
-        if no starting point is found, return 0, 0 as the starting point. 
+        Gets the map from the constants.IMAGES["map"] object.
+        Sets a map (two-dimensional list of Tiles), the width and height of the image loaded 
+        and the player starting point, x and y, from the file as variables in the globals module.
+        (5 items) If no starting point is found, return 0, 0 as the starting point. 
     '''
-    # Load the image and declare variables
+    # Load the image
     map_image = pygame.image.load("res\\" + constants.IMAGES["map"].png)
     map = []
+    # Variable for holding multi_tiles until after the primary generation, because 
+    multi_tiles = []
     width, height = map_image.get_size()
     player_start_x = 0
     player_start_y = 0
@@ -44,13 +47,29 @@ def generate_map(map_name):
             if type == "start_tile":
                 player_start_x = x * constants.TILE_SIZE
                 player_start_y = y * constants.TILE_SIZE
-            
+            # Check to see if it's a multi-tile and, if so, store that in a variable to be done last
+            if constants.IMAGES[type].multi_tile:
+                multi_tiles.append([type, x, y])
+                map[x].append(tiles.make_tile(constants.DEFAULT_TILE, x, y))
+                continue
             # Make a new tile and add it to the map
             tile = tiles.make_tile(type, x, y)
             map[x].append(tile)
             
-    # Return the map, image size (for size of windows) and player start point
-    return map, width, height, player_start_x, player_start_y
+    # Sets the values to the global values
+    globals.map = map
+    globals.width = width
+    globals.height = height
+    globals.player_start_x = player_start_x
+    globals.player_start_y = player_start_y
+    
+    # Create the multi-tiles
+    for multi_tile in multi_tiles:
+        type, x, y = multi_tile
+        width, height = constants.IMAGES[type].multi_tile
+        if (globals.map[x][y].type == constants.DEFAULT_TILE and 
+                tiles.area_is_free(x, y, width, height)):
+            globals.map[x][y] = tiles.make_tile(type, x, y)
     
 def pixel_type(pixel, x, y):
     ''' Function for checking a pixel color code and from that figuring out which kind of tile should go to that index in the map.
@@ -74,7 +93,8 @@ def paint_map(screen):
         
         Uses variables from globals.py and constants.py
          
-        DEPRECATED! use update_map and screen.blit instead! (Much quicker)
+        DEPRECATED! use update_map and screen.blit instead! (Much quicker as it doesn't
+            have to update the entire screen every frame then)
     '''
     globals.screen.fill(constants.BLACK)
     for i in range(len(map)):
