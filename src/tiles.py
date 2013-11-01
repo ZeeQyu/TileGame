@@ -84,8 +84,7 @@ class Tile(object):
             if constants.IMAGES[constants.IMAGES[self.type].evolve[2]].collides:
                 has_entities = not entities.free_of_entities(self)
             if not has_entities:
-                globals.map[self.x][self.y] = make_tile(constants.IMAGES[self.type].evolve[2], self.x, self.y)
-                globals.update_map = True
+                make_tile(constants.IMAGES[self.type].evolve[2], self.x, self.y)
                 globals.tick_tiles.remove([self.x, self.y])
                 return
         else:
@@ -153,7 +152,16 @@ def make_tile(type, x, y, target=None):
             If it is a random tile, it should be the base form of the identifier
             (for example, "tree" and not "tree1"
         "x" and "y" are the indices of the tile in the "globals.map" array
+        "target" should be a tuple of coordinates in the tile array if the tile being created is
+            a pointer. It should be left empty if the tile isn't a multi-tile pointer.
     '''
+    # If the old tile was a multi-tile
+#     if (globals.map[x][y] and type(globals.map[x][y]) == MultiTileHead or
+#             type(globals.map[x][y]) == MultiTilePointer):
+#         if type(globals.map[x][y]) == MultiTilePointer:
+#             replace_tile = constants.IMAGES[[globals.map[x][y].type].destroy]
+#         else:
+#             replace_tile = constants.IMAGES
     # If it is a multi-tile
     if constants.IMAGES[type].multi_tile != None:
         width, height = constants.IMAGES[type].multi_tile
@@ -169,11 +177,12 @@ def make_tile(type, x, y, target=None):
                 if x == i and y == j:
                     continue
                 if constants.IMAGES[type].collides:
-                    globals.map[i][j] = make_tile("collide_pointer", i, j, (x, y))
+                    make_tile("collide_pointer", i, j, (x, y))
                 else:
-                    globals.map[i][j] = make_tile("pointer", i, j, (x, y))
-                    
-        return MultiTileHead(type, x, y, width, height)
+                    make_tile("pointer", i, j, (x, y))
+        
+        print "Made Head at ", x, y
+        globals.map[x][y] = MultiTileHead(type, x, y, width, height)
     
     timer = 0
     # If the tile evolves, get a random timer for that
@@ -183,9 +192,18 @@ def make_tile(type, x, y, target=None):
         timer = randint(*constants.IMAGES[type].evolve[:2])
     
         if target != None:
-            return MultiTilePointer(type, x, y, *target)
+            globals.map[x][y] = MultiTilePointer(type, x, y, *target)
         else:
-            return Tile(type, x, y, timer)
+            globals.map[x][y] = Tile(type, x, y, timer)
     else:
-        return Tile(type, x, y, timer)
+        globals.map[x][y] = Tile(type, x, y, timer)
+    globals.update_map = True
     
+def destroy_tile(self, x, y):
+    if (globals.map[x][y] and type(globals.map[x][y]) == MultiTileHead or
+            type(globals.map[x][y]) == MultiTilePointer):
+        if type(globals.map[x][y]) == MultiTilePointer:
+            replace_tile = constants.IMAGES[[globals.map[x][y].type].destroy]
+        else:
+            replace_tile = constants.IMAGES
+        

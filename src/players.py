@@ -78,10 +78,9 @@ class Player(Entity):
                 if constants.IMAGES[globals.map[x][y].type].placeable:
                     # If there is a special case for placing tiles, use that. Otherwise, use the default
                     if globals.map[x][y].type in constants.SPECIAL_PLACE_TILES.keys():
-                        globals.map[x][y] = tiles.make_tile(constants.SPECIAL_PLACE_TILES[globals.map[x][y].type], x, y)
+                        tiles.make_tile(constants.SPECIAL_PLACE_TILES[globals.map[x][y].type], x, y)
                     else:
-                        globals.map[x][y] = tiles.make_tile(constants.DEFAULT_PLACE_TILE, x, y)
-                    globals.update_map = True
+                        tiles.make_tile(constants.DEFAULT_PLACE_TILE, x, y)
             # Ignore IndexErrors because the indices might be outside of the map
             except IndexError:
                 pass
@@ -95,8 +94,7 @@ class Player(Entity):
             # If remove_timer has reached 0 which means the countdown is done
             if self.remove_timer < 1:
                 # Get the second value in the third value of the related IMAGES index
-                globals.map[x][y] = tiles.make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)
-                globals.update_map = True
+                tiles.make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)
                 self.update_aim_tile = True
                 self.remove_timer = None
                 return
@@ -176,7 +174,10 @@ class Player(Entity):
             self.toggle_grab = True
         elif (event.key == pgl.K_q):
             x, y = self.get_tile()
-            print tiles.area_is_free(x, y, 3, 3)
+            width, height = constants.IMAGES["megatree"].multi_tile
+            if tiles.area_is_free(x, y, width, height):
+                tiles.make_tile("megatree", x, y)
+            print x, y
             
 def if_down(down_or_up):
     ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
