@@ -36,6 +36,8 @@ class Img(object):
                 for example, a tree. Leave blank if it shouldn't be removable.
             "destroy" should be a list containing the time in ticks for a tile to be destroyed
                 and which tile it should turn into. (example: [15, "grass"]) Leave blank for 
+                indestructible. Multi-tiles should have a third value denoting which tile the
+                other tiles in that multitile turns into. (example: [50, "dirt", "tree"]
             "evolve" should be a list containing the minimum time it takes for the tile
                 to evolve (change into another tile) and which tile it should evolve to
                 (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
@@ -100,7 +102,7 @@ IMAGES = {
          "tree18": Img("tree18.png"),
          "tree19": Img("tree19.png"),
          "tree20": Img("tree20.png"),
-         "megatree": Img("multiTree.png", destroy=[50, "dirt"], multi_tile=(3, 2)),
+         "megatree": Img("multiTree.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
          "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
          "stump2": Img("stump2.png"),
          "stump3": Img("stump3.png"),

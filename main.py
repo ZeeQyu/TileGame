@@ -7,7 +7,7 @@
     https://github.com/ZeeQyu/TileGame
     
     Main module, run this to start the program. Ties all the other modules together.
-    
+    ffff
     TileGame is an experimental tile-based game which serves the purpose of
         letting me learn to use PyGame in a good way and evolving my programming capabilities,
         as well as teaching me how to manage own code in multiple modules properly.
@@ -60,7 +60,7 @@ def main():
             globals.force_update = True
         # Event checker. Allows closing of the program and passes keypresses to the player instance
         for event in pygame.event.get():
-            # Quit codef
+            # Quit codeffffffffffffffff
             if event.type == pgl.QUIT:
                 sys.exit()
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:

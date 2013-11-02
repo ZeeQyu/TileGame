@@ -64,12 +64,27 @@ class Player(Entity):
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
             try:
+                print "\t" + str(globals.map[x][y])
                 if constants.IMAGES[globals.map[x][y].type].destroy != None:
+#                     print "Standard timer set"
                     self.remove_timer = constants.IMAGES[globals.map[x][y].type].destroy[0]
+                elif type(globals.map[x][y]) == tiles.MultiTilePointer:
+#                     print "Pointer timer set"
+                    # Finding out which tile the pointer is pointing to, and if that has a destroy value
+                    head_x, head_y = globals.map[x][y].target
+                    multi_tile_head = globals.map[head_x][head_y]
+                    if constants.IMAGES[multi_tile_head.type].destroy != None:
+                        self.remove_timer = constants.IMAGES[multi_tile_head.type].destroy[0]
+                    else:
+                        self.remove_timer = None
                 else:
+#                     print "Indestructible tile"
                     self.remove_timer = None
-            except:
+            except IndexError:
+#                 print "IndexError"
                 self.remove_timer = None
+            except:
+                raise
         self.last_aim_tile = aim_tile
         
         # Placing tile
@@ -86,23 +101,22 @@ class Player(Entity):
                 pass
             except:
                 raise
-
-        if self.removing_tile and not self.placing_tile:
-            # If the timer is None (not removable), return
-            if self.remove_timer == None:
-                return
-            # If remove_timer has reached 0 which means the countdown is done
-            if self.remove_timer < 1:
-                # Get the second value in the third value of the related IMAGES index
-                tiles.make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)
-                self.update_aim_tile = True
-                self.remove_timer = None
-                return
             
+        # Removing tile
+        if self.removing_tile and not self.placing_tile:
+            # If the timer isn't None (is removable)
+            if self.remove_timer != None:
+                # If remove_timer has reached 0 which means the countdown is done
+                if self.remove_timer < 1:
+                    tiles.destroy_tile(x, y)
+                    self.update_aim_tile = True
+                    self.remove_timer = None
+                    return
+                
+        # Grabbing tile
         if self.toggle_grab:
             # If the grab button is pressed
             self.toggle_grab = False
-            print self.following_entity
             if self.following_entity != None:
                 x, y = globals.special_entity_list[self.following_entity].get_tile()
                 if constants.IMAGES[globals.map[x][y].type].placeable:
@@ -173,11 +187,10 @@ class Player(Entity):
             event.type == pgl.KEYDOWN):
             self.toggle_grab = True
         elif (event.key == pgl.K_q):
-            x, y = self.get_tile()
+            x, y = self.get_aim_tile()
             width, height = constants.IMAGES["megatree"].multi_tile
             if tiles.area_is_free(x, y, width, height):
                 tiles.make_tile("megatree", x, y)
-            print x, y
             
 def if_down(down_or_up):
     ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.

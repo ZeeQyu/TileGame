@@ -62,12 +62,12 @@ def generate_map():
     globals.player_start_y = player_start_y
     
     # Create the multi-tiles
-#     for multi_tile in multi_tiles:
-#         type, x, y = multi_tile
-#         width, height = constants.IMAGES[type].multi_tile
-#         if (globals.map[x][y] and globals.map[x][y].type == constants.DEFAULT_TILE and 
-#                 tiles.area_is_free(x, y, width, height)):
-#             tiles.make_tile(type, x, y)
+    for multi_tile in multi_tiles:
+        type, x, y = multi_tile
+        width, height = constants.IMAGES[type].multi_tile
+        if (globals.map[x][y] and globals.map[x][y].type == constants.DEFAULT_TILE and 
+                tiles.area_is_free(x, y, width, height)):
+            tiles.make_tile(type, x, y)
     
 def pixel_type(pixel, x, y):
     ''' Function for checking a pixel color code and from that figuring out which kind of tile should go to that index in the map.
