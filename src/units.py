@@ -155,7 +155,7 @@ class Package(FollowingEntity):
     def __init__(self, x, y, attached_entity=None, custom_name=None):
         ''' Initalizes a FollowingEntity with some package-specific variables.
         '''
-        super(Package, self).__init__(x, y, "package", constants.PACKAGE_MOVEMENT_SPEED,
+        super(Package, self).__init__(x, y, "moving_package", constants.PACKAGE_MOVEMENT_SPEED,
                                       attached_entity=attached_entity, pull_min=constants.PACKAGE_PULL_MIN,
                                       pull_max=constants.PACKAGE_PULL_MAX, rotates=False, custom_name=custom_name)
         # Compensate for the package image being smaller than package_tile image

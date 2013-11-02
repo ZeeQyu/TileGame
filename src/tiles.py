@@ -210,13 +210,15 @@ def destroy_tile(x, y):
         # Get the destroy value
         if type(globals.map[x][y]) == MultiTileHead:
             destroy_value = constants.IMAGES[globals.map[x][y].type].destroy
-            multi_tile = {"x": x, "y": y, "width": globals.map[x][y].width,
+            multi_tile = {"x": x, "y": y,
+                          "width": globals.map[x][y].width,
                           "height": globals.map[x][y].height} 
         else:
             target_x, target_y = globals.map[x][y].target
             destroy_value = constants.IMAGES[globals.map[target_x][target_y].type].destroy
             try:
-                multi_tile = {"x": target_x, "y": target_y, "width": globals.map[target_x][target_y].width,
+                multi_tile = {"x": target_x, "y": target_y,
+                              "width": globals.map[target_x][target_y].width,
                               "height": globals.map[target_x][target_y].height}
             except:
                  import pdb, sys
@@ -229,7 +231,7 @@ def destroy_tile(x, y):
                 if len(destroy_value) > 2:
                     make_tile(destroy_value[2], i, j)
                 else:
-                    make_tile[destroy_value[1], i, j]
+                    make_tile(destroy_value[1], i, j)
         make_tile(destroy_value[1], x, y)
     else:
         make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)

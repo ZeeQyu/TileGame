@@ -8,8 +8,6 @@
 
     Module for initating global variables that should be available in all modules
 '''
-from collections import OrderedDict
-
 import pygame
 import pygame.locals as pgl
 
@@ -17,17 +15,17 @@ from maps import generate_map
 import graphics
 import constants
 
-# Load map using functions from maps.py and store into the map variable
-# Get the size of the image as well as the player start point from the map.png file.
-map = width = height = player_start_x = player_start_y = screen = None
 # Making some variables that should be available for use in all modules
+map = width = height = player_start_x = player_start_y = screen = None
 images = {}
 
+# If the map should be rerendered next time.
 force_update = True
 
-# Initiate an entity list. Contains all entities.
-# The player is in index 0. The currently moved package is index 1.
+# Initiate an entity list. This contains all entites that aren't special.
 entity_list = []
+# This entity list holds named entities that will be accessed by name.
+# The syntax for this list is {"string_key": Entity}
 special_entity_list = {}
 images = graphics.load_graphics()
 

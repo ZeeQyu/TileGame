@@ -121,7 +121,7 @@ IMAGES = {
          "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
          "large_ore2": Img("large_ore2.png"),
          "large_ore3": Img("large_ore3.png"),
-         "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, multi_tile=(2, 2)),
+         "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
          "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
          
@@ -131,7 +131,7 @@ IMAGES = {
          # entities
          "player": Img("player.png"),
          "beetle": Img("beetle.png"),
-         "package": Img("packageNograss.png"),
+         "moving_package": Img("packageNograss.png"),
          "ufo": Img("enemyUfo.png"),
          
          # other
@@ -173,7 +173,7 @@ PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
-PACKAGE_PULL_MIN = 10
+PACKAGE_PULL_MIN = 9
 PACKAGE_PULL_MAX = 20
 
 # Key for key configurIation
