@@ -64,7 +64,6 @@ class Player(Entity):
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
             try:
-                print "\t" + str(globals.map[x][y])
                 if constants.IMAGES[globals.map[x][y].type].destroy != None:
 #                     print "Standard timer set"
                     self.remove_timer = constants.IMAGES[globals.map[x][y].type].destroy[0]
