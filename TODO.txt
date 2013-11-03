@@ -16,18 +16,14 @@ ZeeQyu TODO list:
 	Projectile collision
 
 Pokemania00 Graphics TODO list:
-	
-   	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
+
    	3x3 tile (48*48px) HQ that has an opening where packages can come out. 
    	5 Fallen trees, for when you chop down a tree 
     10 rocks
     Make colliding tiles (trees and rocks) stretch further to the edges
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
-	~5 random ores with miners.
-	3 32x32 megaores
-	(With miners)
+	3 32x32 megaores (with miners)
 	6 16x32/32x32/48x32 megatrees
-	Make logo background green with grass texture
 	A less dark robot than the current one
 	Bullet factory. (32x32)
 	Various projectiles with launcher. Go wild when it comes to ideas
