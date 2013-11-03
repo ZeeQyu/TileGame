@@ -141,6 +141,7 @@ IMAGES = {
          # other
          "map": Img("map.png"),
          "aim": Img("aim.png"),
+         "remove_aim": Img("removeAim.png"),
          "icon": Img("logo.png"),
          "menu_background": Img("menuBackground.png")
         }

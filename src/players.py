@@ -41,9 +41,15 @@ class Player(Entity):
         '''
         super(Player, self).paint()
         if self.removing_tile:
-            globals.screen.blit(globals.images["aim"].get(),
+            globals.screen.blit(globals.images["remove_aim"].get(),
                                 (self.last_aim_tile[0]*constants.TILE_SIZE,
                                  self.last_aim_tile[1]*constants.TILE_SIZE))
+        else:
+            x = ((self.last_aim_tile[0]*constants.TILE_SIZE) +
+                (constants.TILE_SIZE - globals.images["aim"].get_size()[0]) / 2)
+            y = ((self.last_aim_tile[1]*constants.TILE_SIZE) +
+                (constants.TILE_SIZE - globals.images["aim"].get_size()[1]) / 2)
+            globals.screen.blit(globals.images["aim"].get(), (x, y))
             
     def update(self, time_diff):
         ''' Calls the superclass update and updates the state of the aim marker.

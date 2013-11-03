@@ -163,8 +163,6 @@ def main():
             for i in range(len(globals.special_entity_list.values())-1, -1, -1):
                 entity = globals.special_entity_list.values()[i]
                 entity.paint()
-            # Test the menu background
-            globals.screen.blit(globals.images["menu_background"].get(), (10, 10))
             # Update the display
             pygame.display.flip()
         
