@@ -13,7 +13,8 @@ import sys, time
 import pygame
 import pygame.locals as pgl
 
-import constants, globals
+import constants as c
+import globals as g
 
 WHITE = (255, 255, 255)
 
@@ -26,13 +27,13 @@ def key_reconfig():
     invalid_key_timer = 0
     new_keys = []
     
-    transparent_surface = pygame.Surface((globals.width*constants.TILE_SIZE,
-                                          globals.height*constants.TILE_SIZE)).convert_alpha()
+    transparent_surface = pygame.Surface((g.width*c.TILE_SIZE,
+                                          g.height*c.TILE_SIZE)).convert_alpha()
     transparent_surface.fill((0, 0, 0, 150))
     
     font = pygame.font.Font("freesansbold.ttf", 20)
-    welcome_surface = font.render(constants.CONFIG_KEYS_MESSAGE, True, constants.CONFIG_KEYS_FONT_COLOR)
-    error_surface = font.render(constants.CONFIG_KEYS_ERROR_MESSAGE, True, constants.CONFIG_KEYS_FONT_COLOR)    
+    welcome_surface = font.render(c.CONFIG_KEYS_MESSAGE, True, c.CONFIG_KEYS_FONT_COLOR)
+    error_surface = font.render(c.CONFIG_KEYS_ERROR_MESSAGE, True, c.CONFIG_KEYS_FONT_COLOR)    
     
     while True:
         # Events
@@ -41,7 +42,7 @@ def key_reconfig():
             if event.type == pgl.QUIT:
                 sys.exit()
             # Cancel
-            elif event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
+            elif event.type == pgl.KEYDOWN and event.key == c.CONFIG_KEYS_KEY:
                 return
             # Key configuration
             elif event.type == pgl.KEYDOWN:
@@ -50,7 +51,7 @@ def key_reconfig():
         if set_key != None:
             for key in new_keys:
                 if set_key == key:
-                    invalid_key_timer = constants.CONFIG_KEYS_INVALID_TIMER
+                    invalid_key_timer = c.CONFIG_KEYS_INVALID_TIMER
                     set_key = None
                     break
             if set_key == None:
@@ -64,35 +65,35 @@ def key_reconfig():
             screen_updates = False
 
             # If it's done
-            if len(new_keys) == len(globals.key_list):
+            if len(new_keys) == len(g.key_list):
                 for i in range(len(new_keys)):
-                    globals.key_list[i][1] = new_keys[i]
-                globals.update_key_dict()
+                    g.key_list[i][1] = new_keys[i]
+                g.update_key_dict()
                 return
-            elif len(new_keys) > len(globals.key_list):
+            elif len(new_keys) > len(g.key_list):
                 raise Exception("The new_keys dictionary somhow got larger than the old_keys dictionary")
             
             # The text that tells the user which key should be configured next.
             # Uses the lenght of the new_keys to figure out which message it should use
-            text_surface = font.render(constants.CONFIG_KEYS_TEXT_PREFIX + 
-                                       globals.key_list[len(new_keys)][2],
-                                       True, constants.CONFIG_KEYS_FONT_COLOR)
+            text_surface = font.render(c.CONFIG_KEYS_TEXT_PREFIX + 
+                                       g.key_list[len(new_keys)][2],
+                                       True, c.CONFIG_KEYS_FONT_COLOR)
             # Draw the map buffer
-            globals.screen.blit(globals.map_screen_buffer, (0, 0))
+            g.screen.blit(g.map_screen_buffer, (0, 0))
             # Draw entities
-            for entity in globals.entity_list:
+            for entity in g.entity_list:
                 entity.paint()
             # Darken the screen a bit
-            globals.screen.blit(transparent_surface, (0, 0))
+            g.screen.blit(transparent_surface, (0, 0))
             # Draw text
-            globals.screen.blit(welcome_surface, (200, 100))
-            globals.screen.blit(text_surface, (200, 200))
+            g.screen.blit(welcome_surface, (200, 100))
+            g.screen.blit(text_surface, (200, 200))
             if invalid_key_timer > 0:
                 invalid_key_timer -= 1
-                globals.screen.blit(error_surface, (200, 300))
+                g.screen.blit(error_surface, (200, 300))
             pygame.display.flip()
         # Sleep by a fixed amount, because this loop doesn't need to update very constantly 
-        time.sleep(constants.TICK_FREQ)
+        time.sleep(c.TICK_FREQ)
 
 class Menu(object):
     ''' Base class for on-screen menus that won't pause the game.
@@ -101,7 +102,7 @@ class Menu(object):
         ''' Creates a general-purpose menu.
         
             "background" should be a string identifier pointing
-                towards a Graphics object in the globals.images dictionary
+                towards a Graphics object in the g.images dictionary
                 that should be used as a background.
             "target" should be a tuple with an x and y coordinate in pixels
                 for where the menu's top left corner should be painted
@@ -112,7 +113,7 @@ class Menu(object):
     def paint(self):
         ''' Paints the menu at self.target.
         '''
-        globals.screen.blit(globals.images[self.background].get(), self.target)
+        g.screen.blit(g.images[self.background].get(), self.target)
         
 class BuildMenu(Menu):
     ''' Subclass of Menu, used for choosing which building you want to build at a location.
@@ -122,23 +123,23 @@ class BuildMenu(Menu):
         super(BuildMenu, self).__init__("menu_background", self.target)
         
     def update_position(self):
-        player_x = globals.special_entity_list["player"].x
-        player_y = globals.special_entity_list["player"].y
+        player_x = g.special_entity_list["player"].x
+        player_y = g.special_entity_list["player"].y
         # Put the target variable in the other end of the screen than the player
-        background_width, background_height = globals.images["menu_background"].get_size()
-        if player_x > globals.width*constants.TILE_SIZE/2.0:
-            if player_y > globals.height*constants.TILE_SIZE/2.0:
-                self.target = (constants.BORDER_MARGIN, constants.BORDER_MARGIN)
+        background_width, background_height = g.images["menu_background"].get_size()
+        if player_x > g.width*c.TILE_SIZE/2.0:
+            if player_y > g.height*c.TILE_SIZE/2.0:
+                self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
             else:
-                self.target = (constants.BORDER_MARGIN,
-                          globals.height * constants.TILE_SIZE - background_height - constants.BORDER_MARGIN)
+                self.target = (c.BORDER_MARGIN,
+                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
         else:
-            if player_y > globals.height*constants.TILE_SIZE/2.0:
-                self.target = (globals.width * constants.TILE_SIZE - background_width - constants.BORDER_MARGIN,
-                          constants.BORDER_MARGIN)
+            if player_y > g.height*c.TILE_SIZE/2.0:
+                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
+                          c.BORDER_MARGIN)
             else:
-                self.target = (globals.width * constants.TILE_SIZE - background_width - constants.BORDER_MARGIN,
-                          globals.height * constants.TILE_SIZE - background_height - constants.BORDER_MARGIN)
+                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
+                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
                 
     def paint(self):
         ''' Updates the position of the menu and paints it.

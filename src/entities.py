@@ -13,8 +13,8 @@
 import pygame
 from pygame import Rect
 
-import globals
-import constants
+import globals as g
+import constants as c
 from graphics import Graphics
 
 class InvalidCallParameterException(Exception):
@@ -38,7 +38,7 @@ class Entity(object):
         self.x = x
         self.y = y
         # Getting width and height from image file
-        self.width, self.height = globals.images[image].get_size()
+        self.width, self.height = g.images[image].get_size()
         # Variables for checking if the entity should move.
         self.x_plus = False
         self.x_minus = False
@@ -64,7 +64,7 @@ class Entity(object):
         # paint was called
         self.angle = 0
         self.last_angle = 0
-        # The name in globals.special_entity_list of the FollowingEntity following this entity.
+        # The name in g.special_entity_list of the FollowingEntity following this entity.
         self.following_entity = None
         
     def update(self, delta_remainder):
@@ -125,7 +125,7 @@ class Entity(object):
                     self.angle = self.last_angle
             # Update the player if he's aiming in a new direction
             if self.angle != self.last_angle:
-                globals.force_update = True
+                g.force_update = True
             # Remember the angle until next time
             self.last_angle = self.angle
             
@@ -144,22 +144,22 @@ class Entity(object):
             if self.angle != 0:
                 key = key + str(self.angle)
             # Check the images dict for a key with the current entity and rotation 
-            if globals.images.has_key(key):
-                image = globals.images[key].get()
+            if g.images.has_key(key):
+                image = g.images[key].get()
             else:
                 # The images dict doesn't have the current sprite with that rotation, create it
-                globals.images[key] = Graphics(pygame.transform.rotate(globals.images[self.image].get(), self.angle))
-                image = globals.images[key].get()
+                g.images[key] = Graphics(pygame.transform.rotate(g.images[self.image].get(), self.angle))
+                image = g.images[key].get()
         else:
-            image = globals.images[self.image].get()
+            image = g.images[self.image].get()
             
         # Actually paint the object
         if float(int(self.angle / 90.0)) != self.angle / 90.0:
             # Compensate for rotated entities
-            globals.screen.blit(image, (int(self.x) - int(self.width/5.0),
+            g.screen.blit(image, (int(self.x) - int(self.width/5.0),
                                         int(self.y) - int(self.height/5.0)))
         else:
-            globals.screen.blit(image, (int(self.x), int(self.y)))
+            g.screen.blit(image, (int(self.x), int(self.y)))
         
     def has_moved(self, update=True):
         ''' Compares an old x and y value with the current one. 
@@ -180,7 +180,7 @@ class Entity(object):
     def get_tile(self):
         ''' Returns the coordinates of tile the entity is currently on (x and y) 
         ''' 
-        return int((self.x + self.width/2) / float(constants.TILE_SIZE)), int((self.y + self.height/2) / float(constants.TILE_SIZE))
+        return int((self.x + self.width/2) / float(c.TILE_SIZE)), int((self.y + self.height/2) / float(c.TILE_SIZE))
     
     def corner_in_tile(self, tile):
         ''' Checks if any of the entities corners are inside of the specified tile.
@@ -231,7 +231,7 @@ class Entity(object):
         if self.wall_collides:
             # Move the entity inside of the window (border collision)
             entity_rect = Rect(self.x, self.y, self.width,self.height)
-            window_rect = Rect(0, 0, globals.width * constants.TILE_SIZE, globals.height * constants.TILE_SIZE)
+            window_rect = Rect(0, 0, g.width * c.TILE_SIZE, g.height * c.TILE_SIZE)
             if not window_rect.contains(entity_rect):
                 entity_rect.clamp_ip(window_rect)
                 self.x = entity_rect.left
@@ -247,8 +247,8 @@ class Entity(object):
             for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
                 for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
                     try:
-                        if constants.IMAGES[globals.map[i][j].type].collides:
-                            checked_tiles.append(globals.map[i][j].rect())
+                        if c.IMAGES[g.map[i][j].type].collides:
+                            checked_tiles.append(g.map[i][j].rect())
                     except IndexError:
                         # That index was apparently outside of the map
                         pass
@@ -270,11 +270,11 @@ def free_of_entities(tile):
     '''
     free_of_entities = True
     # Loop through all normal entities.
-    for entity in globals.entity_list:
+    for entity in g.entity_list:
         if entity.corner_in_tile(tile):
             free_of_entities = False
     # Loop through all special entites
-    for entity in globals.special_entity_list.values():
+    for entity in g.special_entity_list.values():
         if entity.corner_in_tile(tile):
             free_of_entities = False
     return free_of_entities

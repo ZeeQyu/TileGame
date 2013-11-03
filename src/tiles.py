@@ -9,14 +9,15 @@
     Module containing the tile class.
     Tiles are the main building block of the game world.
     They have a texture associated, the type attribute 
-    corresponds to the constants.py IMAGES dictionary paths.
+    corresponds to the c.py IMAGES dictionary paths.
 '''
 from random import choice, randint
 
 import pygame
 
-import constants, globals, entities, units
-
+import entities, units
+import globals as g
+import constants as c
 class AreaNotFreeException(Exception):
     ''' Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
         make_tile() is called.
@@ -29,7 +30,7 @@ class Tile(object):
     
     def __init__(self, type, x, y):
         ''' Simple initalizer.
-            "type" should be a string from the list of keys in the constants.py IMAGES dictionary.
+            "type" should be a string from the list of keys in the c.py IMAGES dictionary.
             "x" and "y" should be ints and can be used for finding out where a tile belongs if
                 you copy the tile away from the map array in main.py. They are not normally used.
             "timer" should be the time until time_up() is called. If this is the base class
@@ -41,15 +42,15 @@ class Tile(object):
         self.x = x
         self.y = y
         # If the tile evolves, get a random timer for that
-        if constants.IMAGES[type].evolve != None:
-            globals.tick_tiles.append([x, y])
-            self.timer = randint(*constants.IMAGES[type].evolve[:2])
+        if c.IMAGES[type].evolve != None:
+            g.tick_tiles.append([x, y])
+            self.timer = randint(*c.IMAGES[type].evolve[:2])
         else:
             self.timer = 0          
 
-        if constants.IMAGES[type].random:
+        if c.IMAGES[type].random:
             image_keys = []
-            for image in constants.IMAGES.keys():
+            for image in c.IMAGES.keys():
                 if image.startswith(type) and (image[len(type):].isdigit() or len(image) == len(type)):
                     image_keys.append(image)
             self.image = choice(image_keys)
@@ -68,8 +69,8 @@ class Tile(object):
     def rect(self):
         ''' Returns a pygame.Rect object with the same dimensions and location as the tile
         '''
-        return pygame.Rect(self.x * constants.TILE_SIZE, self.y * constants.TILE_SIZE,
-                           constants.TILE_SIZE, constants.TILE_SIZE)
+        return pygame.Rect(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
+                           c.TILE_SIZE, c.TILE_SIZE)
     
     def get_image(self):
         ''' Returns the random texture string or just the image
@@ -79,20 +80,20 @@ class Tile(object):
     
     def time_up(self):
         ''' The function that should be called when self.timer has reached 0
-            Exchanges this tile for the appropriate tile specified in the constants.IMAGES variable
+            Exchanges this tile for the appropriate tile specified in the c.IMAGES variable
         '''
         # Check if the entity evolves
-        if constants.IMAGES[self.type].evolve != None:
+        if c.IMAGES[self.type].evolve != None:
             has_entities = False
             # Check if any entity is on that tile
-            if constants.IMAGES[constants.IMAGES[self.type].evolve[2]].collides:
+            if c.IMAGES[c.IMAGES[self.type].evolve[2]].collides:
                 has_entities = not entities.free_of_entities(self)
             if not has_entities:
-                make_tile(constants.IMAGES[self.type].evolve[2], self.x, self.y)
-                globals.tick_tiles.remove([self.x, self.y])
+                make_tile(c.IMAGES[self.type].evolve[2], self.x, self.y)
+                g.tick_tiles.remove([self.x, self.y])
                 return
         else:
-            globals.tick_tiles.remove([self.x, self.y])
+            g.tick_tiles.remove([self.x, self.y])
         
     def __str__(self):
         ''' Returns tile type and location (all attributes)
@@ -140,18 +141,18 @@ def area_is_free(x, y, width, height):
             to be checked. 
     '''
     is_free = True
-#     for key in globals.special_entity_list.keys():
+#     for key in g.special_entity_list.keys():
 #         if "areapackage" in key:
-#             del globals.special_entity_list[key]
+#             del g.special_entity_list[key]
     for i in range(x, x+width):
         for j in range(y, y+height):
             # If any of the tiles aren't placeable, it isn't free.
-            if constants.IMAGES[globals.map[i][j].type].placeable == False:
+            if c.IMAGES[g.map[i][j].type].placeable == False:
                 is_free = False
             else:
-#                 units.Package(i * constants.TILE_SIZE, j * constants.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))
+#                 units.Package(i * c.TILE_SIZE, j * c.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))
                 pass
-            if not entities.free_of_entities(globals.map[i][j]):
+            if not entities.free_of_entities(g.map[i][j]):
                 is_free = False
     return is_free
     
@@ -163,15 +164,15 @@ def make_tile(type, x, y, target=None):
         "type" should be a string identifier from IMAGES.
             If it is a random tile, it should be the base form of the identifier
             (for example, "tree" and not "tree1"
-        "x" and "y" are the indices of the tile in the "globals.map" array
+        "x" and "y" are the indices of the tile in the "g.map" array
         "target" should be a tuple of coordinates in the tile array if the tile being created is
             a pointer. It should be left empty if the tile isn't a multi-tile pointer.
     '''
   
 
     # If it is a multi-tile
-    if constants.IMAGES[type].multi_tile != None:
-        width, height = constants.IMAGES[type].multi_tile
+    if c.IMAGES[type].multi_tile != None:
+        width, height = c.IMAGES[type].multi_tile
         if not area_is_free(x, y, width, height):
             raise AreaNotFreeException("The area at x " + x + ", y " + y +
                                        ", with the width " + width + " and the height " +
@@ -184,7 +185,7 @@ def make_tile(type, x, y, target=None):
                 if x == i and y == j:
                     continue
                 # On all others, make pointers
-                if constants.IMAGES[type].collides:
+                if c.IMAGES[type].collides:
                     make_tile("collide_pointer", i, j, (x, y))
                 else:
                     make_tile("pointer", i, j, (x, y))
@@ -198,27 +199,27 @@ def make_tile(type, x, y, target=None):
         else:
             tile = Tile(type, x, y)
     # Change and update the map
-    globals.map[x][y] = tile
-    globals.update_map = True
+    g.map[x][y] = tile
+    g.update_map = True
     return tile 
     
 def destroy_tile(x, y):
     # If the old tile was a multitile head or pointer
-    if (globals.map[x][y] and (type(globals.map[x][y]) == MultiTileHead or
-            type(globals.map[x][y]) == MultiTilePointer)):
+    if (g.map[x][y] and (type(g.map[x][y]) == MultiTileHead or
+            type(g.map[x][y]) == MultiTilePointer)):
         # Get the destroy value
-        if type(globals.map[x][y]) == MultiTileHead:
-            destroy_value = constants.IMAGES[globals.map[x][y].type].destroy
+        if type(g.map[x][y]) == MultiTileHead:
+            destroy_value = c.IMAGES[g.map[x][y].type].destroy
             multi_tile = {"x": x, "y": y,
-                          "width": globals.map[x][y].width,
-                          "height": globals.map[x][y].height} 
+                          "width": g.map[x][y].width,
+                          "height": g.map[x][y].height} 
         else:
-            target_x, target_y = globals.map[x][y].target
-            destroy_value = constants.IMAGES[globals.map[target_x][target_y].type].destroy
+            target_x, target_y = g.map[x][y].target
+            destroy_value = c.IMAGES[g.map[target_x][target_y].type].destroy
             try:
                 multi_tile = {"x": target_x, "y": target_y,
-                              "width": globals.map[target_x][target_y].width,
-                              "height": globals.map[target_x][target_y].height}
+                              "width": g.map[target_x][target_y].width,
+                              "height": g.map[target_x][target_y].height}
             except:
                  import pdb, sys
                  e, m, tb = sys.exc_info()
@@ -233,5 +234,5 @@ def destroy_tile(x, y):
                     make_tile(destroy_value[1], i, j)
         make_tile(destroy_value[1], x, y)
     else:
-        make_tile(constants.IMAGES[globals.map[x][y].type].destroy[1], x, y)
+        make_tile(c.IMAGES[g.map[x][y].type].destroy[1], x, y)
         

@@ -10,18 +10,20 @@
     Also handles key press events for movement of the player.
 '''
 
-import constants, units, globals, tiles
+import units, tiles
 import pygame.locals as pgl
 from entities import Entity
+import globals as g
+import constants as c
 
 class Player(Entity):
-    ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in constants.py
+    ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
     '''
     
-    def __init__(self, x=globals.player_start_x, y=globals.player_start_y):
+    def __init__(self, x=g.player_start_x, y=g.player_start_y):
         ''' "x" and "y" should be ints.
         '''
-        super(Player, self).__init__(x, y, "player", constants.PLAYER_MOVEMENT_SPEED)
+        super(Player, self).__init__(x, y, "player", c.PLAYER_MOVEMENT_SPEED)
         # If the player is currently placing or removing a tile
         self.placing_tile = False
         self.removing_tile = False
@@ -41,15 +43,15 @@ class Player(Entity):
         '''
         super(Player, self).paint()
         if self.removing_tile:
-            globals.screen.blit(globals.images["remove_aim"].get(),
-                                (self.last_aim_tile[0]*constants.TILE_SIZE,
-                                 self.last_aim_tile[1]*constants.TILE_SIZE))
+            g.screen.blit(g.images["remove_aim"].get(),
+                                (self.last_aim_tile[0]*c.TILE_SIZE,
+                                 self.last_aim_tile[1]*c.TILE_SIZE))
         else:
-            x = ((self.last_aim_tile[0]*constants.TILE_SIZE) +
-                (constants.TILE_SIZE - globals.images["aim"].get_size()[0]) / 2)
-            y = ((self.last_aim_tile[1]*constants.TILE_SIZE) +
-                (constants.TILE_SIZE - globals.images["aim"].get_size()[1]) / 2)
-            globals.screen.blit(globals.images["aim"].get(), (x, y))
+            x = ((self.last_aim_tile[0]*c.TILE_SIZE) +
+                (c.TILE_SIZE - g.images["aim"].get_size()[0]) / 2)
+            y = ((self.last_aim_tile[1]*c.TILE_SIZE) +
+                (c.TILE_SIZE - g.images["aim"].get_size()[1]) / 2)
+            g.screen.blit(g.images["aim"].get(), (x, y))
             
     def update(self, time_diff):
         ''' Calls the superclass update and updates the state of the aim marker.
@@ -59,7 +61,7 @@ class Player(Entity):
         # Update screen whenever aim marker changes states
         if self.removing_tile != self.last_removing_tile:
             self.last_removing_tile = self.removing_tile
-            globals.force_update = True
+            g.force_update = True
         
         # Get which tile the player is looking at
         aim_tile = self.get_aim_tile()
@@ -70,16 +72,16 @@ class Player(Entity):
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
             try:
-                if constants.IMAGES[globals.map[x][y].type].destroy != None:
+                if c.IMAGES[g.map[x][y].type].destroy != None:
 #                     print "Standard timer set"
-                    self.remove_timer = constants.IMAGES[globals.map[x][y].type].destroy[0]
-                elif type(globals.map[x][y]) == tiles.MultiTilePointer:
+                    self.remove_timer = c.IMAGES[g.map[x][y].type].destroy[0]
+                elif type(g.map[x][y]) == tiles.MultiTilePointer:
 #                     print "Pointer timer set"
                     # Finding out which tile the pointer is pointing to, and if that has a destroy value
-                    head_x, head_y = globals.map[x][y].target
-                    multi_tile_head = globals.map[head_x][head_y]
-                    if constants.IMAGES[multi_tile_head.type].destroy != None:
-                        self.remove_timer = constants.IMAGES[multi_tile_head.type].destroy[0]
+                    head_x, head_y = g.map[x][y].target
+                    multi_tile_head = g.map[head_x][head_y]
+                    if c.IMAGES[multi_tile_head.type].destroy != None:
+                        self.remove_timer = c.IMAGES[multi_tile_head.type].destroy[0]
                     else:
                         self.remove_timer = None
                 else:
@@ -95,12 +97,12 @@ class Player(Entity):
         # Placing tile
         if self.placing_tile and not self.removing_tile:
             try:
-                if constants.IMAGES[globals.map[x][y].type].placeable:
+                if c.IMAGES[g.map[x][y].type].placeable:
                     # If there is a special case for placing tiles, use that. Otherwise, use the default
-                    if globals.map[x][y].type in constants.SPECIAL_PLACE_TILES.keys():
-                        tiles.make_tile(constants.SPECIAL_PLACE_TILES[globals.map[x][y].type], x, y)
+                    if g.map[x][y].type in c.SPECIAL_PLACE_TILES.keys():
+                        tiles.make_tile(c.SPECIAL_PLACE_TILES[g.map[x][y].type], x, y)
                     else:
-                        tiles.make_tile(constants.DEFAULT_PLACE_TILE, x, y)
+                        tiles.make_tile(c.DEFAULT_PLACE_TILE, x, y)
             # Ignore IndexErrors because the indices might be outside of the map
             except IndexError:
                 pass
@@ -123,15 +125,15 @@ class Player(Entity):
             # If the grab button is pressed
             self.toggle_grab = False
             if self.following_entity != None:
-                x, y = globals.special_entity_list[self.following_entity].get_tile()
-                if constants.IMAGES[globals.map[x][y].type].placeable:
-                    globals.special_entity_list[self.following_entity].target_coords = [x*constants.TILE_SIZE,
-                                                                                        y*constants.TILE_SIZE]
+                x, y = g.special_entity_list[self.following_entity].get_tile()
+                if c.IMAGES[g.map[x][y].type].placeable:
+                    g.special_entity_list[self.following_entity].target_coords = [x*c.TILE_SIZE,
+                                                                                        y*c.TILE_SIZE]
             else:
-                if globals.map[x][y].type == constants.PACKAGE_TILE_NAME:
-                    globals.map[x][y] = tiles.make_tile(constants.DEFAULT_TILE, x, y)
-                    globals.update_map = True
-                    units.Package(x*constants.TILE_SIZE, y*constants.TILE_SIZE, "player")
+                if g.map[x][y].type == c.PACKAGE_TILE_NAME:
+                    g.map[x][y] = tiles.make_tile(c.DEFAULT_TILE, x, y)
+                    g.update_map = True
+                    units.Package(x*c.TILE_SIZE, y*c.TILE_SIZE, "player")
         
     def tick(self):
         ''' What happens every tick. Counts down the remove block timer. 
@@ -175,23 +177,23 @@ class Player(Entity):
     def event_check(self, event):
         ''' Event checker. Checks if the event is a key press or release on the arrow keys.
         '''
-        if event.key == globals.key_dict["move_up"][0]:
+        if event.key == g.key_dict["move_up"][0]:
             self.y_minus = if_down(event.type)
-        elif event.key == globals.key_dict["move_down"][0]:
+        elif event.key == g.key_dict["move_down"][0]:
             self.y_plus = if_down(event.type)
-        elif event.key == globals.key_dict["move_left"][0]:
+        elif event.key == g.key_dict["move_left"][0]:
             self.x_minus = if_down(event.type)
-        elif event.key == globals.key_dict["move_right"][0]:
+        elif event.key == g.key_dict["move_right"][0]:
             self.x_plus = if_down(event.type)
         
-        elif event.key == globals.key_dict["place_tile"][0]:
+        elif event.key == g.key_dict["place_tile"][0]:
             self.placing_tile = if_down(event.type)
-        elif event.key == globals.key_dict["remove_tile"][0]:
+        elif event.key == g.key_dict["remove_tile"][0]:
             self.removing_tile = if_down(event.type)
-        elif (event.key == globals.key_dict["pick_up_tile"][0] and
+        elif (event.key == g.key_dict["pick_up_tile"][0] and
             event.type == pgl.KEYDOWN):
             self.toggle_grab = True
-        elif event.key == globals.key_dict["build_structure"][0]:
+        elif event.key == g.key_dict["build_structure"][0]:
             pass
             
 def if_down(down_or_up):

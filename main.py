@@ -7,7 +7,7 @@
     https://github.com/ZeeQyu/TileGame
     
     Main module, run this to start the program. Ties all the other modules together.
-    ffff
+    
     TileGame is an experimental tile-based game which serves the purpose of
         letting me learn to use PyGame in a good way and evolving my programming capabilities,
         as well as teaching me how to manage own code in multiple modules properly.
@@ -23,7 +23,9 @@ import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
-import tiles, graphics, maps, units, globals, players, interface, constants
+import tiles, graphics, maps, units, players, interface
+import globals as g
+import constants as c
 import pygame.locals as pgl
 
     
@@ -38,12 +40,12 @@ def main():
     # Make map
     maps.generate_map()
     # Initiate player
-    globals.special_entity_list["player"] = players.Player(globals.player_start_x, globals.player_start_y)
+    g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
     # Creates a window just the size to fit all the tiles in the map file.
-    pygame.display.set_icon(globals.images["icon"].get())
+    pygame.display.set_icon(g.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
-    globals.screen = pygame.display.set_mode((globals.width * constants.TILE_SIZE,
-                                              globals.height * constants.TILE_SIZE))
+    g.screen = pygame.display.set_mode((g.width * c.TILE_SIZE,
+                                              g.height * c.TILE_SIZE))
     
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
@@ -57,8 +59,8 @@ def main():
     # Main loop
     while True:
         # Make the screen update every frame
-        if constants.FORCE_UPDATE:
-            globals.force_update = True
+        if c.FORCE_UPDATE:
+            g.force_update = True
         # Event checker. Allows closing of the program and passes keypresses to the player instance
         for event in pygame.event.get():
             # Quit code
@@ -66,31 +68,31 @@ def main():
                 sys.exit()
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
                 # Create beetle with (default) space
-                if event.type == pgl.KEYDOWN and event.key == globals.key_dict["spawn_beetle"][0]:
-                    globals.entity_list.append(units.Beetle(globals.special_entity_list["player"].x,
-                                                            globals.special_entity_list["player"].y))
+                if event.type == pgl.KEYDOWN and event.key == g.key_dict["spawn_beetle"][0]:
+                    g.entity_list.append(units.Beetle(g.special_entity_list["player"].x,
+                                                            g.special_entity_list["player"].y))
                 # Duplicate all beetles with (default) D
-                elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["duplicate_beetles"][0]:
+                elif event.type == pgl.KEYDOWN and event.key == g.key_dict["duplicate_beetles"][0]:
                     # Make an empty list to temporarily store the added beetles, so no infinite loop appears
                     temp_entity_list = []
-                    for entity in globals.entity_list:
+                    for entity in g.entity_list:
                         if type(entity) == units.Beetle:
                             temp_entity_list.append(units.Beetle(entity.x, entity.y))
-                    globals.entity_list.extend(temp_entity_list)
+                    g.entity_list.extend(temp_entity_list)
                     temp_entity_list = []
                 # Remove all beetles
-                elif event.type == pgl.KEYDOWN and event.key == globals.key_dict["remove_beetles"][0]:
-                    # Loop backwards through the globals.entity_list
-                    for i in range(len(globals.entity_list)-1, -1, -1):
-                        if type(globals.entity_list[i]) == units.Beetle:
-                            del globals.entity_list[i]
-                    globals.force_update = True
+                elif event.type == pgl.KEYDOWN and event.key == g.key_dict["remove_beetles"][0]:
+                    # Loop backwards through the g.entity_list
+                    for i in range(len(g.entity_list)-1, -1, -1):
+                        if type(g.entity_list[i]) == units.Beetle:
+                            del g.entity_list[i]
+                    g.force_update = True
                 # Key configuration
-                elif event.type == pgl.KEYDOWN and event.key == constants.CONFIG_KEYS_KEY:
-                    skip_cycle = globals.force_update = True
+                elif event.type == pgl.KEYDOWN and event.key == c.CONFIG_KEYS_KEY:
+                    skip_cycle = g.force_update = True
                     interface.key_reconfig()
                 # Otherwise, check for if the player should move
-                globals.special_entity_list["player"].event_check(event)
+                g.special_entity_list["player"].event_check(event)
                 
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
@@ -113,36 +115,36 @@ def main():
             time_updates = 0
             time_start = time_now
         # What happens every tick?
-        if time_last_tick + constants.TICK_FREQ < time_now:
-            time_last_tick = time_last_tick + constants.TICK_FREQ
+        if time_last_tick + c.TICK_FREQ < time_now:
+            time_last_tick = time_last_tick + c.TICK_FREQ
             # Tick all the entites (let them do whatever they do every tick
-            for i in range(len(globals.entity_list)-1, -1, -1):
-                entity = globals.entity_list[i]
+            for i in range(len(g.entity_list)-1, -1, -1):
+                entity = g.entity_list[i]
                 entity.tick()
-            for entity in globals.special_entity_list.values():
+            for entity in g.special_entity_list.values():
                 entity.tick()
-            for tile in globals.tick_tiles:
-                globals.map[tile[0]][tile[1]].tick()
+            for tile in g.tick_tiles:
+                g.map[tile[0]][tile[1]].tick()
         # Make sure the loop doesn't go too quickly and bog the processor down
-        if time_last_sleep < constants.SLEEP_TIME:
-            time.sleep(constants.SLEEP_TIME -  time_last_sleep)
+        if time_last_sleep < c.SLEEP_TIME:
+            time.sleep(c.SLEEP_TIME -  time_last_sleep)
 
         # Update map buffer if needed
-        if globals.update_map:
-            globals.update_map = False
-            globals.force_update = True
-            globals.map_screen_buffer = maps.update_map()
+        if g.update_map:
+            g.update_map = False
+            g.force_update = True
+            g.map_screen_buffer = maps.update_map()
         # update all entities
         entity_has_moved = False
-        if globals.entity_list:
-            for i in range(len(globals.entity_list)-1, -1, -1):
-                entity = globals.entity_list[i]
+        if g.entity_list:
+            for i in range(len(g.entity_list)-1, -1, -1):
+                entity = g.entity_list[i]
                 entity.update(time_diff)
                 # Check if any of them have moved
                 if entity.has_moved():
                     entity_has_moved = True
-        if globals.special_entity_list:
-            for entity in globals.special_entity_list.values():
+        if g.special_entity_list:
+            for entity in g.special_entity_list.values():
                 # Update all enties and check for if any of them is a package that just finished moving.
                 # If so, skip the has_moved check.
                 if entity.update(time_diff) == "deleted":
@@ -151,18 +153,18 @@ def main():
                     entity_has_moved = True
         
         # If any entity moved, redraw the screen
-        if entity_has_moved or globals.force_update:
-            globals.force_update = False
+        if entity_has_moved or g.force_update:
+            g.force_update = False
             time_updates += 1
-            globals.screen.fill(constants.BACKGROUND_COLOR)
+            g.screen.fill(c.BACKGROUND_COLOR)
             # Draw the map buffer on the screen
-            globals.screen.blit(globals.map_screen_buffer, (0, 0))
+            g.screen.blit(g.map_screen_buffer, (0, 0))
             # Draw the entities
-            for i in range(len(globals.entity_list)-1, -1, -1):
-                entity = globals.entity_list[i]
+            for i in range(len(g.entity_list)-1, -1, -1):
+                entity = g.entity_list[i]
                 entity.paint()
-            for i in range(len(globals.special_entity_list.values())-1, -1, -1):
-                entity = globals.special_entity_list.values()[i]
+            for i in range(len(g.special_entity_list.values())-1, -1, -1):
+                entity = g.special_entity_list.values()[i]
                 entity.paint()
             menu.paint()
             # Update the display

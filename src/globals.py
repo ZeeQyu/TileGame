@@ -13,7 +13,6 @@ import pygame.locals as pgl
 
 from maps import generate_map
 import graphics
-import constants
 
 # Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None
