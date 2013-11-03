@@ -52,6 +52,7 @@ def main():
     # Get time once initially and make time variables
     time_last_tick = time_start = time_prev = time.clock()
     time_start = time_cycles = time_updates = time_last_sleep = 0
+    menu = interface.BuildMenu()
     
     # Main loop
     while True:
@@ -163,6 +164,7 @@ def main():
             for i in range(len(globals.special_entity_list.values())-1, -1, -1):
                 entity = globals.special_entity_list.values()[i]
                 entity.paint()
+            menu.paint()
             # Update the display
             pygame.display.flip()
         

@@ -112,29 +112,36 @@ class Menu(object):
     def paint(self):
         ''' Paints the menu at self.target.
         '''
-        globals.screen.blit(globals.images[background].get(), target)
+        globals.screen.blit(globals.images[self.background].get(), self.target)
         
 class BuildMenu(Menu):
     ''' Subclass of Menu, used for choosing which building you want to build at a location.
     '''
     def __init__(self):
+        self.update_position()
+        super(BuildMenu, self).__init__("menu_background", self.target)
+        
+    def update_position(self):
         player_x = globals.special_entity_list["player"].x
         player_y = globals.special_entity_list["player"].y
         # Put the target variable in the other end of the screen than the player
         background_width, background_height = globals.images["menu_background"].get_size()
-        if player_x > globals.width/2.0:
-            if player_y > globals.height/2.0:
-                target = (constants.BORDER_MARGIN, constants.BORDER_MARGIN)
+        if player_x > globals.width*constants.TILE_SIZE/2.0:
+            if player_y > globals.height*constants.TILE_SIZE/2.0:
+                self.target = (constants.BORDER_MARGIN, constants.BORDER_MARGIN)
             else:
-                target = (constants.BORDER_MARGIN,
-                          globals.height - background_height - constants.BORDER_MARGIN)
+                self.target = (constants.BORDER_MARGIN,
+                          globals.height * constants.TILE_SIZE - background_height - constants.BORDER_MARGIN)
         else:
-            if player_y > globals.height/2.0:
-                target = (globals.width - background_width - constants.BORDER_MARGIN,
+            if player_y > globals.height*constants.TILE_SIZE/2.0:
+                self.target = (globals.width * constants.TILE_SIZE - background_width - constants.BORDER_MARGIN,
                           constants.BORDER_MARGIN)
             else:
-                target = (globals.width - background_width - constants.BORDER_MARGIN,
-                          globals.height - background_height - constants.BORDER_MARGIN)
+                self.target = (globals.width * constants.TILE_SIZE - background_width - constants.BORDER_MARGIN,
+                          globals.height * constants.TILE_SIZE - background_height - constants.BORDER_MARGIN)
                 
-        super(BuildMenu, self).__init__("menu_background", )
-        
+    def paint(self):
+        ''' Updates the position of the menu and paints it.
+        '''
+        self.update_position()
+        super(BuildMenu, self).paint()

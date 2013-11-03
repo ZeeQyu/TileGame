@@ -189,7 +189,6 @@ def make_tile(type, x, y, target=None):
                 else:
                     make_tile("pointer", i, j, (x, y))
         
-        print "Made Head at ", x, y
         tile = MultiTileHead(type, x, y, width, height)
     else:
         timer = 0
