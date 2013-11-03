@@ -93,4 +93,27 @@ def key_reconfig():
             pygame.display.flip()
         # Sleep by a fixed amount, because this loop doesn't need to update very constantly 
         time.sleep(constants.TICK_FREQ)
+
+class Menu(object):
+    ''' Base class for on-screen menus that won't pause the game.
+    '''
+    def __init__(self, background, target):
+        ''' Creates a general-purpose menu.
         
+            "background" should be a string identifier pointing
+                towards a Graphics object in the globals.images dictionary
+                that should be used as a background.
+            "target" should be a tuple with an x and y coordinate in pixels
+                for where the menu's top left corner should be painted
+        '''
+        self.background = background
+        self.target = target
+        
+    def paint(self):
+        ''' Paints the menu at self.target.
+        '''
+        globals.screen.blit(globals.images[background].get(), target)
+        
+class BuildMenu(Menu):
+    ''' Subclass of Menu, used for
+    '''

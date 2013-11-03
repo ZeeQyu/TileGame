@@ -1,6 +1,6 @@
 ZeeQyu TODO list:
 	
-	Structures
+	Build Structures-Window
 	Multitile structures
 	HQ
 	Simple pathfinding (Going towards player) with robots?
@@ -14,16 +14,6 @@ ZeeQyu TODO list:
 	Projectiles (Entities moving f.ex 30 degrees) using some trigonometry function
 	Turrets shooting said projectiles at enemies
 	Projectile collision
-	
-		I'm sorry, I can't find any way to add roots to the stumps without it looking odd..
-		Hope they work as they are!
-			//Poke
-			
-		Well, could you make the stumps look less like poles in the ground?
-		Perhaps making very very small roots? I don't know, try to make roots look okay,
-		they don't have to be perfect.
-			//ZQ
-       
 
 Pokemania00 Graphics TODO list:
 	
