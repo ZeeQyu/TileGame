@@ -24,6 +24,8 @@ import pygame
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
 import tiles, graphics, maps, units, players, interface
+# globals and constants are renamed because they are used very very often.
+# This name change is constant through all modules that use them
 import globals as g
 import constants as c
 import pygame.locals as pgl
@@ -166,7 +168,7 @@ def main():
             for i in range(len(g.special_entity_list.values())-1, -1, -1):
                 entity = g.special_entity_list.values()[i]
                 entity.paint()
-            menu.paint()
+            #menu.paint()
             # Update the display
             pygame.display.flip()
         
