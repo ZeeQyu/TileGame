@@ -1,6 +1,6 @@
 Installation instructions to see the current progress:
 
-Advanced users: Make sure you've got python 2.7.*, PIL and pygame installed, clone the repo and run main.py.
+Advanced users: Make sure you've got python 2.7.* and pygame installed, download the repo zip, unzip, and run main.py.
 
 Detailed instructions (Windows):
 Install python 2.7.5 from http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi
