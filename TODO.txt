@@ -17,8 +17,6 @@ ZeeQyu TODO list:
 
 Pokemania00 Graphics TODO list:
 	
-	Make logo 16x16, to see if that fixes the graphical bug in the corner.
-		And give it another background than white
    	A white "point" marker for placing tiles. Not like 16x16, more like 3x3 or something
    	3x3 tile (48*48px) HQ that has an opening where packages can come out. 
    	5 Fallen trees, for when you chop down a tree 
@@ -27,8 +25,8 @@ Pokemania00 Graphics TODO list:
     Like 10 more grass in the same style (flowers and stuff, feel free to reuse some).
 	~5 random ores with miners.
 	3 32x32 megaores
-	6 16x32/32x32/48x32 megatrees
 	(With miners)
+	6 16x32/32x32/48x32 megatrees
 	Make logo background green with grass texture
 	A less dark robot than the current one
 	Bullet factory. (32x32)

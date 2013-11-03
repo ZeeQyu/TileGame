@@ -186,3 +186,6 @@ CONFIG_KEYS_ERROR_MESSAGE = "Sorry, you already used that key."
 CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 # Time in (~)ticks for the "invalid key" text to be displayed each time
 CONFIG_KEYS_INVALID_TIMER = 15
+
+# Menu contants
+BORDER_MARGIN = 10

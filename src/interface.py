@@ -115,5 +115,26 @@ class Menu(object):
         globals.screen.blit(globals.images[background].get(), target)
         
 class BuildMenu(Menu):
-    ''' Subclass of Menu, used for
+    ''' Subclass of Menu, used for choosing which building you want to build at a location.
     '''
+    def __init__(self):
+        player_x = globals.special_entity_list["player"].x
+        player_y = globals.special_entity_list["player"].y
+        # Put the target variable in the other end of the screen than the player
+        background_width, background_height = globals.images["menu_background"].get_size()
+        if player_x > globals.width/2.0:
+            if player_y > globals.height/2.0:
+                target = (constants.BORDER_MARGIN, constants.BORDER_MARGIN)
+            else:
+                target = (constants.BORDER_MARGIN,
+                          globals.height - background_height - constants.BORDER_MARGIN)
+        else:
+            if player_y > globals.height/2.0:
+                target = (globals.width - background_width - constants.BORDER_MARGIN,
+                          constants.BORDER_MARGIN)
+            else:
+                target = (globals.width - background_width - constants.BORDER_MARGIN,
+                          globals.height - background_height - constants.BORDER_MARGIN)
+                
+        super(BuildMenu, self).__init__("menu_background", )
+        
