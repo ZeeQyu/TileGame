@@ -193,6 +193,12 @@ class Player(Entity):
         elif (event.key == g.key_dict["pick_up_tile"][0] and
             event.type == pgl.KEYDOWN):
             self.toggle_grab = True
+        elif (event.key == g.key_dict["plant_megatree"][0]):
+            x, y = self.get_tile()
+            width, height = c.IMAGES["megatree"].multi_tile
+            if tiles.area_is_free(x, y + 2, width, height):
+                tiles.make_tile("megatree", x, y + 2)
+            print "Tried making megatree"
         elif event.key == g.key_dict["build_structure"][0]:
             pass
             
