@@ -2,7 +2,6 @@ ZeeQyu TODO list:
 	
 	Build Structures-Window
 	Multitile structures
-	HQ
 	Simple pathfinding (Going towards player) with robots?
 	Simple enemies that try to attack you
 	Health

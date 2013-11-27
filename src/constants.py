@@ -11,7 +11,7 @@
 import pygame.locals as pgl
 
 # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
-FORCE_UPDATE = False
+FORCE_UPDATE = True
 
 class Img(object):
     ''' Small class for keeping track of data related to different images.
