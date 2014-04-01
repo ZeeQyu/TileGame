@@ -120,30 +120,47 @@ class BuildMenu(Menu):
     ''' Subclass of Menu, used for choosing which building you want to build at a location.
     '''
     def __init__(self):
+        self.target_x = self.target_y = "Empty"
         self.update_position()
-        super(BuildMenu, self).__init__("menu_background", self.target)
+        super().__init__("menu_background", self.target)
+
         
     def update_position(self):
         player_x = g.special_entity_list["player"].x
         player_y = g.special_entity_list["player"].y
-        # Put the target variable in the other end of the screen than the player
+        # Put the target variable in the end of the screen the player isn't in.
         background_width, background_height = g.images["menu_background"].get_size()
-        if player_x > g.width*c.TILE_SIZE/2.0:
-            if player_y > g.height*c.TILE_SIZE/2.0:
-                self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
-            else:
-                self.target = (c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
-        else:
-            if player_y > g.height*c.TILE_SIZE/2.0:
-                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          c.BORDER_MARGIN)
-            else:
-                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+        # X Coordinate
+        if player_x > g.width*c.TILE_SIZE/3.0*2.0:
+            self.target_x = c.BORDER_MARGIN
+        elif player_x > g.width*c.TILE_SIZE/3.0:
+            self.target_x = g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN
+        elif self.target_x is "Empty":
+            self.target_x = c.BORDER_MARGIN
+        # Y Coordinate
+        if player_y > g.height*c.TILE_SIZE/3.0*2.0:
+            self.target_y = c.BORDER_MARGIN
+        elif player_y > g.height*c.TILE_SIZE/3.0:
+            self.target_y = g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN
+        elif self.target_y is "Empty":
+            self.target_y = c.BORDER_MARGIN
+        # if player_x > g.width*c.TILE_SIZE/3.0*2.0:
+        #     if player_y > g.height*c.TILE_SIZE/3.0*2.0:
+        #         self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
+        #     elif player_y < g.height*c.TILE_SIZE/3.0:
+        #         self.target = (c.BORDER_MARGIN,
+        #                   g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+        # elif
+        #     if player_y > g.height*c.TILE_SIZE/3.0*2.0:
+        #         self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
+        #                   c.BORDER_MARGIN)
+        #     elif player_y < g.height*c.TILE_SIZE/3.0:
+        #         self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
+        #                   g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+        self.target = (self.target_x, self.target_y)
                 
     def paint(self):
         ''' Updates the position of the menu and paints it.
         '''
         self.update_position()
-        super(BuildMenu, self).paint()
+        super().paint()

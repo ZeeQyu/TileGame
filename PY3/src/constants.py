@@ -11,7 +11,10 @@
 import pygame.locals as pgl
 
 # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
-FORCE_UPDATE = True
+FORCE_UPDATE = False
+
+# Activates various debug callouts that normally should be on, like fps meter.
+NORMAL_DEBUG = False
 
 class Img(object):
     ''' Small class for keeping track of data related to different images.

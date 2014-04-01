@@ -16,7 +16,7 @@
 '''
 
 # import normal modules
-import sys, os, time, shutil
+import sys, os, time
 
 # Third party modules
 import pygame
@@ -112,7 +112,8 @@ def main():
         if time_start + 1 < time_now:
             if time_updates == 1 and time_cycles == 1:
                 time_updates = 1.0 / (time_diff)
-            print(time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps")
+            if c.NORMAL_DEBUG:
+                print(time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps")
             time_cycles = 0
             time_updates = 0
             time_start = time_now
@@ -129,7 +130,7 @@ def main():
                 g.map[tile[0]][tile[1]].tick()
         # Make sure the loop doesn't go too quickly and bog the processor down
         if time_last_sleep < c.SLEEP_TIME:
-            time.sleep(c.SLEEP_TIME -  time_last_sleep)
+            time.sleep(c.SLEEP_TIME - time_last_sleep)
 
         # Update map buffer if needed
         if g.update_map:

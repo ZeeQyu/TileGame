@@ -25,7 +25,8 @@ class Graphics(object):
             Will load the corresponding image from the /res folder.
         '''
         if type(name) == str:
-            print(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
+            if c.NORMAL_DEBUG:
+                print(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
             self.image = pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
         elif type(name) == pygame.Surface:
             self.image = name 
