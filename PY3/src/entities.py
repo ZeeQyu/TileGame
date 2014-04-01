@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/entities.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -10,9 +10,10 @@
     Also handles key press events for movement of the player.
 '''
 
-import pygame
+import pygame, sys, os
 from pygame import Rect
 
+sys.path.append(os.path.join(os.getcwd(), "sys"))
 import globals as g
 import constants as c
 from graphics import Graphics

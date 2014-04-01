@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/tiles.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -11,10 +11,12 @@
     They have a texture associated, the type attribute 
     corresponds to the c.py IMAGES dictionary paths.
 '''
+import os, sys
 from random import choice, randint
 
 import pygame
 
+sys.path.append(os.path.join(os.getcwd(), "sys"))
 import entities, units
 import globals as g
 import constants as c

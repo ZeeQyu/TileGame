@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/maps.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -11,8 +11,11 @@
     which is used for painting the game world on the screen.
     It can be edited easily by replacing an index with a new tile instance.
 '''
+import os, sys
+
 import pygame
 
+sys.path.append(os.path.join(os.getcwd(), "sys"))
 import tiles
 import constants as c
 import globals as g
@@ -26,7 +29,7 @@ def generate_map():
         (5 items) If no starting point is found, return 0, 0 as the starting point. 
     '''
     # Load the image
-    map_image = pygame.image.load("res\\" + c.IMAGES["map"].png)
+    map_image = pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES["map"].png))
     g.map = []
     # Variable for holding multi_tiles until after the primary generation, because 
     multi_tiles = []

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/graphics.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -9,9 +9,11 @@
     Module containing the Graphics class.
     Uses pygame image objects.
 '''
+import os, sys
 
 import pygame
 
+sys.path.append(os.path.join(os.getcwd(), "sys"))
 import constants as c
    
 class Graphics(object):
@@ -23,7 +25,8 @@ class Graphics(object):
             Will load the corresponding image from the /res folder.
         '''
         if type(name) == str:
-            self.image = pygame.image.load("res\\" + c.IMAGES[name].png)
+            print(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
+            self.image = pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
         elif type(name) == pygame.Surface:
             self.image = name 
     

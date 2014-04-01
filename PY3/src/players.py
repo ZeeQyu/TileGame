@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /src/players.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -9,7 +9,9 @@
     Module containing the player class.
     Also handles key press events for movement of the player.
 '''
+import os, sys
 
+sys.path.append(os.path.join(os.getcwd(), "sys"))
 import units, tiles
 import pygame.locals as pgl
 from entities import Entity

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 ''' Module /main.py
-    TileGame
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -16,13 +16,13 @@
 '''
 
 # import normal modules
-import sys, os, time
+import sys, os, time, shutil
 
 # Third party modules
 import pygame
 
 # make sure the own modules in /src can be imported and import them.
-sys.path.append(os.getcwd() + "\\src")
+sys.path.append(os.path.join(os.getcwd(), "src"))
 import tiles, graphics, maps, units, players, interface
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
@@ -168,10 +168,11 @@ def main():
             for i in range(len(list(g.special_entity_list.values()))-1, -1, -1):
                 entity = list(g.special_entity_list.values())[i]
                 entity.paint()
-            #menu.paint()
+            menu.paint()
             # Update the display
             pygame.display.flip()
         
 if __name__ == '__main__':
     main()
+            
     
