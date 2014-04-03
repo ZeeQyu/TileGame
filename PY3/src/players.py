@@ -101,10 +101,7 @@ class Player(Entity):
             try:
                 if c.IMAGES[g.map[x][y].type].placeable:
                     # If there is a special case for placing tiles, use that. Otherwise, use the default
-                    if g.map[x][y].type in list(c.SPECIAL_PLACE_TILES.keys()):
-                        tiles.make_tile(c.SPECIAL_PLACE_TILES[g.map[x][y].type], x, y)
-                    else:
-                        tiles.make_tile(c.DEFAULT_PLACE_TILE, x, y)
+                    tiles.make_tile(c.DEFAULT_PLACE_TILE, x, y)
             # Ignore IndexErrors because the indices might be outside of the map
             except IndexError:
                 pass

@@ -125,17 +125,21 @@ IMAGES = {
          "rock": Img("rockTile.png", color_code=(0, 0, 0), random=True, collides=True),
          "rock2": Img("rockTile2.png"),
          "rock3": Img("rockTile3.png"),
-         "ore": Img("ore.png", color_code=(255, 216, 0), random=True),
+         "ore": Img("ore.png", color_code=(255, 216, 0), random=True, placeable=True),
          "ore2": Img("ore2.png"),
          "ore3": Img("ore3.png"),
          "ore4": Img("ore4.png"),
          "ore5": Img("ore5.png"),
+         "ore-sapling": Img("flower.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
+         "ore-tree": Img("flower2.png", collides=True, destroy=[10, "ore-stump"]),
+         "ore-stump": Img("flower3.png", destroy=[15, "ore"]),
          "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
          "large_ore2": Img("large_ore2.png"),
          "large_ore3": Img("large_ore3.png"),
          "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
          "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
+         "ore-package": Img("placeholder.png"),
          
          "pointer": Img("emptyPixel.png"),
          "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -167,8 +171,13 @@ else:
 # The identifier of the tile that should be used
 # when the map.png decoding fails. This tile should always have placeable=True.
 DEFAULT_TILE = "grass"
+# Combinations of tiles that, when placed, gives a specific tile
+# Syntax is {"tile_to_be_placed+tile_being_placed_on": "resulting tile"}
+SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
+                       "sapling+ore": "ore-sapling",
+                       "package_tile+ore": "ore-package"}
+
 # The tile that is placed with the players place key
-SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 
 DEFAULT_PLACE_TILE = "sapling"
 
 # Set to true if all textures should be non-random.

@@ -159,7 +159,7 @@ def area_is_free(x, y, width, height):
     return is_free
     
 def make_tile(type, x, y, target=None):
-    ''' Function to create a tile of the appropriate type (Standard, Random and, later, multi-tile)
+    ''' Function to create a tile of the appropriate type (Standard, Random and multi-tile)
         Should be used instead of directly creating a specific tile unless it is certain which type
         is needed.
         
@@ -171,6 +171,10 @@ def make_tile(type, x, y, target=None):
             a pointer. It should be left empty if the tile isn't a multi-tile pointer.
     '''
   
+    # Check if where you're placing the tile is subject to a special tile.
+    if g.map[x][y]:
+        if c.SPECIAL_PLACE_TILES.__contains__(type + "+" + str(g.map[x][y].type)):
+            return make_tile(c.SPECIAL_PLACE_TILES[type + "+" + str(g.map[x][y].type)], x, y)
 
     # If it is a multi-tile
     if c.IMAGES[type].multi_tile != None:

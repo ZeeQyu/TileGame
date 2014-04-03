@@ -179,12 +179,10 @@ class Package(FollowingEntity):
             
         if self.target_coords == [int(self.x), int(self.y)]:
             x, y = self.get_tile()
-            g.map[x][y] = tiles.make_tile(self.tile, x, y)
-            g.update_map = True
+            tiles.make_tile(self.tile, x, y)
             if self.attached_entity != None:
                 g.special_entity_list[self.attached_entity].following_entity = None
             del g.special_entity_list[self.attached_entity + "-" + self.image]
             return "deleted"
         super(Package, self).update(time_diff)
-        
-        
+
