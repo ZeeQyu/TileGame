@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/entities.py
+""" Module /src/entities.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
@@ -8,7 +8,7 @@
     
     Module containing the player class.
     Also handles key press events for movement of the player.
-'''
+"""
 
 import pygame, sys, os
 from pygame import Rect
@@ -19,23 +19,23 @@ import constants as c
 from graphics import Graphics
 
 class InvalidCallParameterException(Exception):
-    ''' A fancy class name for if the programmer (me) somehow mistook what variables
+    """ A fancy class name for if the programmer (me) somehow mistook what variables
         should be passed to the __init__ function in the Entity class in entities.py 
-    ''' 
+    """ 
     pass
 
 class Entity(object):
-    ''' Entity base class for all the other entities to build upon.
-    '''
+    """ Entity base class for all the other entities to build upon.
+    """
     
     def __init__(self, x, y, image, movement_speed, rotates = True, collides = True, wall_collides = True):
 
-        ''' "x" and "y" should be ints.
+        """ "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
             "width_or_size" should either be an int denoting the width of the entity
             or a tuple containing both width and height in that order.
             In the latter case, height should be left empty
-        '''
+        """
         self.x = x
         self.y = y
         # Getting width and height from image file
@@ -69,13 +69,13 @@ class Entity(object):
         self.following_entity = None
         
     def update(self, delta_remainder):
-        ''' Updates the entity location if any of the plus and minus variables are set to True
+        """ Updates the entity location if any of the plus and minus variables are set to True
             "delta_remainder" should be the time since the last update in seconds.
             
             moves the enitity one pixel at the time if the delta_remainder is too large
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
-        '''
+        """
         # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
         if self.movement_speed > 0:
             delta = 0
@@ -131,14 +131,14 @@ class Entity(object):
             self.last_angle = self.angle
             
     def tick(self):
-        ''' Dummy method for what happens every tick
-        '''
+        """ Dummy method for what happens every tick
+        """
         pass
     
             
     def paint(self):
-        ''' Paints the player on the screen
-        '''
+        """ Paints the player on the screen
+        """
         if self.rotates:
             # Create a key with the current entity string and the angle
             key = self.image
@@ -163,12 +163,12 @@ class Entity(object):
             g.screen.blit(image, (int(self.x), int(self.y)))
         
     def has_moved(self, update=True):
-        ''' Compares an old x and y value with the current one. 
+        """ Compares an old x and y value with the current one. 
             If the value has changed, the unit has moved to another pixel and should be redrawn.
             update should be 1 if you want to update the checking to a new pixel and 0 if you don't
             
             returns True if the player has changed pixel and False if it hasn't
-        '''
+        """
 
         if self.old_x != int(self.x) or self.old_y != int(self.y):
             if update:
@@ -179,14 +179,14 @@ class Entity(object):
             return False
             
     def get_tile(self):
-        ''' Returns the coordinates of tile the entity is currently on (x and y) 
-        ''' 
+        """ Returns the coordinates of tile the entity is currently on (x and y) 
+        """ 
         return int((self.x + self.width/2) / float(c.TILE_SIZE)), int((self.y + self.height/2) / float(c.TILE_SIZE))
     
     def corner_in_tile(self, tile):
-        ''' Checks if any of the entities corners are inside of the specified tile.
+        """ Checks if any of the entities corners are inside of the specified tile.
             "tile" should be a tiles.Tile object
-        '''
+        """
         # Get the corners of the entity
         corners = [(self.x, self.y),
                    (self.x+self.width, self.y),
@@ -203,8 +203,8 @@ class Entity(object):
             return False
         
     def update_collision_rects(self):
-        ''' Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
-        '''
+        """ Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
+        """
         self.col_right = Rect(self.x + self.width - 1, 
                               self.y + 1,
                               1,
@@ -226,9 +226,9 @@ class Entity(object):
                                1)
         
     def collision_check(self):
-        ''' Method for checking if the entity has run into a tree or something
+        """ Method for checking if the entity has run into a tree or something
             and move it back a pixel if it has
-        '''
+        """
         if self.wall_collides:
             # Move the entity inside of the window (border collision)
             entity_rect = Rect(self.x, self.y, self.width,self.height)
@@ -267,8 +267,8 @@ class Entity(object):
                 self.y += 1
 
 def free_of_entities(tile):
-    ''' A function to check if any of the entities has any of its corners inside the specified tile.
-    '''
+    """ A function to check if any of the entities has any of its corners inside the specified tile.
+    """
     free_of_entities = True
     # Loop through all normal entities.
     for entity in g.entity_list:

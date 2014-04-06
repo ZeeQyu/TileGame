@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /main.py
+""" Module /main.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
@@ -13,7 +13,7 @@
         as well as teaching me how to manage own code in multiple modules properly.
     Features are added at an irregular basis. Check back now and then to the website written above.
     Ideas and goals can be found in the concept.txt file
-'''
+"""
 
 # import normal modules
 import sys, os, time
@@ -32,10 +32,10 @@ import pygame.locals as pgl
 
     
 def main():
-    ''' Main function, initalizes various variables and contains the main program loop.
+    """ Main function, initalizes various variables and contains the main program loop.
         Should not be called any other way than running the file.
         Takes no arguments and returns nothing.
-    '''
+    """
     # initialize pygame
     pygame.init()
     
@@ -56,7 +56,7 @@ def main():
     # Get time once initially and make time variables
     time_last_tick = time_start = time_prev = time.clock()
     time_start = time_cycles = time_updates = time_last_sleep = 0
-    menu = interface.BuildMenu()
+    g.special_entity_list["build_menu"] = interface.BuildMenu()
     
     # Main loop
     while True:
@@ -169,7 +169,7 @@ def main():
             for i in range(len(list(g.special_entity_list.values()))-1, -1, -1):
                 entity = list(g.special_entity_list.values())[i]
                 entity.paint()
-            menu.paint()
+
             # Update the display
             pygame.display.flip()
         

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/tiles.py
+""" Module /src/tiles.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
@@ -10,7 +10,7 @@
     Tiles are the main building block of the game world.
     They have a texture associated, the type attribute 
     corresponds to the c.py IMAGES dictionary paths.
-'''
+"""
 import os, sys
 from random import choice, randint
 
@@ -21,22 +21,22 @@ import entities, units
 import globals as g
 import constants as c
 class AreaNotFreeException(Exception):
-    ''' Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
+    """ Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
         make_tile() is called.
-    '''
+    """
     pass
 
 class Tile(object):
-    ''' Tile object containing the type and location of the tile.
-    '''
+    """ Tile object containing the type and location of the tile.
+    """
     
     def __init__(self, type, x, y):
-        ''' Simple initalizer.
+        """ Simple initalizer.
             "type" should be a string from the list of keys in the c.py IMAGES dictionary.
             "x" and "y" should be ints and can be used for finding out where a tile belongs if
                 you copy the tile away from the map array in main.py. They are not normally used.
             "timer" should be the time until time_up() is called. If this is the base class
-        '''
+        """
         # Type of tile, for identification purposes.
         # Can be accessed directly, but not for image getting purposes
         # get_image() should be used instead
@@ -60,30 +60,30 @@ class Tile(object):
             self.image = self.type 
         
     def tick(self):
-        ''' Method for counting down the block replacement timer.
+        """ Method for counting down the block replacement timer.
             Should only be called if the tile is a transforming tile (for example, sapling)
-        '''
+        """
         if self.timer < 0:
             self.time_up()
         else:
             self.timer -= 1
     
     def rect(self):
-        ''' Returns a pygame.Rect object with the same dimensions and location as the tile
-        '''
+        """ Returns a pygame.Rect object with the same dimensions and location as the tile
+        """
         return pygame.Rect(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
                            c.TILE_SIZE, c.TILE_SIZE)
     
     def get_image(self):
-        ''' Returns the random texture string or just the image
-        ''' 
+        """ Returns the random texture string or just the image
+        """ 
         return self.image
 
     
     def time_up(self):
-        ''' The function that should be called when self.timer has reached 0
+        """ The function that should be called when self.timer has reached 0
             Exchanges this tile for the appropriate tile specified in the c.IMAGES variable
-        '''
+        """
         # Check if the entity evolves
         if c.IMAGES[self.type].evolve != None:
             has_entities = False
@@ -98,50 +98,50 @@ class Tile(object):
             g.tick_tiles.remove([self.x, self.y])
         
     def __str__(self):
-        ''' Returns tile type and location (all attributes)
-        '''
+        """ Returns tile type and location (all attributes)
+        """
         template = "{id} tile of type {type} at x {x} y {y} with evolve timer {timer}"
         return template.format(id=self.type, x=self.x, y=self.y,
                                type=type(self), timer=self.timer)
     
     def __eq__(self, other):
-        ''' Compares the type attribute
-        '''
+        """ Compares the type attribute
+        """
         return self.type == other.type
     
     def __ne__(self, other):
-        ''' Compares the type attribute
-        '''
+        """ Compares the type attribute
+        """
         return self.type != other.type
 
 class MultiTileHead(Tile):
-    ''' The top-left tile of any multi-tile. Paints the actual image
-    '''
+    """ The top-left tile of any multi-tile. Paints the actual image
+    """
     def __init__(self, type, x, y, width, height):
         super(MultiTileHead, self).__init__(type, x, y)
         self.width = width
         self.height = height
     
 class MultiTilePointer(Tile):
-    ''' The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel.
-    '''
+    """ The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel.
+    """
     def __init__(self, type, x, y, head_x, head_y):
         super(MultiTilePointer, self).__init__(type, x, y)
         self.target = head_x, head_y
         
     def __str__(self):
-        ''' Returns the normal values and the coordinates of the head.
-        '''
+        """ Returns the normal values and the coordinates of the head.
+        """
         template = "{id} tile of type {type} at x {x} y {y} pointing at {target}"
         return template.format(id=self.type, x=self.x, y=self.y,
                                type=type(self), target=self.target)
         
 def area_is_free(x, y, width, height):
-    ''' Checks an area for if a multitile can be placed there
+    """ Checks an area for if a multitile can be placed there
         "x" and "y" is the top left corner tile in the area.
         "width" and "height" is the width and height of the area 
             to be checked. 
-    '''
+    """
     is_free = True
 #     for key in g.special_entity_list.keys():
 #         if "areapackage" in key:
@@ -159,7 +159,7 @@ def area_is_free(x, y, width, height):
     return is_free
     
 def make_tile(type, x, y, target=None):
-    ''' Function to create a tile of the appropriate type (Standard, Random and multi-tile)
+    """ Function to create a tile of the appropriate type (Standard, Random and multi-tile)
         Should be used instead of directly creating a specific tile unless it is certain which type
         is needed.
         
@@ -169,7 +169,7 @@ def make_tile(type, x, y, target=None):
         "x" and "y" are the indices of the tile in the "g.map" array
         "target" should be a tuple of coordinates in the tile array if the tile being created is
             a pointer. It should be left empty if the tile isn't a multi-tile pointer.
-    '''
+    """
   
     # Check if where you're placing the tile is subject to a special tile.
     if g.map[x][y]:

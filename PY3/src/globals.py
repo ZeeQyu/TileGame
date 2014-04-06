@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/globals.py
+""" Module /src/globals.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
 
     Module for initating global variables that should be available in all modules
-'''
+"""
 import os, sys
 
 import pygame
@@ -43,9 +43,9 @@ map_screen_buffer = None
 update_map = True
 
 def update_key_dict():
-    ''' Copies the key_list list of lists and converts it to a dictionary, key_dict.
+    """ Copies the key_list list of lists and converts it to a dictionary, key_dict.
         Uses the first index in each index as the key and the other values in a list as the value. 
-    '''
+    """
     for item in key_list:
         key_dict[item[0]] = item[1:]
 

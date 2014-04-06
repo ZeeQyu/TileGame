@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/constants.py
+""" Module /src/constants.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module containing various constants and the important IMAGES dictionary that is used to load maps and images.
-'''
+"""
 import pygame.locals as pgl
 
 # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
@@ -17,13 +17,13 @@ FORCE_UPDATE = False
 NORMAL_DEBUG = False
 
 class Img(object):
-    ''' Small class for keeping track of data related to different images.
+    """ Small class for keeping track of data related to different images.
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
-    '''
+    """
     def __init__(self, png, color_code=None, random=False, collides=False,
                  placeable=False, destroy=None, evolve=None, grabbable=None,
                  multi_tile=None):
-        ''' Initializes a tile image or other image. Should be stored in a dictionary where the
+        """ Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
                 Leave everything else blank if this isn't a tile.
@@ -49,7 +49,7 @@ class Img(object):
                 it shouldn't be grabbable.
             "multi_tile" should be a tuple of the width and height in tiles of the tile if
                 it is a multi-tile. (example: (3, 3))
-        '''
+        """
         self.type = type
         self.png = png
         self.color_code = color_code
@@ -188,7 +188,8 @@ TILE_SIZE = 16
 # Entities
 # Names of special entities
 PLAYER_NAME = "player"
-PACKAGE_TILE_NAME = "package_tile"
+PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
+                      "ore-package": "ore"}
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
 BEETLE_MOVEMENT_SPEED = 70

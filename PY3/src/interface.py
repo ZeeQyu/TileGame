@@ -1,28 +1,27 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/interface.py
+""" Module /src/interface.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module handling interfaces, menus and prompts
-'''
+"""
 import os, sys, time
 
 import pygame
 import pygame.locals as pgl
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 import constants as c
 import globals as g
 
 WHITE = (255, 255, 255)
 
 def key_reconfig():
-    ''' Function for reconfiguring key mappings. Freezes the screen and darkens it and displays
+    """ Function for reconfiguring key mappings. Freezes the screen and darkens it and displays
         prompts for telling the user which key should be inputted next. Closes when done 
-    '''
+    """
     set_key = None
     screen_updated = True
     invalid_key_timer = 0
@@ -97,70 +96,73 @@ def key_reconfig():
         time.sleep(c.TICK_FREQ)
 
 class Menu(object):
-    ''' Base class for on-screen menus that won't pause the game.
-    '''
+    """ Base class for on-screen menus that won't pause the game.
+    """
     def __init__(self, background, target):
-        ''' Creates a general-purpose menu.
+        """ Creates a general-purpose menu.
         
             "background" should be a string identifier pointing
                 towards a Graphics object in the g.images dictionary
                 that should be used as a background.
             "target" should be a tuple with an x and y coordinate in pixels
                 for where the menu's top left corner should be painted
-        '''
+        """
         self.background = background
         self.target = target
-        
-    def paint(self):
-        ''' Paints the menu at self.target.
-        '''
-        g.screen.blit(g.images[self.background].get(), self.target)
-        
-class BuildMenu(Menu):
-    ''' Subclass of Menu, used for choosing which building you want to build at a location.
-    '''
-    def __init__(self):
-        self.target_x = self.target_y = "Empty"
-        self.update_position()
-        super().__init__("menu_background", self.target)
 
-        
     def update_position(self):
+        """ Updates the position of the Menu based on where the player is.
+        """
         player_x = g.special_entity_list["player"].x
         player_y = g.special_entity_list["player"].y
         # Put the target variable in the end of the screen the player isn't in.
         background_width, background_height = g.images["menu_background"].get_size()
+
         # X Coordinate
-        if player_x > g.width*c.TILE_SIZE/3.0*2.0:
+        if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
             self.target_x = c.BORDER_MARGIN
-        elif player_x > g.width*c.TILE_SIZE/3.0:
+        elif player_x < g.width * c.TILE_SIZE / 3.0:
             self.target_x = g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN
         elif self.target_x is "Empty":
             self.target_x = c.BORDER_MARGIN
+
         # Y Coordinate
-        if player_y > g.height*c.TILE_SIZE/3.0*2.0:
+        if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
             self.target_y = c.BORDER_MARGIN
-        elif player_y > g.height*c.TILE_SIZE/3.0:
+        elif player_y < g.height * c.TILE_SIZE / 3.0:
             self.target_y = g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN
         elif self.target_y is "Empty":
             self.target_y = c.BORDER_MARGIN
-        # if player_x > g.width*c.TILE_SIZE/3.0*2.0:
-        #     if player_y > g.height*c.TILE_SIZE/3.0*2.0:
-        #         self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
-        #     elif player_y < g.height*c.TILE_SIZE/3.0:
-        #         self.target = (c.BORDER_MARGIN,
-        #                   g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
-        # elif
-        #     if player_y > g.height*c.TILE_SIZE/3.0*2.0:
-        #         self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-        #                   c.BORDER_MARGIN)
-        #     elif player_y < g.height*c.TILE_SIZE/3.0:
-        #         self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-        #                   g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+
+        # Set the variable the outside refers to.
         self.target = (self.target_x, self.target_y)
-                
+
+    def tick(self):
+        """ Dummy methods
+        """
+        pass
+    
+    def update(self, time_diff):
+        """ Dummy method for
+        """
+        pass
+
+    def has_moved(self):
+        pass
+    
     def paint(self):
-        ''' Updates the position of the menu and paints it.
-        '''
+        """ Updates the position of the menu and paints it at that position
+        """
         self.update_position()
-        super().paint()
+        g.screen.blit(g.images[self.background].get(), self.target)
+
+
+class BuildMenu(Menu):
+    """ Subclass of Menu, used for choosing which building you want to build at a location.
+    """
+    def __init__(self):
+        """ Sets the menu up.
+        """
+        self.target_x = self.target_y = "Empty"
+        self.update_position()
+        super().__init__("menu_background", self.target)
