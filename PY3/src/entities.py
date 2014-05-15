@@ -67,6 +67,8 @@ class Entity(object):
         self.last_angle = 0
         # The name in g.special_entity_list of the FollowingEntity following this entity.
         self.following_entity = None
+        # If the entity has collided since last check.
+        self.collided = False
         
     def update(self, delta_remainder):
         """ Updates the entity location if any of the plus and minus variables are set to True
@@ -238,6 +240,7 @@ class Entity(object):
                 self.x = entity_rect.left
                 self.y = entity_rect.top
 
+        collided = False
         if self.collides:
             # Make sure collision rectangles are up to date
             self.update_collision_rects()
@@ -255,16 +258,21 @@ class Entity(object):
                         pass
                     except:
                         raise
-                    
             # Check if each of the zones collides with any of the tiles
             if self.col_left.collidelist(checked_tiles) != -1:
                 self.x += 1
+                collided = True
             if self.col_right.collidelist(checked_tiles) != -1:
                 self.x -= 1
+                collided = True
             if self.col_bottom.collidelist(checked_tiles) != -1:
                 self.y -= 1
+                collided = True
             if self.col_top.collidelist(checked_tiles) != -1:
                 self.y += 1
+                collided = True
+        self.collided = collided
+
 
 def free_of_entities(tile):
     """ A function to check if any of the entities has any of its corners inside the specified tile.

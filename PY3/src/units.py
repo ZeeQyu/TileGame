@@ -78,7 +78,7 @@ class FollowingEntity(Entity):
         Made for packages, could potentially be reused.
     """     
     def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
-                 rotates=True, collides=False, wall_collides=True, custom_name=None):
+                 rotates=True, collides=True, wall_collides=True, custom_name=None):
         """ Initalizes the FollowingEntity. 
         """
         super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,
@@ -99,20 +99,19 @@ class FollowingEntity(Entity):
             g.special_entity_list[attached_entity + "-" + image] = self
         
     def update(self, time_diff):
-        super(FollowingEntity, self).update(time_diff)
-        if self.target_coords == None and self.attached_entity != None:
+        if self.target_coords is None and self.attached_entity is not None:
             # The horizontal and vertical distances between the middle of FollowingEntity
             # and the middle of attached_entity.
             x_dist = (self.x + self.width/2) - (g.special_entity_list[self.attached_entity].x +
-                                                   g.special_entity_list[self.attached_entity].width / 2)
+                                                g.special_entity_list[self.attached_entity].width / 2)
             y_dist = (self.y + self.height/2) - (g.special_entity_list[self.attached_entity].y +
-                                                    g.special_entity_list[self.attached_entity].height / 2)        
+                                                 g.special_entity_list[self.attached_entity].height / 2)
             # The diagonal distance between the entities.
             dist = math.hypot(self.x - g.special_entity_list[self.attached_entity].x,
                               self.y - g.special_entity_list[self.attached_entity].y)
             pull_max = self.pull_max
             pull_min = self.pull_min
-        elif self.target_coords != None:
+        elif self.target_coords is not None:
             # The entity is currently travelling towards some coordinates.
             x_dist = self.x - self.target_coords[0]
             y_dist = self.y - self.target_coords[1]
@@ -149,6 +148,26 @@ class FollowingEntity(Entity):
                 self.y_plus = self.y_minus = False
         else:
             self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
+        super(FollowingEntity, self).update(time_diff)
+        # Code for not getting stuck on terrain.
+        if self.collided and not self.has_moved(update=False):
+            moved = False
+            if x_dist > 0:
+                self.x -= 1
+                moved = True
+            elif x_dist < 0:
+                self.x += 1
+                moved = True
+
+            if y_dist > 0:
+                self.y -= 1
+                moved = True
+            elif y_dist < 0:
+                self.y += 1
+                moved = True
+            if moved:
+                self.collision_check
+
 
 class Package(FollowingEntity):
     """ The detached version of the package, used as building parts for buildings.

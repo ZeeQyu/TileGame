@@ -197,8 +197,8 @@ PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 20
 # The range of distance the package can be from the player while still being pulled in pixels
-PACKAGE_PULL_MIN = 9
-PACKAGE_PULL_MAX = 18
+PACKAGE_PULL_MIN = 10
+PACKAGE_PULL_MAX = 24
 
 # Key for key configurIation
 CONFIG_KEYS_KEY = pgl.K_INSERT
