@@ -95,10 +95,32 @@ def key_reconfig():
         # Sleep by a fixed amount, because this loop doesn't need to update very constantly 
         time.sleep(c.TICK_FREQ)
 
+
+class MenuButton(object):
+    """ A class for use in menus, representing the various buttons in a menu that can be selected.
+    """
+    def __init__(self, text, image, function):
+        """ "text" should be a short string showing what the button represents
+            "image" should be a string identifier pointing to a Graphics object in the
+                g.images dictionary, for the thumbnail
+            "function" should be a function that is called when this button is selected.
+        """
+        self.text = text
+        self.image = image
+        self.function = function
+        # Set recommended to True for it to be displayed at the top of the menu
+        self.recommended = False
+
+    def __call__(self, *args, **kwargs):
+        """ Calls the predetermined function
+        """
+        return self.function()
+
+
 class Menu(object):
     """ Base class for on-screen menus that won't pause the game.
     """
-    def __init__(self, background, target):
+    def __init__(self, background, ):
         """ Creates a general-purpose menu.
         
             "background" should be a string identifier pointing
@@ -108,7 +130,9 @@ class Menu(object):
                 for where the menu's top left corner should be painted
         """
         self.background = background
-        self.target = target
+        self.target_x = self.target_y = "Empty"
+        self.update_position()
+        self.target = (self.target_x, self.target_y)
 
     def update_position(self):
         """ Updates the position of the Menu based on where the player is.
@@ -136,19 +160,6 @@ class Menu(object):
 
         # Set the variable the outside refers to.
         self.target = (self.target_x, self.target_y)
-
-    def tick(self):
-        """ Dummy methods
-        """
-        pass
-    
-    def update(self, time_diff):
-        """ Dummy method for
-        """
-        pass
-
-    def has_moved(self):
-        pass
     
     def paint(self):
         """ Updates the position of the menu and paints it at that position
@@ -163,6 +174,4 @@ class BuildMenu(Menu):
     def __init__(self):
         """ Sets the menu up.
         """
-        self.target_x = self.target_y = "Empty"
-        self.update_position()
-        super().__init__("menu_background", self.target)
+        super().__init__("menu_background")

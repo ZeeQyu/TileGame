@@ -47,7 +47,7 @@ class Animal(Entity):
                    float(c.TICK_FREQ))
                 # The amount of ticks until direction change, which is a random int
                 # between half of tick_max and tick_max
-                self.movement_timer =  randint(tick_max / 2, tick_max)
+                self.movement_timer =  randint(int(tick_max / 2), tick_max)
                 # Set a random direction
                 self.x_plus = bool(randint(0, 1))
                 self.x_minus = bool(randint(0, 1))
@@ -78,7 +78,7 @@ class FollowingEntity(Entity):
         Made for packages, could potentially be reused.
     """     
     def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
-                 rotates=True, collides=True, wall_collides=True, custom_name=None):
+                 rotates=True, collides=False, wall_collides=True, custom_name=None):
         """ Initalizes the FollowingEntity. 
         """
         super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,

@@ -29,11 +29,14 @@ entity_list = []
 # This entity list holds named entities that will be accessed by name.
 # The syntax for this list is {"string_key": Entity}
 special_entity_list = {}
+# A special list for things like menus that aren't entities.
+non_entity_list = {}
+
 images = graphics.load_graphics()
 
 # List of tiles that should be ticked (tick function called).
 # This is because all tiles shouldn't be ticked, for performance.
-# Should follow the format [[x, y][x, y]]
+# Should follow the format [[x, y], [x, y]]
 tick_tiles = []
 
 # map_screen_buffer is a surface to which the map is painted when it is 
@@ -41,6 +44,7 @@ tick_tiles = []
 map_screen_buffer = None
 # If the map should be rerendered
 update_map = True
+
 
 def update_key_dict():
     """ Copies the key_list list of lists and converts it to a dictionary, key_dict.

@@ -37,12 +37,15 @@ def main():
         Takes no arguments and returns nothing.
     """
     # initialize pygame
+    global entity
     pygame.init()
     
     # Make map
     maps.generate_map()
     # Initiate player
     g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
+    # Initiate the temporary build menu variable
+    g.non_entity_list["build_menu"] = interface.BuildMenu()
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(g.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
@@ -56,7 +59,6 @@ def main():
     # Get time once initially and make time variables
     time_last_tick = time_start = time_prev = time.clock()
     time_start = time_cycles = time_updates = time_last_sleep = 0
-    g.special_entity_list["build_menu"] = interface.BuildMenu()
     
     # Main loop
     while True:
@@ -148,7 +150,7 @@ def main():
                     entity_has_moved = True
         if g.special_entity_list:
             for entity in list(g.special_entity_list.values()):
-                # Update all enties and check for if any of them is a package that just finished moving.
+                # Update all entities and check for if any of them is a package that just finished moving.
                 # If so, skip the has_moved check.
                 if entity.update(time_diff) == "deleted":
                     continue
@@ -162,13 +164,16 @@ def main():
             g.screen.fill(c.BACKGROUND_COLOR)
             # Draw the map buffer on the screen
             g.screen.blit(g.map_screen_buffer, (0, 0))
-            # Draw the entities
+            # Draw the objects
             for i in range(len(g.entity_list)-1, -1, -1):
                 entity = g.entity_list[i]
                 entity.paint()
             for i in range(len(list(g.special_entity_list.values()))-1, -1, -1):
                 entity = list(g.special_entity_list.values())[i]
                 entity.paint()
+            for i in range(len(list(g.non_entity_list.values()))-1, -1, -1):
+                list(g.non_entity_list.values())[i].paint()
+            del entity
 
             # Update the display
             pygame.display.flip()

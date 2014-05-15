@@ -192,13 +192,13 @@ PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
                       "ore-package": "ore"}
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
-BEETLE_MOVEMENT_SPEED = 70
+BEETLE_MOVEMENT_SPEED = 130
 PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
-BEETLE_MAX_TRAVEL_PX = 24
+BEETLE_MAX_TRAVEL_PX = 20
 # The range of distance the package can be from the player while still being pulled in pixels
 PACKAGE_PULL_MIN = 9
-PACKAGE_PULL_MAX = 20
+PACKAGE_PULL_MAX = 18
 
 # Key for key configurIation
 CONFIG_KEYS_KEY = pgl.K_INSERT
