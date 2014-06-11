@@ -155,7 +155,8 @@ IMAGES = {
          "aim": Img("aim.png"),
          "remove_aim": Img("removeAim.png"),
          "icon": Img("logo.png"),
-         "menu_background": Img("menuBackground.png")
+         "menu_background": Img("menuBackground.png"),
+         "button": Img("placeholder_button.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -192,10 +193,10 @@ PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
                       "ore-package": "ore"}
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
-BEETLE_MOVEMENT_SPEED = 130
+BEETLE_MOVEMENT_SPEED = 80
 PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
-BEETLE_MAX_TRAVEL_PX = 20
+BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
 PACKAGE_PULL_MIN = 10
 PACKAGE_PULL_MAX = 24
@@ -212,3 +213,7 @@ CONFIG_KEYS_INVALID_TIMER = 15
 
 # Menu contants
 BORDER_MARGIN = 10
+BUTTON_SIZE = 80
+BUTTONS_WIDE = 5
+BUTTONS_HIGH = 3
+BUTTONS_SPACING = 4

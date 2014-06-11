@@ -56,7 +56,7 @@ def update_key_dict():
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
 # Should ask for the keys in a proper order.
 key_dict = {}
-key_list = [ # Custom keys. Format:
+key_list = [  # Custom keys. Format:
               # "dict_key": [pgl.default_ley, "key config message"], 
               # key config message (index 2) is displayed after
               # the constants.CHANGE_KEYS_TEXT_PREFIX when reconfiguring keys

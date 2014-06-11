@@ -120,7 +120,7 @@ class MenuButton(object):
 class Menu(object):
     """ Base class for on-screen menus that won't pause the game.
     """
-    def __init__(self, background, ):
+    def __init__(self, background, buttons):
         """ Creates a general-purpose menu.
         
             "background" should be a string identifier pointing
@@ -133,6 +133,8 @@ class Menu(object):
         self.target_x = self.target_y = "Empty"
         self.update_position()
         self.target = (self.target_x, self.target_y)
+        self.buttons = buttons
+
 
     def update_position(self):
         """ Updates the position of the Menu based on where the player is.
@@ -174,4 +176,4 @@ class BuildMenu(Menu):
     def __init__(self):
         """ Sets the menu up.
         """
-        super().__init__("menu_background")
+        super().__init__("menu_background", [])
