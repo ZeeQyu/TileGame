@@ -57,7 +57,7 @@ def main():
     skip_cycle = False
     
     # Get time once initially and make time variables
-    time_last_tick = time_start = time_prev = time.clock()
+    time_last_tick = time_prev = time.clock()
     time_start = time_cycles = time_updates = time_last_sleep = 0
     
     # Main loop
@@ -109,11 +109,12 @@ def main():
         if skip_cycle:
             skip_cycle = False
             continue
-        # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
+        # FPS meter (shown in console).
+        # checks the amount of times this code is run every second and prints that every second.
         time_cycles += 1
         if time_start + 1 < time_now:
             if time_updates == 1 and time_cycles == 1:
-                time_updates = 1.0 / (time_diff)
+                time_updates = 1.0 / time_diff
             if c.NORMAL_DEBUG:
                 print(time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps")
             time_cycles = 0

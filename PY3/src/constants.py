@@ -201,7 +201,7 @@ BEETLE_MAX_TRAVEL_PX = 24
 PACKAGE_PULL_MIN = 10
 PACKAGE_PULL_MAX = 24
 
-# Key for key configurIation
+# Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT
 # Messages for when you configure keys.
 CONFIG_KEYS_MESSAGE = "Reconfigure keys: Press insert to cancel."
@@ -211,9 +211,9 @@ CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 # Time in (~)ticks for the "invalid key" text to be displayed each time
 CONFIG_KEYS_INVALID_TIMER = 15
 
-# Menu contants
+# Menu constants
 BORDER_MARGIN = 10
-BUTTON_SIZE = 80
+BUTTON_SIZE = 56
 BUTTONS_WIDE = 5
 BUTTONS_HIGH = 3
 BUTTONS_SPACING = 4

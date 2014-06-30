@@ -71,10 +71,10 @@ def key_reconfig():
                 g.update_key_dict()
                 return
             elif len(new_keys) > len(g.key_list):
-                raise Exception("The new_keys dictionary somhow got larger than the old_keys dictionary")
+                raise Exception("The new_keys dictionary somehow got larger than the old_keys dictionary")
             
             # The text that tells the user which key should be configured next.
-            # Uses the lenght of the new_keys to figure out which message it should use
+            # Uses the length of the new_keys to figure out which message it should use
             text_surface = font.render(c.CONFIG_KEYS_TEXT_PREFIX + 
                                        g.key_list[len(new_keys)][2],
                                        True, c.CONFIG_KEYS_FONT_COLOR)
@@ -135,20 +135,28 @@ class Menu(object):
         self.target = (self.target_x, self.target_y)
         self.buttons = buttons
 
+        self.background_width, self.background_height = g.images["menu_background"].get_size()
+
+        # Defining where buttons can be put
+        area_width = self.background_width - 2 * c.BORDER_MARGIN
+        area_height = self.background_height - 2 * c.BORDER_MARGIN
+        buttons_wide = area_width // c.BUTTON_SIZE + c.BUTTONS_SPACING
+        buttons_high = area_height // c.BUTTON_SIZE + c.BUTTONS_SPACING
+        print(str(buttons_wide) + " and " + str(buttons_high))
+        #self.button_places =
 
     def update_position(self):
         """ Updates the position of the Menu based on where the player is.
         """
         player_x = g.special_entity_list["player"].x
         player_y = g.special_entity_list["player"].y
-        # Put the target variable in the end of the screen the player isn't in.
-        background_width, background_height = g.images["menu_background"].get_size()
 
+        # Put the target variable in the end of the screen the player isn't in.
         # X Coordinate
         if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
             self.target_x = c.BORDER_MARGIN
         elif player_x < g.width * c.TILE_SIZE / 3.0:
-            self.target_x = g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN
+            self.target_x = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGIN
         elif self.target_x is "Empty":
             self.target_x = c.BORDER_MARGIN
 
@@ -156,7 +164,7 @@ class Menu(object):
         if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
             self.target_y = c.BORDER_MARGIN
         elif player_y < g.height * c.TILE_SIZE / 3.0:
-            self.target_y = g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN
+            self.target_y = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGIN
         elif self.target_y is "Empty":
             self.target_y = c.BORDER_MARGIN
 
@@ -168,6 +176,7 @@ class Menu(object):
         """
         self.update_position()
         g.screen.blit(g.images[self.background].get(), self.target)
+        g.screen.blit(g.images["button"].get(), (0, 0))
 
 
 class BuildMenu(Menu):
