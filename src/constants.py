@@ -62,7 +62,7 @@ class Img(object):
         self.multi_tile = multi_tile
         
 # This is the folder for the resources (pictures) of the project
-RES_FOLDER = "..\\res"
+RES_FOLDER = "res"
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
