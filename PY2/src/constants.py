@@ -1,29 +1,26 @@
 #!/usr/bin/env python
 # coding=utf-8
-""" Module /src/constants.py
-    TileGame for Python 3
+''' Module /src/constants.py
+    TileGame
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module containing various constants and the important IMAGES dictionary that is used to load maps and images.
-"""
+'''
 import pygame.locals as pgl
 
 # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
-FORCE_UPDATE = False
-
-# Activates various debug callouts that normally should be on, like fps meter.
-NORMAL_DEBUG = False
+FORCE_UPDATE = True
 
 class Img(object):
-    """ Small class for keeping track of data related to different images.
+    ''' Small class for keeping track of data related to different images.
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
-    """
+    '''
     def __init__(self, png, color_code=None, random=False, collides=False,
                  placeable=False, destroy=None, evolve=None, grabbable=None,
                  multi_tile=None):
-        """ Initializes a tile image or other image. Should be stored in a dictionary where the
+        ''' Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
                 Leave everything else blank if this isn't a tile.
@@ -49,7 +46,7 @@ class Img(object):
                 it shouldn't be grabbable.
             "multi_tile" should be a tuple of the width and height in tiles of the tile if
                 it is a multi-tile. (example: (3, 3))
-        """
+        '''
         self.type = type
         self.png = png
         self.color_code = color_code
@@ -60,9 +57,6 @@ class Img(object):
         self.evolve = evolve
         self.grabbable = grabbable
         self.multi_tile = multi_tile
-        
-# This is the folder for the resources (pictures) of the project
-RES_FOLDER = "res"
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
@@ -125,21 +119,17 @@ IMAGES = {
          "rock": Img("rockTile.png", color_code=(0, 0, 0), random=True, collides=True),
          "rock2": Img("rockTile2.png"),
          "rock3": Img("rockTile3.png"),
-         "ore": Img("ore.png", color_code=(255, 216, 0), random=True, placeable=True),
+         "ore": Img("ore.png", color_code=(255, 216, 0), random=True),
          "ore2": Img("ore2.png"),
          "ore3": Img("ore3.png"),
          "ore4": Img("ore4.png"),
          "ore5": Img("ore5.png"),
-         "ore-sapling": Img("flower.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
-         "ore-tree": Img("flower2.png", collides=True, destroy=[10, "ore-stump"]),
-         "ore-stump": Img("flower3.png", destroy=[15, "ore"]),
          "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
          "large_ore2": Img("large_ore2.png"),
          "large_ore3": Img("large_ore3.png"),
          "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
          "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
-         "ore-package": Img("placeholder.png"),
          
          "pointer": Img("emptyPixel.png"),
          "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -155,8 +145,7 @@ IMAGES = {
          "aim": Img("aim.png"),
          "remove_aim": Img("removeAim.png"),
          "icon": Img("logo.png"),
-         "menu_background": Img("menuBackground.png"),
-         "button": Img("placeholder_button.png")
+         "menu_background": Img("menuBackground.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -172,13 +161,8 @@ else:
 # The identifier of the tile that should be used
 # when the map.png decoding fails. This tile should always have placeable=True.
 DEFAULT_TILE = "grass"
-# Combinations of tiles that, when placed, gives a specific tile
-# Syntax is {"tile_to_be_placed+tile_being_placed_on": "resulting tile"}
-SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
-                       "sapling+ore": "ore-sapling",
-                       "package_tile+ore": "ore-package"}
-
 # The tile that is placed with the players place key
+SPECIAL_PLACE_TILES = {"dirt": "dirt-sapling"} 
 DEFAULT_PLACE_TILE = "sapling"
 
 # Set to true if all textures should be non-random.
@@ -189,19 +173,18 @@ TILE_SIZE = 16
 # Entities
 # Names of special entities
 PLAYER_NAME = "player"
-PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
-                      "ore-package": "ore"}
+PACKAGE_TILE_NAME = "package_tile"
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
-BEETLE_MOVEMENT_SPEED = 80
+BEETLE_MOVEMENT_SPEED = 70
 PACKAGE_MOVEMENT_SPEED = 50
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
-PACKAGE_PULL_MIN = 10
-PACKAGE_PULL_MAX = 24
+PACKAGE_PULL_MIN = 9
+PACKAGE_PULL_MAX = 20
 
-# Key for key configuration
+# Key for key configurIation
 CONFIG_KEYS_KEY = pgl.K_INSERT
 # Messages for when you configure keys.
 CONFIG_KEYS_MESSAGE = "Reconfigure keys: Press insert to cancel."
@@ -211,14 +194,5 @@ CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 # Time in (~)ticks for the "invalid key" text to be displayed each time
 CONFIG_KEYS_INVALID_TIMER = 15
 
-# Menu constants
-# Space between screen border and menu border
-BORDER_MARGINS = 10
-# Soace between menu border and buttons
-BUTTON_PADDING = 30
-# Space between menu border and buttons on the top side
-BUTTON_TOP_PADDING = 45
-# The size of the button files
-BUTTON_SIZE = 56
-# The spacing between buttons
-BUTTON_SPACING = 4
+# Menu contants
+BORDER_MARGIN = 10

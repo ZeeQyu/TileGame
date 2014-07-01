@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
-""" Module /main.py
-    TileGame for Python 3
+''' Module /main.py
+    TileGame
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
@@ -13,7 +13,7 @@
         as well as teaching me how to manage own code in multiple modules properly.
     Features are added at an irregular basis. Check back now and then to the website written above.
     Ideas and goals can be found in the concept.txt file
-"""
+'''
 
 # import normal modules
 import sys, os, time
@@ -22,7 +22,7 @@ import sys, os, time
 import pygame
 
 # make sure the own modules in /src can be imported and import them.
-sys.path.append(os.path.join(os.getcwd(), "src"))
+sys.path.append(os.getcwd() + "\\src")
 import tiles, graphics, maps, units, players, interface
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
@@ -32,20 +32,17 @@ import pygame.locals as pgl
 
     
 def main():
-    """ Main function, initalizes various variables and contains the main program loop.
+    ''' Main function, initalizes various variables and contains the main program loop.
         Should not be called any other way than running the file.
         Takes no arguments and returns nothing.
-    """
+    '''
     # initialize pygame
-    global entity
     pygame.init()
     
     # Make map
     maps.generate_map()
     # Initiate player
     g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
-    # Initiate the temporary build menu variable
-    g.non_entity_list["build_menu"] = interface.BuildMenu()
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(g.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
@@ -57,8 +54,9 @@ def main():
     skip_cycle = False
     
     # Get time once initially and make time variables
-    time_last_tick = time_prev = time.clock()
+    time_last_tick = time_start = time_prev = time.clock()
     time_start = time_cycles = time_updates = time_last_sleep = 0
+    menu = interface.BuildMenu()
     
     # Main loop
     while True:
@@ -109,14 +107,12 @@ def main():
         if skip_cycle:
             skip_cycle = False
             continue
-        # FPS meter (shown in console).
-        # checks the amount of times this code is run every second and prints that every second.
+        # FPS meter (shown in console), checks the amount of times this code is run every second and prints that every second.
         time_cycles += 1
         if time_start + 1 < time_now:
             if time_updates == 1 and time_cycles == 1:
-                time_updates = 1.0 / time_diff
-            if c.NORMAL_DEBUG:
-                print(time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps")
+                time_updates = 1.0 / (time_diff)
+            print time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps"
             time_cycles = 0
             time_updates = 0
             time_start = time_now
@@ -127,13 +123,13 @@ def main():
             for i in range(len(g.entity_list)-1, -1, -1):
                 entity = g.entity_list[i]
                 entity.tick()
-            for entity in list(g.special_entity_list.values()):
+            for entity in g.special_entity_list.values():
                 entity.tick()
             for tile in g.tick_tiles:
                 g.map[tile[0]][tile[1]].tick()
         # Make sure the loop doesn't go too quickly and bog the processor down
         if time_last_sleep < c.SLEEP_TIME:
-            time.sleep(c.SLEEP_TIME - time_last_sleep)
+            time.sleep(c.SLEEP_TIME -  time_last_sleep)
 
         # Update map buffer if needed
         if g.update_map:
@@ -150,13 +146,8 @@ def main():
                 if entity.has_moved():
                     entity_has_moved = True
         if g.special_entity_list:
-<<<<<<< HEAD
             for entity in g.special_entity_list.values():
-                # Update all enties and check for if any of them is a MovingEntity that just finished moving.
-=======
-            for entity in list(g.special_entity_list.values()):
-                # Update all entities and check for if any of them is a package that just finished moving.
->>>>>>> origin/developing
+                # Update all enties and check for if any of them is a package that just finished moving.
                 # If so, skip the has_moved check.
                 if entity.update(time_diff) == "deleted":
                     continue
@@ -170,21 +161,17 @@ def main():
             g.screen.fill(c.BACKGROUND_COLOR)
             # Draw the map buffer on the screen
             g.screen.blit(g.map_screen_buffer, (0, 0))
-            # Draw the objects
+            # Draw the entities
             for i in range(len(g.entity_list)-1, -1, -1):
                 entity = g.entity_list[i]
                 entity.paint()
-            for i in range(len(list(g.special_entity_list.values()))-1, -1, -1):
-                entity = list(g.special_entity_list.values())[i]
+            for i in range(len(g.special_entity_list.values())-1, -1, -1):
+                entity = g.special_entity_list.values()[i]
                 entity.paint()
-            for i in range(len(list(g.non_entity_list.values()))-1, -1, -1):
-                list(g.non_entity_list.values())[i].paint()
-            del entity
-
+            #menu.paint()
             # Update the display
             pygame.display.flip()
         
 if __name__ == '__main__':
     main()
-            
     

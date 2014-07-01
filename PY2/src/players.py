@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # coding=utf-8
-""" Module /src/players.py
-    TileGame for Python 3
+''' Module /src/players.py
+    TileGame
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module containing the player class.
     Also handles key press events for movement of the player.
-"""
-import os, sys
+'''
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 import units, tiles
 import pygame.locals as pgl
 from entities import Entity
@@ -19,12 +17,12 @@ import globals as g
 import constants as c
 
 class Player(Entity):
-    """ Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
-    """
+    ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
+    '''
     
     def __init__(self, x=g.player_start_x, y=g.player_start_y):
-        """ "x" and "y" should be ints.
-        """
+        ''' "x" and "y" should be ints.
+        '''
         super(Player, self).__init__(x, y, "player", c.PLAYER_MOVEMENT_SPEED)
         # If the player is currently placing or removing a tile
         self.placing_tile = False
@@ -41,8 +39,8 @@ class Player(Entity):
         self.update_aim_tile = False
         
     def paint(self):
-        """ Paints the player and its aim indicator on the screen.
-        """
+        ''' Paints the player and its aim indicator on the screen.
+        '''
         super(Player, self).paint()
         if self.removing_tile:
             g.screen.blit(g.images["remove_aim"].get(),
@@ -56,9 +54,9 @@ class Player(Entity):
             g.screen.blit(g.images["aim"].get(), (x, y))
             
     def update(self, time_diff):
-        """ Calls the superclass update and updates the state of the aim marker.
+        ''' Calls the superclass update and updates the state of the aim marker.
             Manages if the player is placing or destroying a block.
-        """
+        '''
         super(Player, self).update(time_diff)
         # Update screen whenever aim marker changes states
         if self.removing_tile != self.last_removing_tile:
@@ -101,7 +99,10 @@ class Player(Entity):
             try:
                 if c.IMAGES[g.map[x][y].type].placeable:
                     # If there is a special case for placing tiles, use that. Otherwise, use the default
-                    tiles.make_tile(c.DEFAULT_PLACE_TILE, x, y)
+                    if g.map[x][y].type in c.SPECIAL_PLACE_TILES.keys():
+                        tiles.make_tile(c.SPECIAL_PLACE_TILES[g.map[x][y].type], x, y)
+                    else:
+                        tiles.make_tile(c.DEFAULT_PLACE_TILE, x, y)
             # Ignore IndexErrors because the indices might be outside of the map
             except IndexError:
                 pass
@@ -129,23 +130,23 @@ class Player(Entity):
                     g.special_entity_list[self.following_entity].target_coords = [x*c.TILE_SIZE,
                                                                                         y*c.TILE_SIZE]
             else:
-                if g.map[x][y].type in c.PACKAGE_TILE_NAMES.keys():
-                    g.map[x][y] = tiles.make_tile(c.PACKAGE_TILE_NAMES[g.map[x][y].type], x, y)
+                if g.map[x][y].type == c.PACKAGE_TILE_NAME:
+                    g.map[x][y] = tiles.make_tile(c.DEFAULT_TILE, x, y)
                     g.update_map = True
                     units.Package(x*c.TILE_SIZE, y*c.TILE_SIZE, "player")
         
     def tick(self):
-        """ What happens every tick. Counts down the remove block timer. 
-        """
+        ''' What happens every tick. Counts down the remove block timer. 
+        '''
         super(Player, self).tick()
         if self.removing_tile and not self.placing_tile and self.remove_timer != None:
             self.remove_timer -= 1
 
         
     def get_relative_aim_tile(self):
-        """ Gets the tile the player is aiming at, relative to the player position.
+        ''' Gets the tile the player is aiming at, relative to the player position.
             returns a tuple ranging from (-1, -1) to (1, 1) with the x and y values
-        """
+        '''
         x = 0
         y = 0
         if self.x_plus:
@@ -164,9 +165,9 @@ class Player(Entity):
             return x, y
     
     def get_aim_tile(self):
-        """ Gets the absolute tile the player is looking at.
+        ''' Gets the absolute tile the player is looking at.
             returns a tuple of the x and y coordinate of the tile.
-        """
+        '''
         x, y = self.get_tile()
         x_add, y_add = self.get_relative_aim_tile()
         x += x_add
@@ -174,8 +175,8 @@ class Player(Entity):
         return x, y
         
     def event_check(self, event):
-        """ Event checker. Checks if the event is a key press or release on the arrow keys.
-        """
+        ''' Event checker. Checks if the event is a key press or release on the arrow keys.
+        '''
         if event.key == g.key_dict["move_up"][0]:
             self.y_minus = if_down(event.type)
         elif event.key == g.key_dict["move_down"][0]:
@@ -197,12 +198,11 @@ class Player(Entity):
             width, height = c.IMAGES["megatree"].multi_tile
             if tiles.area_is_free(x, y + 2, width, height):
                 tiles.make_tile("megatree", x, y + 2)
-            print("Tried making megatree")
+            print "Tried making megatree"
         elif event.key == g.key_dict["build_structure"][0]:
-            if "build_menu" in g.special_entity_list.keys():
-                g.special_entity_list["build_menu"].show = not g.special_entity_list["build_menu"].show
+            pass
             
 def if_down(down_or_up):
-    """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
-    """
+    ''' Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
+    '''
     return down_or_up == pgl.KEYDOWN

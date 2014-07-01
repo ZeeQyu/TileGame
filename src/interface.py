@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding=utf-8
-''' Module /src/interface.py
-    TileGame
+""" Module /src/interface.py
+    TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
     
     Module handling interfaces, menus and prompts
-'''
-import sys, time
+"""
+import os, sys, time
 
 import pygame
 import pygame.locals as pgl
@@ -19,9 +19,9 @@ import globals as g
 WHITE = (255, 255, 255)
 
 def key_reconfig():
-    ''' Function for reconfiguring key mappings. Freezes the screen and darkens it and displays
+    """ Function for reconfiguring key mappings. Freezes the screen and darkens it and displays
         prompts for telling the user which key should be inputted next. Closes when done 
-    '''
+    """
     set_key = None
     screen_updated = True
     invalid_key_timer = 0
@@ -71,10 +71,10 @@ def key_reconfig():
                 g.update_key_dict()
                 return
             elif len(new_keys) > len(g.key_list):
-                raise Exception("The new_keys dictionary somhow got larger than the old_keys dictionary")
+                raise Exception("The new_keys dictionary somehow got larger than the old_keys dictionary")
             
             # The text that tells the user which key should be configured next.
-            # Uses the lenght of the new_keys to figure out which message it should use
+            # Uses the length of the new_keys to figure out which message it should use
             text_surface = font.render(c.CONFIG_KEYS_TEXT_PREFIX + 
                                        g.key_list[len(new_keys)][2],
                                        True, c.CONFIG_KEYS_FONT_COLOR)
@@ -95,54 +95,108 @@ def key_reconfig():
         # Sleep by a fixed amount, because this loop doesn't need to update very constantly 
         time.sleep(c.TICK_FREQ)
 
+
+class MenuButton(object):
+    """ A class for use in menus, representing the various buttons in a menu that can be selected.
+    """
+    def __init__(self, text, image, function):
+        """ "text" should be a short string showing what the button represents
+            "image" should be a string identifier pointing to a Graphics object in the
+                g.images dictionary, for the thumbnail
+            "function" should be a function that is called when this button is selected.
+        """
+        self.text = text
+        self.image = image
+        self.function = function
+        # Set recommended to True for it to be displayed at the top of the menu
+        self.recommended = False
+
+    def __call__(self, *args, **kwargs):
+        """ Calls the predetermined function
+        """
+        return self.function()
+
+
 class Menu(object):
-    ''' Base class for on-screen menus that won't pause the game.
-    '''
-    def __init__(self, background, target):
-        ''' Creates a general-purpose menu.
+    """ Base class for on-screen menus that won't pause the game.
+    """
+    def __init__(self, background, buttons):
+        """ Creates a general-purpose menu.
         
             "background" should be a string identifier pointing
                 towards a Graphics object in the g.images dictionary
                 that should be used as a background.
             "target" should be a tuple with an x and y coordinate in pixels
                 for where the menu's top left corner should be painted
-        '''
+        """
         self.background = background
-        self.target = target
-        
-    def paint(self):
-        ''' Paints the menu at self.target.
-        '''
-        g.screen.blit(g.images[self.background].get(), self.target)
-        
-class BuildMenu(Menu):
-    ''' Subclass of Menu, used for choosing which building you want to build at a location.
-    '''
-    def __init__(self):
+        self.buttons = buttons
+        self.button_places = []
+        self.background_width, self.background_height = g.images["menu_background"].get_size()
+        self.target_x = self.target_y = "Empty"
+        self.target = (self.target_x, self.target_y)
+
         self.update_position()
-        super(BuildMenu, self).__init__("menu_background", self.target)
-        
+
     def update_position(self):
+        """ Updates the position of the Menu based on where the player is.
+        """
         player_x = g.special_entity_list["player"].x
         player_y = g.special_entity_list["player"].y
-        # Put the target variable in the other end of the screen than the player
-        background_width, background_height = g.images["menu_background"].get_size()
-        if player_x > g.width*c.TILE_SIZE/2.0:
-            if player_y > g.height*c.TILE_SIZE/2.0:
-                self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
-            else:
-                self.target = (c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
-        else:
-            if player_y > g.height*c.TILE_SIZE/2.0:
-                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          c.BORDER_MARGIN)
-            else:
-                self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
-                
+
+        # Put the target variable in the end of the screen the player isn't in.
+        # X Coordinate
+        if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
+            self.target_x = c.BORDER_MARGINS
+        elif player_x < g.width * c.TILE_SIZE / 3.0:
+            self.target_x = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
+        elif self.target_x is "Empty":
+            self.target_x = c.BORDER_MARGINS
+
+        # Y Coordinate
+        if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
+            self.target_y = c.BORDER_MARGINS
+        elif player_y < g.height * c.TILE_SIZE / 3.0:
+            self.target_y = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
+        elif self.target_y is "Empty":
+            self.target_y = c.BORDER_MARGINS
+
+        # If the background has moved, move the buttons
+        if self.target != (self.target_x, self.target_y):
+            # Defining where buttons can be put
+            area_width = self.background_width - 2 * c.BUTTON_PADDING
+            area_height = self.background_height - c.BUTTON_PADDING - c.BUTTON_TOP_PADDING
+            buttons_wide = area_width // (c.BUTTON_SIZE + c.BUTTON_SPACING)
+            buttons_high = area_height // (c.BUTTON_SIZE + c.BUTTON_SPACING)
+
+            # Define an amount of top left corners for the buttons
+            self.button_places = []
+            # A distance from the edges that is balanced to center the buttons in the menu
+            margin = (area_width - buttons_wide * (c.BUTTON_SIZE + c.BUTTON_SPACING) + c.BUTTON_SPACING) / 2
+            # Add all the buttons in an order from top left to top right
+            for j in range(buttons_high):
+                for i in range(buttons_wide):
+                    self.button_places.append((i * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                               self.target_x + margin + c.BUTTON_PADDING,
+                                               j * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                               self.target_y + c.BUTTON_TOP_PADDING,))
+
+        # Set the variable the outside refers to.
+        self.target = (self.target_x, self.target_y)
+
     def paint(self):
-        ''' Updates the position of the menu and paints it.
-        '''
+        """ Updates the position of the menu and paints it at that position
+        """
         self.update_position()
-        super(BuildMenu, self).paint()
+        g.screen.blit(g.images[self.background].get(), self.target)
+        for spot in self.button_places:
+            g.screen.blit(g.images["button"].get(), (spot[0], spot[1]))
+
+
+class BuildMenu(Menu):
+    """ Subclass of Menu, used for choosing which building you want to build at a location.
+    """
+    def __init__(self):
+        """ Sets the menu up.
+        """
+        super().__init__("menu_background", [])
