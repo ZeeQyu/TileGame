@@ -130,20 +130,13 @@ class Menu(object):
                 for where the menu's top left corner should be painted
         """
         self.background = background
-        self.target_x = self.target_y = "Empty"
-        self.update_position()
-        self.target = (self.target_x, self.target_y)
         self.buttons = buttons
-
+        self.button_places = []
         self.background_width, self.background_height = g.images["menu_background"].get_size()
+        self.target_x = self.target_y = "Empty"
+        self.target = (self.target_x, self.target_y)
 
-        # Defining where buttons can be put
-        area_width = self.background_width - 2 * c.BORDER_MARGIN
-        area_height = self.background_height - 2 * c.BORDER_MARGIN
-        buttons_wide = area_width // c.BUTTON_SIZE + c.BUTTONS_SPACING
-        buttons_high = area_height // c.BUTTON_SIZE + c.BUTTONS_SPACING
-        print(str(buttons_wide) + " and " + str(buttons_high))
-        #self.button_places =
+        self.update_position()
 
     def update_position(self):
         """ Updates the position of the Menu based on where the player is.
@@ -154,29 +147,50 @@ class Menu(object):
         # Put the target variable in the end of the screen the player isn't in.
         # X Coordinate
         if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
-            self.target_x = c.BORDER_MARGIN
+            self.target_x = c.BORDER_MARGINS
         elif player_x < g.width * c.TILE_SIZE / 3.0:
-            self.target_x = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGIN
+            self.target_x = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
         elif self.target_x is "Empty":
-            self.target_x = c.BORDER_MARGIN
+            self.target_x = c.BORDER_MARGINS
 
         # Y Coordinate
         if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
-            self.target_y = c.BORDER_MARGIN
+            self.target_y = c.BORDER_MARGINS
         elif player_y < g.height * c.TILE_SIZE / 3.0:
-            self.target_y = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGIN
+            self.target_y = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
         elif self.target_y is "Empty":
-            self.target_y = c.BORDER_MARGIN
+            self.target_y = c.BORDER_MARGINS
+
+        # If the background has moved, move the buttons
+        if self.target != (self.target_x, self.target_y):
+            # Defining where buttons can be put
+            area_width = self.background_width - 2 * c.BUTTON_PADDING
+            area_height = self.background_height - c.BUTTON_PADDING - c.BUTTON_TOP_PADDING
+            buttons_wide = area_width // (c.BUTTON_SIZE + c.BUTTON_SPACING)
+            buttons_high = area_height // (c.BUTTON_SIZE + c.BUTTON_SPACING)
+
+            # Define an amount of top left corners for the buttons
+            self.button_places = []
+            margin = (area_width - buttons_wide * (c.BUTTON_SIZE + c.BUTTON_SPACING) + c.BUTTON_SPACING) / 2
+            for j in range(buttons_high):
+                for i in range(buttons_wide):
+                    self.button_places.append((i * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                               self.target_x + margin + c.BUTTON_PADDING,
+                                               j * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                               self.target_y + c.BUTTON_TOP_PADDING,))
+            print(self.button_places)
+            print(self.target, self.target_x, self.target_y)
 
         # Set the variable the outside refers to.
         self.target = (self.target_x, self.target_y)
-    
+
     def paint(self):
         """ Updates the position of the menu and paints it at that position
         """
         self.update_position()
         g.screen.blit(g.images[self.background].get(), self.target)
-        g.screen.blit(g.images["button"].get(), (0, 0))
+        for spot in self.button_places:
+            g.screen.blit(g.images["button"].get(), (spot[0], spot[1]))
 
 
 class BuildMenu(Menu):

@@ -212,8 +212,13 @@ CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 CONFIG_KEYS_INVALID_TIMER = 15
 
 # Menu constants
-BORDER_MARGIN = 10
+# Space between screen border and menu border
+BORDER_MARGINS = 10
+# Soace between menu border and buttons
+BUTTON_PADDING = 30
+# Space between menu border and buttons on the top side
+BUTTON_TOP_PADDING = 45
+# The size of the button files
 BUTTON_SIZE = 56
-BUTTONS_WIDE = 5
-BUTTONS_HIGH = 3
-BUTTONS_SPACING = 4
+# The spacing between buttons
+BUTTON_SPACING = 4
