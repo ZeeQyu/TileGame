@@ -150,14 +150,9 @@ def main():
                 if entity.has_moved():
                     entity_has_moved = True
         if g.special_entity_list:
-<<<<<<< HEAD
-            for entity in g.special_entity_list.values():
-                # Update all enties and check for if any of them is a MovingEntity that just finished moving.
-=======
             for entity in list(g.special_entity_list.values()):
-                # Update all entities and check for if any of them is a package that just finished moving.
->>>>>>> origin/developing
-                # If so, skip the has_moved check.
+                 # Update all entities and check for if any of them is a package that just finished moving.
+                 # If so, skip the has_moved check.
                 if entity.update(time_diff) == "deleted":
                     continue
                 if entity.has_moved():
@@ -186,5 +181,3 @@ def main():
         
 if __name__ == '__main__':
     main()
-            
-    
