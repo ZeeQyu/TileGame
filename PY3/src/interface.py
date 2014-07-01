@@ -171,15 +171,15 @@ class Menu(object):
 
             # Define an amount of top left corners for the buttons
             self.button_places = []
+            # A distance from the edges that is balanced to center the buttons in the menu
             margin = (area_width - buttons_wide * (c.BUTTON_SIZE + c.BUTTON_SPACING) + c.BUTTON_SPACING) / 2
+            # Add all the buttons in an order from top left to top right
             for j in range(buttons_high):
                 for i in range(buttons_wide):
                     self.button_places.append((i * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                                self.target_x + margin + c.BUTTON_PADDING,
                                                j * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                                self.target_y + c.BUTTON_TOP_PADDING,))
-            print(self.button_places)
-            print(self.target, self.target_x, self.target_y)
 
         # Set the variable the outside refers to.
         self.target = (self.target_x, self.target_y)
