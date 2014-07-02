@@ -16,7 +16,6 @@ import pygame.locals as pgl
 import constants as c
 import globals as g
 
-WHITE = (255, 255, 255)
 
 def key_reconfig():
     """ Function for reconfiguring key mappings. Freezes the screen and darkens it and displays
@@ -233,8 +232,10 @@ class Menu(object):
 def _hello():
     print("Hi there!")
 
+
 def _hello2(name):
     print("Hi, {}!".format(name))
+
 
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
