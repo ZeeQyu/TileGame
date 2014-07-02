@@ -142,6 +142,7 @@ class Menu(object):
         self.buttons = buttons
         self.buttons.reverse()
 
+        self.selected = 0
         self.button_places = []
         self.background_width, self.background_height = g.images["menu_background"].get_size()
         self.target_x = self.target_y = "Empty"
@@ -222,6 +223,11 @@ class Menu(object):
             g.screen.blit(g.images[button.image].get(),
                          (self.button_places[spot_number][0], self.button_places[spot_number][1]))
             spot_number += 1
+
+        border_img = g.images["button_border"]
+        g.screen.blit(border_img.get(),
+                     (self.button_places[self.selected][0] - (border_img.get_size()[0] - c.BUTTON_SIZE) / 2,
+                      self.button_places[self.selected][1] - (border_img.get_size()[1] - c.BUTTON_SIZE) / 2))
 
 
 def _hello():

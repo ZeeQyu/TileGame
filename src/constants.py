@@ -159,7 +159,8 @@ IMAGES = {
          "button": Img("placeholder_button.png"),
          "button1": Img("button1.png"),
          "button2": Img("button2.png"),
-         "button3": Img("button3.png")
+         "button3": Img("button3.png"),
+         "button_border": Img("button_border.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
