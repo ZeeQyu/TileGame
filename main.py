@@ -83,7 +83,6 @@ def main():
                         if type(entity) == units.Beetle:
                             temp_entity_list.append(units.Beetle(entity.x, entity.y))
                     g.entity_list.extend(temp_entity_list)
-                    temp_entity_list = []
                 # Remove all beetles
                 elif event.type == pgl.KEYDOWN and event.key == g.key_dict["remove_beetles"][0]:
                     # Loop backwards through the g.entity_list

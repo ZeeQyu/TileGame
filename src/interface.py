@@ -61,7 +61,7 @@ def key_reconfig():
         
         # Only update screen if something updated
         if screen_updated:
-            screen_updates = False
+            screen_updated = False
 
             # If it's done
             if len(new_keys) == len(g.key_list):
@@ -198,35 +198,43 @@ class Menu(object):
     def paint(self):
         """ Updates the position of the menu and paints it at that position
         """
+
+        screen_buffer = pygame.Surface(g.images["menu_background"].get_size(), flags=pygame.SRCALPHA)
+        screen_buffer.convert_alpha()
         # Update the position and paint the background
         self.update_position()
-        g.screen.blit(g.images[self.background].get(), self.target)
+        screen_buffer.blit(g.images[self.background].get(), self.target)
 
         spot_number = 0
-        buttons = self.buttons
+        buttons = self.buttons[:]
         # Go through all buttons and paint those who are "recommended" first.
+        any_recommended = False
         for i in range(len(buttons)-1, -1, -1):
             button = buttons[i]
             if button.recommended:
-                g.screen.blit(g.images[button.image].get(),
+                screen_buffer.blit(g.images[button.image].get(),
                               (self.button_places[spot_number][0], self.button_places[spot_number][1]))
                 del buttons[i]
                 spot_number += 1
+                any_recommended = True
 
-        #  Then leave a spot empty.
-        spot_number += 1
+        # Then leave a spot empty, if any of them were recommended
+        if any_recommended:
+            spot_number += 1
 
         # Then add all the other buttons.
         for i in range(len(buttons)-1, -1, -1):
             button = buttons[i]
-            g.screen.blit(g.images[button.image].get(),
+            screen_buffer.blit(g.images[button.image].get(),
                          (self.button_places[spot_number][0], self.button_places[spot_number][1]))
             spot_number += 1
 
         border_img = g.images["button_border"]
-        g.screen.blit(border_img.get(),
+        screen_buffer.blit(border_img.get(),
                      (self.button_places[self.selected][0] - (border_img.get_size()[0] - c.BUTTON_SIZE) / 2,
                       self.button_places[self.selected][1] - (border_img.get_size()[1] - c.BUTTON_SIZE) / 2))
+
+        g.screen.blit(screen_buffer, (0, 0))
 
 
 def _hello():

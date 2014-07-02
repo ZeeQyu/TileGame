@@ -218,7 +218,7 @@ CONFIG_KEYS_INVALID_TIMER = 15
 # Menu constants
 # Space between screen border and menu border
 BORDER_MARGINS = 10
-# Soace between menu border and buttons
+# Space between menu border and buttons
 BUTTON_PADDING = 30
 # Space between menu border and buttons on the top side
 BUTTON_TOP_PADDING = 45
