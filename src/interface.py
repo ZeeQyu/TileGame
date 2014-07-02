@@ -99,22 +99,31 @@ def key_reconfig():
 class MenuButton(object):
     """ A class for use in menus, representing the various buttons in a menu that can be selected.
     """
-    def __init__(self, text, image, function):
+    def __init__(self, text, image, function=False, vars=[], recommended=False):
         """ "text" should be a short string showing what the button represents
             "image" should be a string identifier pointing to a Graphics object in the
                 g.images dictionary, for the thumbnail
             "function" should be a function that is called when this button is selected.
+            "vars" should be a list of parameters that should be passed to the function when it's called.
         """
         self.text = text
         self.image = image
         self.function = function
+        self.vars = vars
         # Set recommended to True for it to be displayed at the top of the menu
-        self.recommended = False
+        self.recommended = recommended
 
     def __call__(self, *args, **kwargs):
         """ Calls the predetermined function
         """
-        return self.function()
+        if self.function:
+            if vars:
+                return self.function(*self.vars)
+            else:
+                return self.function()
+
+    def __str__(self):
+        return self.text
 
 
 class Menu(object):
@@ -131,6 +140,8 @@ class Menu(object):
         """
         self.background = background
         self.buttons = buttons
+        self.buttons.reverse()
+
         self.button_places = []
         self.background_width, self.background_height = g.images["menu_background"].get_size()
         self.target_x = self.target_y = "Empty"
@@ -187,11 +198,37 @@ class Menu(object):
     def paint(self):
         """ Updates the position of the menu and paints it at that position
         """
+        # Update the position and paint the background
         self.update_position()
         g.screen.blit(g.images[self.background].get(), self.target)
-        for spot in self.button_places:
-            g.screen.blit(g.images["button"].get(), (spot[0], spot[1]))
 
+        spot_number = 0
+        buttons = self.buttons
+        # Go through all buttons and paint those who are "recommended" first.
+        for i in range(len(buttons)-1, -1, -1):
+            button = buttons[i]
+            if button.recommended:
+                g.screen.blit(g.images[button.image].get(),
+                              (self.button_places[spot_number][0], self.button_places[spot_number][1]))
+                del buttons[i]
+                spot_number += 1
+
+        #  Then leave a spot empty.
+        spot_number += 1
+
+        # Then add all the other buttons.
+        for i in range(len(buttons)-1, -1, -1):
+            button = buttons[i]
+            g.screen.blit(g.images[button.image].get(),
+                         (self.button_places[spot_number][0], self.button_places[spot_number][1]))
+            spot_number += 1
+
+
+def _hello():
+    print("Hi there!")
+
+def _hello2(name):
+    print("Hi, {}!".format(name))
 
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
@@ -199,4 +236,9 @@ class BuildMenu(Menu):
     def __init__(self):
         """ Sets the menu up.
         """
-        super().__init__("menu_background", [])
+
+        super().__init__("menu_background", [
+            MenuButton("Hello", "button1", _hello),
+            MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
+            MenuButton("No Function", "button3")
+        ])

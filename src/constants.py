@@ -156,7 +156,10 @@ IMAGES = {
          "remove_aim": Img("removeAim.png"),
          "icon": Img("logo.png"),
          "menu_background": Img("menuBackground.png"),
-         "button": Img("placeholder_button.png")
+         "button": Img("placeholder_button.png"),
+         "button1": Img("button1.png"),
+         "button2": Img("button2.png"),
+         "button3": Img("button3.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -221,4 +224,4 @@ BUTTON_TOP_PADDING = 45
 # The size of the button files
 BUTTON_SIZE = 56
 # The spacing between buttons
-BUTTON_SPACING = 4
+BUTTON_SPACING = 6
