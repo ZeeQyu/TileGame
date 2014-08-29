@@ -32,14 +32,13 @@ import pygame.locals as pgl
 
     
 def main():
-    """ Main function, initalizes various variables and contains the main program loop.
+    """ Main function, initializes various variables and contains the main program loop.
         Should not be called any other way than running the file.
         Takes no arguments and returns nothing.
     """
     # initialize pygame
     global entity
     pygame.init()
-    
     # Make map
     maps.generate_map()
     # Initiate player
@@ -122,7 +121,7 @@ def main():
         # What happens every tick?
         if time_last_tick + c.TICK_FREQ < time_now:
             time_last_tick = time_last_tick + c.TICK_FREQ
-            # Tick all the entites (let them do whatever they do every tick
+            # Tick all the entities (let them do whatever they do every tick
             for i in range(len(g.entity_list)-1, -1, -1):
                 entity = g.entity_list[i]
                 entity.tick()

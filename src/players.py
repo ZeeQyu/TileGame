@@ -39,6 +39,8 @@ class Player(Entity):
         self.last_aim_tile = self.get_aim_tile()
         # Refreshes the tile the player is aiming at if True, for rechecking after removing a tile
         self.update_aim_tile = False
+        # If the player has opened a menu. If so, arrow keys should navigate the menu.
+        self.browsing_menu = False
         
     def paint(self):
         """ Paints the player and its aim indicator on the screen.
@@ -74,7 +76,7 @@ class Player(Entity):
             # Checks if the aim tile has a remove time (can be destroyed).
             # If so, assign that value to self.remove_timer.
             try:
-                if c.IMAGES[g.map[x][y].type].destroy != None:
+                if c.IMAGES[g.map[x][y].type].destroy is not None:
 #                     print "Standard timer set"
                     self.remove_timer = c.IMAGES[g.map[x][y].type].destroy[0]
                 elif type(g.map[x][y]) == tiles.MultiTilePointer:
@@ -82,7 +84,7 @@ class Player(Entity):
                     # Finding out which tile the pointer is pointing to, and if that has a destroy value
                     head_x, head_y = g.map[x][y].target
                     multi_tile_head = g.map[head_x][head_y]
-                    if c.IMAGES[multi_tile_head.type].destroy != None:
+                    if c.IMAGES[multi_tile_head.type].destroy is not None:
                         self.remove_timer = c.IMAGES[multi_tile_head.type].destroy[0]
                     else:
                         self.remove_timer = None
@@ -177,31 +179,65 @@ class Player(Entity):
         """ Event checker. Checks if the event is a key press or release on the arrow keys.
         """
         if event.key == g.key_dict["move_up"][0]:
-            self.y_minus = if_down(event.type)
+            if not self.browsing_menu:
+                self.y_minus = if_down(event.type)
+            else:
+                if if_down(event.type):
+                    g.selected[1] -= 1
+                    g.force_update = True
+
         elif event.key == g.key_dict["move_down"][0]:
-            self.y_plus = if_down(event.type)
+            if not self.browsing_menu:
+                self.y_plus = if_down(event.type)
+            else:
+                if if_down(event.type):
+                    g.selected[1] += 1
+                    g.force_update = True
+
         elif event.key == g.key_dict["move_left"][0]:
-            self.x_minus = if_down(event.type)
+            if not self.browsing_menu:
+                self.x_minus = if_down(event.type)
+            else:
+                if if_down(event.type):
+                    g.selected[0] -= 1
+                    g.force_update = True
+
         elif event.key == g.key_dict["move_right"][0]:
-            self.x_plus = if_down(event.type)
+            if not self.browsing_menu:
+                self.x_plus = if_down(event.type)
+            else:
+                if if_down(event.type):
+                    g.selected[0] += 1
+                    g.force_update = True
         
         elif event.key == g.key_dict["place_tile"][0]:
             self.placing_tile = if_down(event.type)
         elif event.key == g.key_dict["remove_tile"][0]:
             self.removing_tile = if_down(event.type)
         elif (event.key == g.key_dict["pick_up_tile"][0] and
-            event.type == pgl.KEYDOWN):
+              event.type == pgl.KEYDOWN):
             self.toggle_grab = True
-        elif (event.key == g.key_dict["plant_megatree"][0]):
-            x, y = self.get_tile()
-            width, height = c.IMAGES["megatree"].multi_tile
-            if tiles.area_is_free(x, y + 2, width, height):
-                tiles.make_tile("megatree", x, y + 2)
-            print("Tried making megatree")
-        elif event.key == g.key_dict["build_structure"][0]:
-            if "build_menu" in g.special_entity_list.keys():
-                g.special_entity_list["build_menu"].show = not g.special_entity_list["build_menu"].show
-            
+
+        elif (event.key == g.key_dict["build_structure"][0] and
+              event.type == pgl.KEYUP):
+            # Shows the build menu
+            if "build_menu" in g.non_entity_list.keys():
+                g.non_entity_list["build_menu"].show = not g.non_entity_list["build_menu"].show
+                g.force_update = True
+                self.browsing_menu = not self.browsing_menu
+                self.y_minus = self.y_plus = self.x_minus = self.x_plus = False
+
+        elif (event.key == g.key_dict["select"][0] and
+              event.type == pgl.KEYDOWN):
+            # Selects the current menu item
+            if "build_menu" in g.non_entity_list.keys():
+                if g.non_entity_list["build_menu"].show:
+                    if g.non_entity_list["build_menu"].select():
+                        self.browsing_menu = False
+
+
+
+
 def if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
     """

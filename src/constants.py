@@ -151,6 +151,7 @@ IMAGES = {
          "ufo": Img("enemyUfo.png"),
          
          # other
+         "empty": Img("emptyPixel.png"),
          "map": Img("map.png"),
          "aim": Img("aim.png"),
          "remove_aim": Img("removeAim.png"),
@@ -213,16 +214,20 @@ CONFIG_KEYS_TEXT_PREFIX = "Please press the key you want to use for "
 CONFIG_KEYS_ERROR_MESSAGE = "Sorry, you already used that key."
 CONFIG_KEYS_FONT_COLOR = (255, 255, 255)
 # Time in (~)ticks for the "invalid key" text to be displayed each time
-CONFIG_KEYS_INVALID_TIMER = 15
+CONFIG_KEYS_INVALID_TIMER = 20
 
 # Menu constants
 # Space between screen border and menu border
 BORDER_MARGINS = 10
 # Space between menu border and buttons
-BUTTON_PADDING = 30
+BUTTON_PADDING = 35
 # Space between menu border and buttons on the top side
-BUTTON_TOP_PADDING = 45
+BUTTON_TOP_PADDING = 35
+# Space between menu border and buttons on the bottom side
+BUTTON_BOTTOM_PADDING = 35
 # The size of the button files
 BUTTON_SIZE = 56
 # The spacing between buttons
 BUTTON_SPACING = 6
+# The color of the tooltips in the menus
+MENU_FONT_COLOR = (255, 255, 255)

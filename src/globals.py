@@ -45,6 +45,9 @@ map_screen_buffer = None
 # If the map should be rerendered
 update_map = True
 
+# The selection coordinate for the current on-screen menu
+selected = [0, 0]
+
 
 def update_key_dict():
     """ Copies the key_list list of lists and converts it to a dictionary, key_dict.
@@ -54,7 +57,7 @@ def update_key_dict():
         key_dict[item[0]] = item[1:]
 
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
-# Should ask for the keys in a proper order.
+# should ask for the keys in a proper order.
 key_dict = {}
 key_list = [  # Custom keys. Format:
               # "dict_key": [pgl.default_ley, "key config message"], 
@@ -68,9 +71,9 @@ key_list = [  # Custom keys. Format:
 
         ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
-        ["pick_up_tile", pgl.K_e, "picking up or placing down a package on the ground."],
+        ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
         ["build_structure", pgl.K_q, "opening a menu of what can be built."],
-        ["plant_megatree", pgl.K_z, "planting a megatree on the tile two tiles below the player."],
+        ["select", 13, "selecting the current menu item."], # The enter button
         
         ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
         ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],

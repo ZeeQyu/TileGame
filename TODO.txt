@@ -17,20 +17,33 @@ ZeeQyu TODO list:
 Pokemania00 Graphics TODO list:
 
    	3x3 tile (48*48px) HQ that has an opening where packages can come out.
-   	3 ore with sapling
-   	3 ore with tree
-   	3 ore with fallen tree
-   	3 ore with stump
-   	3 ore with package on it
-   	5 Fallen trees on grass, for when you chop down a tree
-    10 rocks
+    1 ore with sapling
+    1 ore with tree
+    1 ore with fallen tree
+    1 ore with stump
+    1 ore with package on it
+    1 Fallen trees on grass, for when you chop down a tree
+
+    These three tiles are like a progress bar of how long there is left until a building being built is done.
+        1 16x16 just started building-construction site (A package that is opened)
+        1 16x16 a third way there construction site (some walls halfway done)
+        1 16x16 two thirds done construction site (scaffolding roof)
+
+    1
+
+    2 more ore with sapling
+    2 more ore with tree
+    2 more ore with fallen tree
+    2 more ore with stump
+    2 more ore with package on it
+    4 more Fallen trees on grass, for when you chop down a tree
+
     Make colliding tiles (trees and rocks) stretch further to the edges
+    10 rocks
     Like 10 more grass in the same style with flowers and stuff, feel free to reuse some(and then, no more grass)
-	3 32x32 megaores (with miners)
-	6 16x32/32x32/48x32 megatrees
 	A less dark robot than the current one
 	Bullet factory. (32x32)
-	
-	If you get extra time and are bored, come up with a bunch of resources
-		and products that you could make out of those, and combinations of resources.
-		Basically ideas for the resource network that the end game will build on.
+
+	Maybe:
+	3 32x32 megaores (with miners)
+	6 16x32/32x32/48x32 megatrees
