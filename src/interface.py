@@ -105,12 +105,15 @@ def key_reconfig():
 class MenuButton(object):
     """ A class for use in menus, representing the various buttons in a menu that can be selected.
     """
-    def __init__(self, text, image, function=False, vars=[], recommended=False):
+    def __init__(self, text, image, function=False, vars=[], recommended=False, tile_filter=[]):
         """ "text" should be a short string showing what the button represents
             "image" should be a string identifier pointing to a Graphics object in the
                 g.images dictionary, for the thumbnail
             "function" should be a function that is called when this button is selected.
             "vars" should be a list of parameters that should be passed to the function when it's called.
+            "recommended" decides whether or not this tile should be one of the first to be displayed.
+            "tile_filter" should be a list of tiles that can be marked when this button should appear.
+                Leave empty to always display.
         """
         self.text = text
         self.image = image
@@ -118,6 +121,9 @@ class MenuButton(object):
         self.vars = vars
         # Set recommended to True for it to be displayed at the top of the menu
         self.recommended = recommended
+        # The tiles that can be marked for this button to appear.
+        # Leave empty for no filtering = all tiles are accepted.
+        self.tile_filter = tile_filter
 
     def __call__(self, *args, **kwargs):
         """ Calls the predetermined function
@@ -157,7 +163,7 @@ class Menu(object):
         self.target_x = self.target_y = "Empty"
         self.target = (self.target_x, self.target_y)
         # If the build menu should be painted
-        self.show = False
+        self.show = True
 
         # Note that this is a function
         self.update_position()
@@ -354,6 +360,15 @@ def _hello2(name):
     print("Hi, {}!".format(name))
     return True
 
+
+def _launcher():
+    pass
+
+
+def _close():
+    return True
+
+
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
     """
@@ -363,18 +378,13 @@ class BuildMenu(Menu):
 
         super().__init__("menu_background", [
             MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello),
+            MenuButton("Build Launcher", "launcher_button", _launcher, recommended=True),
             MenuButton("Hello", "button1", _hello),
             MenuButton("Hello", "button1", _hello, recommended=True),
 
             MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
             MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
             MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
-            MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
-            MenuButton("No Function", "button3")
+            MenuButton("No Function", "button3"),
+            MenuButton("Close", "button_close", _close)
         ])

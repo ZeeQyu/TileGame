@@ -17,6 +17,7 @@ import pygame.locals as pgl
 from entities import Entity
 import globals as g
 import constants as c
+import interface
 
 class Player(Entity):
     """ Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
@@ -142,7 +143,6 @@ class Player(Entity):
         super(Player, self).tick()
         if self.removing_tile and not self.placing_tile and self.remove_timer != None:
             self.remove_timer -= 1
-
         
     def get_relative_aim_tile(self):
         """ Gets the tile the player is aiming at, relative to the player position.
@@ -218,14 +218,18 @@ class Player(Entity):
               event.type == pgl.KEYDOWN):
             self.toggle_grab = True
 
-        elif (event.key == g.key_dict["build_structure"][0] and
+        elif (event.key == g.key_dict["build_menu"][0] and
               event.type == pgl.KEYUP):
+
             # Shows the build menu
-            if "build_menu" in g.non_entity_list.keys():
-                g.non_entity_list["build_menu"].show = not g.non_entity_list["build_menu"].show
-                g.force_update = True
-                self.browsing_menu = not self.browsing_menu
-                self.y_minus = self.y_plus = self.x_minus = self.x_plus = False
+            g.force_update = True
+            self.y_minus = self.y_plus = self.x_minus = self.x_plus = False
+            if "build_menu" not in g.non_entity_list.keys():
+                g.non_entity_list["build_menu"] = interface.BuildMenu()
+                self.browsing_menu = True
+            else:
+                del g.non_entity_list["build_menu"]
+                self.browsing_menu = False
 
         elif (event.key == g.key_dict["select"][0] and
               event.type == pgl.KEYDOWN):
@@ -233,9 +237,8 @@ class Player(Entity):
             if "build_menu" in g.non_entity_list.keys():
                 if g.non_entity_list["build_menu"].show:
                     if g.non_entity_list["build_menu"].select():
+                        del g.non_entity_list["build_menu"]
                         self.browsing_menu = False
-
-
 
 
 def if_down(down_or_up):

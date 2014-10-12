@@ -43,8 +43,6 @@ def main():
     maps.generate_map()
     # Initiate player
     g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
-    # Initiate the temporary build menu variable
-    g.non_entity_list["build_menu"] = interface.BuildMenu()
     # Creates a window just the size to fit all the tiles in the map file.
     pygame.display.set_icon(g.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")

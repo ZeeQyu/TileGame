@@ -72,7 +72,7 @@ key_list = [  # Custom keys. Format:
         ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
         ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
-        ["build_structure", pgl.K_q, "opening a menu of what can be built."],
+        ["build_menu", pgl.K_q, "opening a menu of what can be built."],
         ["select", 13, "selecting the current menu item."], # The enter button
         
         ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],

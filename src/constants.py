@@ -51,7 +51,10 @@ class Img(object):
                 it is a multi-tile. (example: (3, 3))
         """
         self.type = type
-        self.png = png
+        if "." in png:
+            self.png = png
+        else:
+            self.png = png + ".png"
         self.color_code = color_code
         self.random = random
         self.collides = collides
@@ -161,7 +164,9 @@ IMAGES = {
          "button1": Img("button1.png"),
          "button2": Img("button2.png"),
          "button3": Img("button3.png"),
-         "button_border": Img("button_border.png")
+         "launcher_button": Img("launcher_button.png"),
+         "button_border": Img("button_border.png"),
+         "button_close": Img("close_button.png")
         }
 
 BACKGROUND_COLOR = (0, 0, 0)

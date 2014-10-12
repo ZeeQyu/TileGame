@@ -132,14 +132,14 @@ class BuildMenu(Menu):
                 self.target = (c.BORDER_MARGIN, c.BORDER_MARGIN)
             else:
                 self.target = (c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+                               g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
         else:
             if player_y > g.height*c.TILE_SIZE/2.0:
                 self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          c.BORDER_MARGIN)
+                               c.BORDER_MARGIN)
             else:
                 self.target = (g.width * c.TILE_SIZE - background_width - c.BORDER_MARGIN,
-                          g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
+                               g.height * c.TILE_SIZE - background_height - c.BORDER_MARGIN)
                 
     def paint(self):
         ''' Updates the position of the menu and paints it.
