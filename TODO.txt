@@ -1,6 +1,5 @@
 ZeeQyu TODO list:
 
-	Build Structures-Window
 	Multitile structures
 	Simple pathfinding (Going towards player) with robots?
 	Simple enemies that try to attack you
@@ -16,8 +15,8 @@ ZeeQyu TODO list:
 
 Pokemania00 Graphics TODO list:
 
-   	3x3 tile (48*48px) HQ that has an opening where packages can come out.
-    1 ore with sapling
+High priority
+   	1 ore with sapling
     1 ore with tree
     1 ore with fallen tree
     1 ore with stump
@@ -29,8 +28,8 @@ Pokemania00 Graphics TODO list:
         1 16x16 a third way there construction site (some walls halfway done)
         1 16x16 two thirds done construction site (scaffolding roof)
 
-    1
-
+Low priority
+    3x3 tile (48*48px) HQ that has an opening where packages can come out.
     2 more ore with sapling
     2 more ore with tree
     2 more ore with fallen tree

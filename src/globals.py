@@ -16,6 +16,7 @@ import pygame.locals as pgl
 sys.path.append(os.path.join(os.getcwd(), "sys"))
 from maps import generate_map
 import graphics
+import constants as c
 
 # Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None
@@ -49,7 +50,7 @@ update_map = True
 selected = [0, 0]
 
 
-def update_key_dict():
+def update_key_dict(key_list):
     """ Copies the key_list list of lists and converts it to a dictionary, key_dict.
         Uses the first index in each index as the key and the other values in a list as the value. 
     """
@@ -58,26 +59,7 @@ def update_key_dict():
 
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
 # should ask for the keys in a proper order.
+key_list = c.key_list
 key_dict = {}
-key_list = [  # Custom keys. Format:
-              # "dict_key": [pgl.default_ley, "key config message"], 
-              # key config message (index 2) is displayed after
-              # the constants.CHANGE_KEYS_TEXT_PREFIX when reconfiguring keys
-        ["move_up", pgl.K_UP, "moving the player up."],
-        ["move_down", pgl.K_DOWN, "moving the player down."],
-        ["move_right", pgl.K_RIGHT, "moving the player right."],
-        ["move_left", pgl.K_LEFT, "moving the player left."],
 
-
-        ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
-        ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
-        ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
-        ["build_menu", pgl.K_q, "opening a menu of what can be built."],
-        ["select", 13, "selecting the current menu item."], # The enter button
-        
-        ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
-        ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
-        ["remove_beetles", pgl.K_w, "removing all beetles."]
-    ]
-
-update_key_dict()
+update_key_dict(key_list)

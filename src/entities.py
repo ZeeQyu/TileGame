@@ -146,7 +146,7 @@ class Entity(object):
             key = self.image
             if self.angle != 0:
                 key = key + str(self.angle)
-            # Check the images dict for a key with the current entity and rotation 
+            # Check the images dict for a key with the cutrrent entity and rotation
             if key in g.images:
                 image = g.images[key].get()
             else:

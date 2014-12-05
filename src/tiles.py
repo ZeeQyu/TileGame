@@ -17,9 +17,10 @@ from random import choice, randint
 import pygame
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import entities, units
 import globals as g
 import constants as c
+import entities
+
 class AreaNotFreeException(Exception):
     """ Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
         make_tile() is called.
@@ -227,9 +228,10 @@ def destroy_tile(x, y):
                               "width": g.map[target_x][target_y].width,
                               "height": g.map[target_x][target_y].height}
             except:
-                 import pdb, sys
-                 e, m, tb = sys.exc_info()
-                 pdb.post_mortem(tb)
+                raise "Failed to destroy a multitile. Please implement a fix."
+                 # import pdb, sys
+                 # e, m, tb = sys.exc_info()
+                 # pdb.post_mortem(tb)
         for i in range(multi_tile["x"], multi_tile["x"] + multi_tile["width"]):
             for j in range(multi_tile["y"], multi_tile["y"] + multi_tile["height"]):
                 if i == x and j == y:
@@ -241,4 +243,3 @@ def destroy_tile(x, y):
         make_tile(destroy_value[1], x, y)
     else:
         make_tile(c.IMAGES[g.map[x][y].type].destroy[1], x, y)
-        

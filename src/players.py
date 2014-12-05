@@ -19,6 +19,7 @@ import globals as g
 import constants as c
 import interface
 
+
 class Player(Entity):
     """ Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
     """
@@ -178,6 +179,7 @@ class Player(Entity):
     def event_check(self, event):
         """ Event checker. Checks if the event is a key press or release on the arrow keys.
         """
+
         if event.key == g.key_dict["move_up"][0]:
             if not self.browsing_menu:
                 self.y_minus = if_down(event.type)
@@ -217,10 +219,8 @@ class Player(Entity):
         elif (event.key == g.key_dict["pick_up_tile"][0] and
               event.type == pgl.KEYDOWN):
             self.toggle_grab = True
-
         elif (event.key == g.key_dict["build_menu"][0] and
               event.type == pgl.KEYUP):
-
             # Shows the build menu
             g.force_update = True
             self.y_minus = self.y_plus = self.x_minus = self.x_plus = False

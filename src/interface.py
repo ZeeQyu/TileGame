@@ -15,6 +15,7 @@ import pygame.locals as pgl
 
 import constants as c
 import globals as g
+import tiles
 
 
 def key_reconfig():
@@ -105,7 +106,7 @@ def key_reconfig():
 class MenuButton(object):
     """ A class for use in menus, representing the various buttons in a menu that can be selected.
     """
-    def __init__(self, text, image, function=False, vars=[], recommended=False, tile_filter=[]):
+    def __init__(self, text, image, function=False, variables=[], recommended=False, tile_filter=[]):
         """ "text" should be a short string showing what the button represents
             "image" should be a string identifier pointing to a Graphics object in the
                 g.images dictionary, for the thumbnail
@@ -118,7 +119,7 @@ class MenuButton(object):
         self.text = text
         self.image = image
         self.function = function
-        self.vars = vars
+        self.vars = variables
         # Set recommended to True for it to be displayed at the top of the menu
         self.recommended = recommended
         # The tiles that can be marked for this button to appear.
@@ -129,7 +130,7 @@ class MenuButton(object):
         """ Calls the predetermined function
         """
         if self.function:
-            if vars:
+            if self.vars:
                 return self.function(*self.vars)
             else:
                 return self.function()
@@ -153,6 +154,17 @@ class Menu(object):
         self.background = background
         self.buttons = []
         buttons.reverse()
+        # The buttons gets assigned to coordinates in self.buttons in the end of the init function.
+
+        # Check if each button should stay by looking at the tile filter.
+        filter_tile = (g.map[g.special_entity_list["player"].get_aim_tile()[0]]
+                       [g.special_entity_list["player"].get_aim_tile()[1]].type)
+        print(filter_tile)
+        for i in range(len(buttons)-1, -1, -1):
+            button = buttons[i]
+            if button.tile_filter:
+                if filter_tile not in button.tile_filter:
+                    del buttons[i]
 
         # The last known g.selected variable
         self.old_selected = g.selected[:]
@@ -195,8 +207,8 @@ class Menu(object):
                     spot[0] = 0
                     spot[1] += 1
                     if spot[1] >= buttons_high and not self.needs_scroll:
-                        raise "Too many buttons. Implement a fix" # TODO: Remove this
                         self.needs_scroll = True
+                        raise "Too many buttons. Implement a fix"  # TODO: Remove this
                 self.buttons[spot[0]][spot[1]] = button
                 del buttons[i]
                 spot[0] += 1
@@ -209,8 +221,8 @@ class Menu(object):
                 spot[0] = 0
                 spot[1] += 1
                 if spot[1] >= buttons_high and not self.needs_scroll:
-                    raise "Too many buttons. Implement a fix"  # TODO: Remove this
                     self.needs_scroll = True
+                    raise "Too many buttons. Implement a fix"  # TODO: Remove this
             spot[0] += 1
 
         # Then add all the other buttons.
@@ -220,8 +232,8 @@ class Menu(object):
                 spot[0] = 0
                 spot[1] += 1
                 if spot[1] >= buttons_high and not self.needs_scroll:
-                    raise "Too many buttons. Implement a fix"  # TODO: Remove this
                     self.needs_scroll = True
+                    raise "Too many buttons. Implement a fix"  # TODO: Remove this
             self.buttons[spot[0]][spot[1]] = button
             del buttons[i]
             spot[0] += 1
@@ -351,18 +363,9 @@ class Menu(object):
             g.selected[1] += len(self.buttons[0])
 
 
-def _hello():
-    print("Hi there!")
+def _put_tile(tile_id):
+    tiles.make_tile(tile_id, *g.special_entity_list["player"].get_aim_tile())
     return True
-
-
-def _hello2(name):
-    print("Hi, {}!".format(name))
-    return True
-
-
-def _launcher():
-    pass
 
 
 def _close():
@@ -376,15 +379,9 @@ class BuildMenu(Menu):
         """ Sets the menu up.
         """
 
-        super().__init__("menu_background", [
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Build Launcher", "launcher_button", _launcher, recommended=True),
-            MenuButton("Hello", "button1", _hello),
-            MenuButton("Hello", "button1", _hello, recommended=True),
 
-            MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
-            MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
-            MenuButton("Hello, me", "button2", _hello2, ["You"], recommended=True),
-            MenuButton("No Function", "button3"),
+        super().__init__("menu_background", [
+            MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], tile_filter=["package_tile"]),
+            MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], tile_filter=["ore-package"]),
             MenuButton("Close", "button_close", _close)
         ])

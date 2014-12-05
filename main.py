@@ -37,7 +37,6 @@ def main():
         Takes no arguments and returns nothing.
     """
     # initialize pygame
-    global entity
     pygame.init()
     # Make map
     maps.generate_map()

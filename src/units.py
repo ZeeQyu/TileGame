@@ -24,7 +24,7 @@ class Animal(Entity):
                  rotates = True, wall_collides = True):
         """ Calls the entity init and creates another variable
         """
-        super(Animal, self).__init__(x, y, image, movement_speed,collides=collides,
+        super(Animal, self).__init__(x, y, image, movement_speed, collides=collides,
                                      rotates=rotates, wall_collides=wall_collides)
         self.movement_timer = 0
         self.max_travel = max_travel

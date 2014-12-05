@@ -15,6 +15,8 @@ FORCE_UPDATE = False
 
 # Activates various debug callouts that normally should be on, like fps meter.
 NORMAL_DEBUG = False
+S_DEBUG = True
+
 
 class Img(object):
     """ Small class for keeping track of data related to different images.
@@ -42,8 +44,8 @@ class Img(object):
                 indestructible. Multi-tiles should have a third value denoting which tile the
                 other tiles in that multitile turns into. (example: [50, "dirt", "tree"]
             "evolve" should be a list containing the minimum time it takes for the tile
-                to evolve (change into another tile) and which tile it should evolve to
-                (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
+                to evolve (change into another tile), makimum time in ticks and which tile
+                it should evolve to (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
             "grabbable" should be a string with the class name of the entity it should become
                 if the grab key is used on that Tile. (example: Package) Leave as None if
                 it shouldn't be grabbable.
@@ -133,6 +135,11 @@ IMAGES = {
          "ore3": Img("ore3.png"),
          "ore4": Img("ore4.png"),
          "ore5": Img("ore5.png"),
+         "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True),
+         "ore_mine2": Img("oreMine2.png"),
+         "ore_mine3": Img("oreMine3.png"),
+         "ore_mine4": Img("oreMine4.png"),
+         "ore_mine5": Img("oreMine5.png"),
          "ore-sapling": Img("flower.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
          "ore-tree": Img("flower2.png", collides=True, destroy=[10, "ore-stump"]),
          "ore-stump": Img("flower3.png", destroy=[15, "ore"]),
@@ -143,6 +150,7 @@ IMAGES = {
          "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
          "ore-package": Img("placeholder.png"),
+         "launcher": Img("launcher.png", collides=True, destroy=[40, "package_tile"]),
          
          "pointer": Img("emptyPixel.png"),
          "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -165,9 +173,31 @@ IMAGES = {
          "button2": Img("button2.png"),
          "button3": Img("button3.png"),
          "launcher_button": Img("launcher_button.png"),
+         "ore_mine_button": Img("oreMineButton.png"),
          "button_border": Img("button_border.png"),
          "button_close": Img("close_button.png")
         }
+
+key_list = [  # Custom keys. Format:
+              # "dict_key": [pgl.default_ley, "key config message"],
+              # key config message (index 2) is displayed after
+              # the constants.CHANGE_KEYS_TEXT_PREFIX when reconfiguring keys
+        ["move_up", pgl.K_UP, "moving the player up."],
+        ["move_down", pgl.K_DOWN, "moving the player down."],
+        ["move_right", pgl.K_RIGHT, "moving the player right."],
+        ["move_left", pgl.K_LEFT, "moving the player left."],
+
+
+        ["remove_tile", pgl.K_f, "removing the tile the player is looking at."],
+        ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
+        ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
+        ["build_menu", pgl.K_q, "opening a menu of what can be built."],
+        ["select", pgl.K_SPACE, "selecting the current menu item."],  # The enter button
+
+        ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
+        ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
+        ["remove_beetles", pgl.K_w, "removing all beetles."]
+    ]
 
 BACKGROUND_COLOR = (0, 0, 0)
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for

@@ -35,7 +35,7 @@ X A character that can alter the terrain
 / Adding window icon (Picture won't display in taskbar, this might not be fixable until packaging into installer.
 X Dragging packages
 X Multi-tiles
-/ Build Structure-Window
+X Build Structure-Window
   Multitile structures
   Enemies and combat
   Win condition
