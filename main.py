@@ -39,7 +39,7 @@ def main():
     # initialize pygame
     pygame.init()
     # Make map
-    maps.generate_map()
+    maps.load_map(maps.generate_map())
     # Initiate player
     g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
     # Creates a window just the size to fit all the tiles in the map file.
@@ -67,7 +67,7 @@ def main():
             if event.type == pgl.QUIT:
                 sys.exit()
             if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
-                # Create beetle with (default) space
+                # Create beetle with (default) a
                 if event.type == pgl.KEYDOWN and event.key == g.key_dict["spawn_beetle"][0]:
                     g.entity_list.append(units.Beetle(g.special_entity_list["player"].x,
                                                             g.special_entity_list["player"].y))
@@ -173,6 +173,45 @@ def main():
 
             # Update the display
             pygame.display.flip()
-        
+
+
+def alternative_main():
+    """ Alternative main function for testing procedural generation
+    """
+    # initialize pygame
+    pygame.init()
+    # Make map
+    maps.load_map(maps.generate_map())
+
+    # Creates a window just the size to fit all the tiles in the map file.
+    pygame.display.set_icon(g.images["icon"].get())
+    pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
+    g.screen = pygame.display.set_mode((c.GEN_MAP_SIZE[0] * c.TILE_SIZE,
+                                        c.GEN_MAP_SIZE[1] * c.TILE_SIZE))
+    while True:
+        # Gen map
+        maps.load_map(maps.generate_map())
+
+        # Painting
+        g.screen.fill(c.BACKGROUND_COLOR)
+        g.screen.blit(maps.update_map(), (0, 0))
+        pygame.display.flip()
+
+        # Restart mechanism
+        do_break = False
+        while True:
+            for event in pygame.event.get():
+                # Quit code
+                if event.type == pgl.QUIT:
+                    sys.exit()
+                if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
+                    # Restart generation
+                    if event.type == pgl.KEYDOWN and event.key == pgl.K_SPACE:
+                        do_break = True
+                        break
+            if do_break:
+                break
+
 if __name__ == '__main__':
     main()
+    # alternative_main()

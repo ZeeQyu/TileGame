@@ -158,6 +158,7 @@ def area_is_free(x, y, width, height):
             if not entities.free_of_entities(g.map[i][j]):
                 is_free = False
     return is_free
+
     
 def make_tile(type, x, y, target=None):
     """ Function to create a tile of the appropriate type (Standard, Random and multi-tile)
@@ -178,7 +179,7 @@ def make_tile(type, x, y, target=None):
             return make_tile(c.SPECIAL_PLACE_TILES[type + "+" + str(g.map[x][y].type)], x, y)
 
     # If it is a multi-tile
-    if c.IMAGES[type].multi_tile != None:
+    if c.IMAGES[type].multi_tile is not None:
         width, height = c.IMAGES[type].multi_tile
         if not area_is_free(x, y, width, height):
             raise AreaNotFreeException("The area at x " + x + ", y " + y +
@@ -201,7 +202,7 @@ def make_tile(type, x, y, target=None):
     else:
         timer = 0
         # Check if target was specified. If so, this tile is a pointer.
-        if target != None:
+        if target is not None:
             tile = MultiTilePointer(type, x, y, *target)
         else:
             tile = Tile(type, x, y)
@@ -209,7 +210,8 @@ def make_tile(type, x, y, target=None):
     g.map[x][y] = tile
     g.update_map = True
     return tile 
-    
+
+
 def destroy_tile(x, y):
     # If the old tile was a multitile head or pointer
     if (g.map[x][y] and (type(g.map[x][y]) == MultiTileHead or
@@ -229,9 +231,7 @@ def destroy_tile(x, y):
                               "height": g.map[target_x][target_y].height}
             except:
                 raise "Failed to destroy a multitile. Please implement a fix."
-                 # import pdb, sys
-                 # e, m, tb = sys.exc_info()
-                 # pdb.post_mortem(tb)
+
         for i in range(multi_tile["x"], multi_tile["x"] + multi_tile["width"]):
             for j in range(multi_tile["y"], multi_tile["y"] + multi_tile["height"]):
                 if i == x and j == y:

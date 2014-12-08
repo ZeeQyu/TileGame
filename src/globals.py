@@ -10,11 +10,7 @@
 """
 import os, sys
 
-import pygame
-import pygame.locals as pgl
-
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-from maps import generate_map
 import graphics
 import constants as c
 

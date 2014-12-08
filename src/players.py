@@ -127,17 +127,17 @@ class Player(Entity):
         if self.toggle_grab:
             # If the grab button is pressed
             self.toggle_grab = False
-            if self.following_entity != None:
+            if self.following_entity is not None:
                 x, y = g.special_entity_list[self.following_entity].get_tile()
                 if c.IMAGES[g.map[x][y].type].placeable:
                     g.special_entity_list[self.following_entity].target_coords = [x*c.TILE_SIZE,
-                                                                                        y*c.TILE_SIZE]
+                                                                                  y*c.TILE_SIZE]
             else:
                 if g.map[x][y].type in c.PACKAGE_TILE_NAMES.keys():
                     g.map[x][y] = tiles.make_tile(c.PACKAGE_TILE_NAMES[g.map[x][y].type], x, y)
                     g.update_map = True
                     units.Package(x*c.TILE_SIZE, y*c.TILE_SIZE, "player")
-        
+
     def tick(self):
         """ What happens every tick. Counts down the remove block timer. 
         """

@@ -36,10 +36,10 @@ X A character that can alter the terrain
 X Dragging packages
 X Multi-tiles
 X Build Structure-Window
+  Random map generator
   Multitile structures
   Enemies and combat
   Win condition
-  Random map generator
   A menu screen
   Graphics options
   Sound

@@ -15,7 +15,7 @@ FORCE_UPDATE = False
 
 # Activates various debug callouts that normally should be on, like fps meter.
 NORMAL_DEBUG = False
-S_DEBUG = True
+SPECIAL_DEBUG = True
 
 
 class Img(object):
@@ -151,6 +151,7 @@ IMAGES = {
          "package_tile": Img("package.png", color_code=(255, 0, 0)),
          "ore-package": Img("placeholder.png"),
          "launcher": Img("launcher.png", collides=True, destroy=[40, "package_tile"]),
+         "endless_package": Img("package.png", color_code=(0, 255, 0), placeable=True),
          
          "pointer": Img("emptyPixel.png"),
          "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -192,12 +193,29 @@ key_list = [  # Custom keys. Format:
         ["place_tile", pgl.K_d, "placing a tile on the spot the player is looking at."],
         ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
         ["build_menu", pgl.K_q, "opening a menu of what can be built."],
-        ["select", pgl.K_SPACE, "selecting the current menu item."],  # The enter button
+        ["select", pgl.K_SPACE, "selecting the current menu item."],
 
         ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
         ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
         ["remove_beetles", pgl.K_w, "removing all beetles."]
     ]
+
+# The identifier of the tile that should be used
+# when the map.png decoding fails. This tile should always have placeable=True.
+DEFAULT_TILE = "grass"
+
+# Combinations of tiles that, when placed, gives a specific tile
+# Syntax is {"tile_to_be_placed+tile_being_placed_on": "resulting tile"}
+SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
+                       "sapling+ore": "ore-sapling",
+                       "package_tile+ore": "ore-package",
+
+                       "package_tile+endless_package": "endless_package",
+                       "sapling+endless_package": "endless_package"}
+
+PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
+                      "ore-package": "ore",
+                      "endless_package": "endless_package"}
 
 BACKGROUND_COLOR = (0, 0, 0)
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
@@ -208,15 +226,6 @@ if FORCE_UPDATE:
     SLEEP_TIME = 0.00001
 else:
     SLEEP_TIME = 0.001
-
-# The identifier of the tile that should be used
-# when the map.png decoding fails. This tile should always have placeable=True.
-DEFAULT_TILE = "grass"
-# Combinations of tiles that, when placed, gives a specific tile
-# Syntax is {"tile_to_be_placed+tile_being_placed_on": "resulting tile"}
-SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
-                       "sapling+ore": "ore-sapling",
-                       "package_tile+ore": "ore-package"}
 
 # The tile that is placed with the players place key
 DEFAULT_PLACE_TILE = "sapling"
@@ -229,8 +238,6 @@ TILE_SIZE = 16
 # Entities
 # Names of special entities
 PLAYER_NAME = "player"
-PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
-                      "ore-package": "ore"}
 # The speed various entities moves at. Any number greater than or equal to 0
 PLAYER_MOVEMENT_SPEED = 50
 BEETLE_MOVEMENT_SPEED = 80
@@ -266,3 +273,14 @@ BUTTON_SIZE = 56
 BUTTON_SPACING = 6
 # The color of the tooltips in the menus
 MENU_FONT_COLOR = (255, 255, 255)
+
+# Map generation
+# Size of the generated map
+GEN_MAP_SIZE = (60, 50)
+# Per mille chance of generating that tile at first generation
+GEN_TREE_PER_MILLE = 500
+GEN_ORE_PER_MILLE = 5
+# Number of times the terrain should be smoothed
+GEN_ITERATIONS = 3
+# The chance of rock formations evolving from rocks.
+GEN_ORE_CHANCE = 40

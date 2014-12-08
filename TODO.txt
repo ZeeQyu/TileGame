@@ -1,5 +1,7 @@
 ZeeQyu TODO list:
 
+    Random maps
+    Fix menu selecting empty spaces
 	Multitile structures
 	Simple pathfinding (Going towards player) with robots?
 	Simple enemies that try to attack you
@@ -22,6 +24,8 @@ High priority
     1 ore with stump
     1 ore with package on it
     1 Fallen trees on grass, for when you chop down a tree
+    1 Endless Package
+    1 Wreckage (broken package)
 
     These three tiles are like a progress bar of how long there is left until a building being built is done.
         1 16x16 just started building-construction site (A package that is opened)
