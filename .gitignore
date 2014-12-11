@@ -39,4 +39,4 @@ nosetests.xml
 uydfql24.n0c.txt
 
 # Workspace
-workspace.xml
+*workspace.xml
