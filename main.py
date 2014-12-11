@@ -23,7 +23,8 @@ import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.path.join(os.getcwd(), "src"))
-import tiles, graphics, maps, units, players, interface
+import tiles, graphics, units, players, interface
+import maps
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
 import globals as g
@@ -38,6 +39,7 @@ def main():
     """
     # initialize pygame
     pygame.init()
+
     # Make map
     maps.load_map(maps.generate_map())
     # Initiate player
@@ -146,8 +148,8 @@ def main():
                     entity_has_moved = True
         if g.special_entity_list:
             for entity in list(g.special_entity_list.values()):
-                 # Update all entities and check for if any of them is a package that just finished moving.
-                 # If so, skip the has_moved check.
+                # Update all entities and check for if any of them is a package that just finished moving.
+                # If so, skip the has_moved check.
                 if entity.update(time_diff) == "deleted":
                     continue
                 if entity.has_moved():
@@ -174,44 +176,5 @@ def main():
             # Update the display
             pygame.display.flip()
 
-
-def alternative_main():
-    """ Alternative main function for testing procedural generation
-    """
-    # initialize pygame
-    pygame.init()
-    # Make map
-    maps.load_map(maps.generate_map())
-
-    # Creates a window just the size to fit all the tiles in the map file.
-    pygame.display.set_icon(g.images["icon"].get())
-    pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
-    g.screen = pygame.display.set_mode((c.GEN_MAP_SIZE[0] * c.TILE_SIZE,
-                                        c.GEN_MAP_SIZE[1] * c.TILE_SIZE))
-    while True:
-        # Gen map
-        maps.load_map(maps.generate_map())
-
-        # Painting
-        g.screen.fill(c.BACKGROUND_COLOR)
-        g.screen.blit(maps.update_map(), (0, 0))
-        pygame.display.flip()
-
-        # Restart mechanism
-        do_break = False
-        while True:
-            for event in pygame.event.get():
-                # Quit code
-                if event.type == pgl.QUIT:
-                    sys.exit()
-                if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
-                    # Restart generation
-                    if event.type == pgl.KEYDOWN and event.key == pgl.K_SPACE:
-                        do_break = True
-                        break
-            if do_break:
-                break
-
 if __name__ == '__main__':
     main()
-    # alternative_main()

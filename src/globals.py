@@ -46,7 +46,7 @@ update_map = True
 selected = [0, 0]
 
 
-def update_key_dict(key_list):
+def create_key_dict(key_list):
     """ Copies the key_list list of lists and converts it to a dictionary, key_dict.
         Uses the first index in each index as the key and the other values in a list as the value. 
     """
@@ -55,7 +55,12 @@ def update_key_dict(key_list):
 
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
 # should ask for the keys in a proper order.
-key_list = c.key_list
 key_dict = {}
 
-update_key_dict(key_list)
+key_list = c.key_list
+
+create_key_dict(key_list)
+
+
+def update_key_dict():
+    create_key_dict(key_list)

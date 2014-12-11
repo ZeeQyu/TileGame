@@ -79,10 +79,8 @@ class Player(Entity):
             # If so, assign that value to self.remove_timer.
             try:
                 if c.IMAGES[g.map[x][y].type].destroy is not None:
-#                     print "Standard timer set"
                     self.remove_timer = c.IMAGES[g.map[x][y].type].destroy[0]
                 elif type(g.map[x][y]) == tiles.MultiTilePointer:
-#                     print "Pointer timer set"
                     # Finding out which tile the pointer is pointing to, and if that has a destroy value
                     head_x, head_y = g.map[x][y].target
                     multi_tile_head = g.map[head_x][head_y]
@@ -91,10 +89,8 @@ class Player(Entity):
                     else:
                         self.remove_timer = None
                 else:
-#                     print "Indestructible tile"
                     self.remove_timer = None
             except IndexError:
-#                 print "IndexError"
                 self.remove_timer = None
             except:
                 raise
@@ -128,13 +124,13 @@ class Player(Entity):
             # If the grab button is pressed
             self.toggle_grab = False
             if self.following_entity is not None:
-                x, y = g.special_entity_list[self.following_entity].get_tile()
+                x, y = self.get_aim_tile()
                 if c.IMAGES[g.map[x][y].type].placeable:
                     g.special_entity_list[self.following_entity].target_coords = [x*c.TILE_SIZE,
                                                                                   y*c.TILE_SIZE]
             else:
                 if g.map[x][y].type in c.PACKAGE_TILE_NAMES.keys():
-                    g.map[x][y] = tiles.make_tile(c.PACKAGE_TILE_NAMES[g.map[x][y].type], x, y)
+                    tiles.make_tile(c.PACKAGE_TILE_NAMES[g.map[x][y].type], x, y)
                     g.update_map = True
                     units.Package(x*c.TILE_SIZE, y*c.TILE_SIZE, "player")
 
@@ -142,7 +138,7 @@ class Player(Entity):
         """ What happens every tick. Counts down the remove block timer. 
         """
         super(Player, self).tick()
-        if self.removing_tile and not self.placing_tile and self.remove_timer != None:
+        if self.removing_tile and not self.placing_tile and self.remove_timer is not None:
             self.remove_timer -= 1
         
     def get_relative_aim_tile(self):
@@ -182,42 +178,43 @@ class Player(Entity):
 
         if event.key == g.key_dict["move_up"][0]:
             if not self.browsing_menu:
-                self.y_minus = if_down(event.type)
+                self.y_minus = _if_down(event.type)
             else:
-                if if_down(event.type):
+                if _if_down(event.type):
                     g.selected[1] -= 1
                     g.force_update = True
 
         elif event.key == g.key_dict["move_down"][0]:
             if not self.browsing_menu:
-                self.y_plus = if_down(event.type)
+                self.y_plus = _if_down(event.type)
             else:
-                if if_down(event.type):
+                if _if_down(event.type):
                     g.selected[1] += 1
                     g.force_update = True
 
         elif event.key == g.key_dict["move_left"][0]:
             if not self.browsing_menu:
-                self.x_minus = if_down(event.type)
+                self.x_minus = _if_down(event.type)
             else:
-                if if_down(event.type):
+                if _if_down(event.type):
                     g.selected[0] -= 1
                     g.force_update = True
 
         elif event.key == g.key_dict["move_right"][0]:
             if not self.browsing_menu:
-                self.x_plus = if_down(event.type)
+                self.x_plus = _if_down(event.type)
             else:
-                if if_down(event.type):
+                if _if_down(event.type):
                     g.selected[0] += 1
                     g.force_update = True
         
         elif event.key == g.key_dict["place_tile"][0]:
-            self.placing_tile = if_down(event.type)
+            self.placing_tile = _if_down(event.type)
         elif event.key == g.key_dict["remove_tile"][0]:
-            self.removing_tile = if_down(event.type)
+            self.removing_tile = _if_down(event.type)
         elif (event.key == g.key_dict["pick_up_tile"][0] and
               event.type == pgl.KEYDOWN):
+            # This is handled in self.update()
             self.toggle_grab = True
         elif (event.key == g.key_dict["build_menu"][0] and
               event.type == pgl.KEYUP):
@@ -241,7 +238,7 @@ class Player(Entity):
                         self.browsing_menu = False
 
 
-def if_down(down_or_up):
+def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
     """
     return down_or_up == pgl.KEYDOWN

@@ -143,10 +143,15 @@ def generate_map():
                 return_image.set_at((i, j), c.IMAGES["tree"].color_code)
             elif random_number >= 1000 - c.GEN_ORE_PER_MILLE:
                 return_image.set_at((i, j), c.IMAGES["ore"].color_code)
+            elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["rock"].color_code)
             else:
                 return_image.set_at((i, j), c.IMAGES["grass"].color_code)
     for i in range(c.GEN_ITERATIONS):
         return_image = _iterate_generation(return_image)
+
+    for i in range(c.GEN_ROCK_ITERATIONS):
+        return_image = _iterate_rocks(return_image)
 
     # Put out a random endless package in the middle
     return_image.set_at((return_image.get_width() // 2, return_image.get_height() // 2),
@@ -173,16 +178,18 @@ def _iterate_generation(passed_image):
             ores = 0
             for i in range(x - 1, x + 2, 1):
                 for j in range(y - 1, y + 2, 1):
-                    blocked, ore = _is_blocked(x, y, i, j)
+                    blocked, ore = _is_blocked(x, y, i, j)[:2]
                     if blocked:
                         amount += 1
                     if ore:
                         ores += 1
-            if ores is 1 and random.randint(1, 100) < c.GEN_ORE_CHANCE: # TODO Gör sten till ores, sätt sten i separat iteration, kolla om du kollar på en sten och sätt en sten på någon av de omgivande platserna
+            if ores is 1 and random.randint(1, 100) < c.GEN_ORE_CHANCE:
                 iterated_image.set_at((x, y), c.IMAGES["ore"].color_code)
             elif amount >= 5:
                 if _compare("ore", x, y):
                     iterated_image.set_at((x, y), c.IMAGES["ore"].color_code)
+                elif _compare("rock", x, y):
+                    iterated_image.set_at((x, y), c.IMAGES["rock"].color_code)
                 else:
                     iterated_image.set_at((x, y), c.IMAGES["tree"].color_code)
             else:
@@ -190,21 +197,49 @@ def _iterate_generation(passed_image):
     return iterated_image
 
 
+def _iterate_rocks(passed_image):
+    """ Evolves rock formations every iteration
+    """
+    global map_image
+    map_image = passed_image
+    iterated_image = passed_image
+    for x in range(map_image.get_width()):
+        for y in range(map_image.get_height()):
+            if _compare("rock", x, y):
+                rocks = 0
+                for i in range(x - 1, x + 2, 1):
+                    for j in range(y - 1, y + 2, 1):
+                        rock = _is_blocked(x, y, i, j)[2:][0]
+                        if rock:
+                            rocks += 1
+                if rocks <= 2:
+                    relative_x = relative_y = 0
+                    while relative_x is 0 and relative_y is 0:
+                        relative_x = random.randint(-1, 1)
+                        relative_y = random.randint(-1, 1)
+                    iterated_image.set_at((x + relative_x, y + relative_y), c.IMAGES["rock"].color_code)
+
+    return iterated_image
+
+
 def _is_blocked(x, y, i, j):
     """ Finds out if the selected coordinate has a collidable tile
     """
     ore = False
+    rock = False
     if (i < 0 or i >= map_image.get_width() or
             j < 0 or j >= map_image.get_height()):
-        return True, False
+        return True, False, False
     else:
         if _compare("ore", i, j) and not (x == i and y == j):
-            ore += 1
+            ore = True
+        if _compare("rock", i, j) and not (x == i and y == j):
+            rock = True
         if (map_image.get_at((i, j)) == c.IMAGES["tree"].color_code or
                 map_image.get_at((i, j)) == c.IMAGES["rock"].color_code):
-            return True, ore
+            return True, ore, rock
         else:
-            return False, ore
+            return False, ore, rock
 
 
 def _compare(tile_type, x, y):

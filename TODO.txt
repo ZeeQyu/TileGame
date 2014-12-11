@@ -1,6 +1,5 @@
 ZeeQyu TODO list:
 
-    Random maps
     Fix menu selecting empty spaces
 	Multitile structures
 	Simple pathfinding (Going towards player) with robots?
@@ -20,12 +19,13 @@ Pokemania00 Graphics TODO list:
 High priority
    	1 ore with sapling
     1 ore with tree
-    1 ore with fallen tree
     1 ore with stump
     1 ore with package on it
-    1 Fallen trees on grass, for when you chop down a tree
-    1 Endless Package
     1 Wreckage (broken package)
+    1 Stone-crusher (a machine with pistons aiming each of the four directions,
+        so they like crush the rocks around them. 32x32px)
+    1 Fallen trees on grass, for when you chop down a tree
+    1 ore with fallen tree
 
     These three tiles are like a progress bar of how long there is left until a building being built is done.
         1 16x16 just started building-construction site (A package that is opened)
@@ -34,6 +34,10 @@ High priority
 
 Low priority
     3x3 tile (48*48px) HQ that has an opening where packages can come out.
+    1 Endless Package
+
+    Higher-res picture for the buttons that I mocked up.
+
     2 more ore with sapling
     2 more ore with tree
     2 more ore with fallen tree

@@ -1,10 +1,6 @@
 Installation instructions to see the current progress:
 
-<<<<<<< HEAD
-Advanced users: Make sure you've got python 2.7.* and pygame installed, download the repo zip, unzip, and run main.py.
-=======
 Advanced users: Make sure you've got python 3.2.* (32-bit) and pygame installed, clone the repo and run main.py.
->>>>>>> origin/developing
 
 Detailed instructions (Windows):
 Install python 3.2.5 from https://www.python.org/ftp/python/3.2.5/python-3.2.5.msi
@@ -14,4 +10,4 @@ Go to the project homepage: https://github.com/ZeeQyu/TileGame
 and press "Download Zip" Save the file to somewhere and extract the entire folder.
 Run main.py.
 
-That should do it.
+That should do it. Mind the stairs.

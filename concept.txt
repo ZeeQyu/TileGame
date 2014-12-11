@@ -36,7 +36,7 @@ X A character that can alter the terrain
 X Dragging packages
 X Multi-tiles
 X Build Structure-Window
-  Random map generator
+/ Random map generator
   Multitile structures
   Enemies and combat
   Win condition
@@ -44,7 +44,7 @@ X Build Structure-Window
   Graphics options
   Sound
   Tutorial
-  Polishing and optimizing
+  Polishing and more optimizing
 	  Animated tiles
 	  Different keyboard layouts handling
   Publishing via a Website?

@@ -10,7 +10,7 @@
     Also handles key press events for movement of the player.
 """
 
-import pygame, sys, os
+import pygame, sys, os, math
 from pygame import Rect
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
@@ -18,11 +18,13 @@ import globals as g
 import constants as c
 from graphics import Graphics
 
+
 class InvalidCallParameterException(Exception):
     """ A fancy class name for if the programmer (me) somehow mistook what variables
         should be passed to the __init__ function in the Entity class in entities.py 
     """ 
     pass
+
 
 class Entity(object):
     """ Entity base class for all the other entities to build upon.
@@ -78,9 +80,8 @@ class Entity(object):
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         """
-        # If the delta value (the time passed) is too large, make sure the player doesn't move more than one pixel.
+        # If the delta value (the time passed) is too large, make sure the entity doesn't move more than one pixel.
         if self.movement_speed > 0:
-            delta = 0
             while delta_remainder > 0:
                 if delta_remainder > (1 / self.movement_speed):
                     delta = (1 / self.movement_speed)
@@ -89,11 +90,9 @@ class Entity(object):
                     delta = delta_remainder
                     delta_remainder = 0
                 # Variables for checking if the entity changed pixel
-                prev_x = self.x
-                prev_y = self.y
                 # Move the entity in the direction the variables denote it should be.
                 if self.x_plus:
-                   self.x += self.movement_speed * delta
+                    self.x += self.movement_speed * delta
                 if self.x_minus:
                     self.x -= self.movement_speed * delta
                 if self.y_plus:
@@ -136,8 +135,7 @@ class Entity(object):
         """ Dummy method for what happens every tick
         """
         pass
-    
-            
+
     def paint(self):
         """ Paints the player on the screen
         """
@@ -145,7 +143,7 @@ class Entity(object):
             # Create a key with the current entity string and the angle
             key = self.image
             if self.angle != 0:
-                key = key + str(self.angle)
+                key += str(self.angle)
             # Check the images dict for a key with the cutrrent entity and rotation
             if key in g.images:
                 image = g.images[key].get()
@@ -160,7 +158,7 @@ class Entity(object):
         if float(int(self.angle / 90.0)) != self.angle / 90.0:
             # Compensate for rotated entities
             g.screen.blit(image, (int(self.x) - int(self.width/5.0),
-                                        int(self.y) - int(self.height/5.0)))
+                          int(self.y) - int(self.height/5.0)))
         else:
             g.screen.blit(image, (int(self.x), int(self.y)))
         
@@ -274,17 +272,177 @@ class Entity(object):
         self.collided = collided
 
 
+class FollowingEntity(Entity):
+    """ A subclass of Entity that attaches itself to another entity and follows it around.
+        Made for packages, could potentially be reused.
+    """
+    def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
+                 rotates=True, collides=True, wall_collides=True, custom_name=None, target_coords=None):
+        """ Initalizes the FollowingEntity.
+        """
+        super(FollowingEntity, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed,
+                                              rotates=rotates, collides=collides, wall_collides=wall_collides)
+
+        if attached_entity is not None:
+            if g.special_entity_list[attached_entity].following_entity is None:
+                g.special_entity_list[attached_entity].following_entity = attached_entity + "-" + image
+        self.attached_entity = attached_entity
+        self.pull_min = pull_min
+        self.pull_max = pull_max
+        # The coordinates the entity currently is travelling towards.
+        # Should be None if it's currently following the attached_entity.
+        # Otherwise, it should be pixel coordinates (example: (45, 120))
+        self.target_coords = target_coords
+        if custom_name:
+            g.special_entity_list[custom_name] = self
+            self.custom_name = custom_name
+        # if this doesn't have a name or an attached entity it should be a unnamed entity.
+        elif attached_entity is not None:
+            g.special_entity_list[attached_entity + "-" + image] = self
+            self.custom_name = None
+        else:
+            g.entity_list.append(self)
+            self.custom_name = None
+
+    def update(self, time_diff):
+        if self.target_coords is None and self.attached_entity is not None:
+            # The horizontal and vertical distances between the middle of FollowingEntity
+            # and the middle of attached_entity.
+            x_dist = (self.x + self.width/2) - (g.special_entity_list[self.attached_entity].x +
+                                                g.special_entity_list[self.attached_entity].width / 2)
+            y_dist = (self.y + self.height/2) - (g.special_entity_list[self.attached_entity].y +
+                                                 g.special_entity_list[self.attached_entity].height / 2)
+            # The diagonal distance between the entities.
+            dist = math.hypot(self.x - g.special_entity_list[self.attached_entity].x,
+                              self.y - g.special_entity_list[self.attached_entity].y)
+            pull_max = self.pull_max
+            pull_min = self.pull_min
+        elif self.target_coords is not None:
+            # The entity is currently travelling towards some coordinates.
+            x_dist = self.x - self.target_coords[0]
+            y_dist = self.y - self.target_coords[1]
+            # The diagonal distance between the entities.
+            dist = math.hypot(x_dist, y_dist)
+            pull_min = 0
+            pull_max = g.width*c.TILE_SIZE + g.height*c.TILE_SIZE
+        else:
+            return
+        # If the diagonal distance isn't too far
+        if dist < pull_max * 1.5:
+            # If it's positive, move left
+            if pull_min < x_dist < pull_max:
+                self.x_minus = True
+                self.x_plus = False
+            # If it's negative, move right
+            elif -pull_min > x_dist > -pull_max:
+                self.x_plus = True
+                self.x_minus = False
+            # If it is outside the range, stop moving
+            else:
+                self.x_plus = self.x_minus = False
+
+            # If it's positive, move up
+            if pull_min < y_dist < pull_max:
+                self.y_minus = True
+                self.y_plus = False
+            # If it's negative, move down
+            elif -pull_min > y_dist > -pull_max:
+                self.y_plus = True
+                self.y_minus = False
+            # If it is outside the range, stop moving
+            else:
+                self.y_plus = self.y_minus = False
+        else:
+            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
+        super(FollowingEntity, self).update(time_diff)
+        # Code for not getting stuck on terrain.
+        if self.collided and not self.has_moved(update=False):
+            moved = False
+            if x_dist > 0:
+                self.x -= 1
+                moved = True
+            elif x_dist < 0:
+                self.x += 1
+                moved = True
+
+            if y_dist > 0:
+                self.y -= 1
+                moved = True
+            elif y_dist < 0:
+                self.y += 1
+                moved = True
+            if moved:
+                self.collision_check
+
+
+class PathingEntity(FollowingEntity):
+    """ An entity that finds the shortest way between two points without colliding wiht collision tiles.
+    """
+    def __init__(self, x, y, image, movement_speed, rotates=True,
+                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
+        """ Initalizes the PathingEntity.
+        """
+        super(PathingEntity, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed,
+                                            attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
+                                            rotates=rotates, collides=collides, wall_collides=wall_collides,
+                                            target_coords=target_coords, custom_name=custom_name)
+        self.target_coords = target_coords
+        self.came_from = []
+
+    def update(self, time_diff):
+        """ Calls the super update function as well as check for if the package should be turned into a tile.
+        """
+        pass
+
+    def _heuristic_cost_estimate(self, start, end):
+        return abs(start[0] - end[0]) + abs(start[1] - end[1])
+
+    def pathfind(self, start, end):
+        """ Finds a path from start to end
+            "start" and "end" are tuples with x and y coordinates of a tile
+        """
+        closed_list = []
+        open_list = {start: self._heuristic_cost_estimate(start, end)}
+        print(open_list[start])
+
+        self.came_from = []
+        for i in len[g.map]:
+            self.came_from.append([])
+            for j in len(g.map[i]):
+                self.came_from[i].append([])
+
+        while open_list is not []:
+            lowest_value = None
+            for value in open_list:
+                if lowest_value is None:
+                    lowest_value = value
+
+    def update(self, time_diff):
+        """ Calls the super update function as well as check for if the package should be turned into a tile.
+        """
+        if self.target_coords == [int(self.x), int(self.y)]:
+            self.target_coords = None
+            if self.rotates:
+                self.angle = 0
+        super(PathingEntity, self).update(time_diff)
+
+    def set_target_tile(self, x, y):
+        """ Sets the target coordinates this entity will move towards.
+        """
+        self.target_coords = [x * c.TILE_SIZE + (c.TILE_SIZE - self.width) / 2,
+                              y * c.TILE_SIZE + (c.TILE_SIZE - self.height) / 2]
+
+
 def free_of_entities(tile):
     """ A function to check if any of the entities has any of its corners inside the specified tile.
     """
-    free_of_entities = True
+    is_free_of_entities = True
     # Loop through all normal entities.
     for entity in g.entity_list:
         if entity.corner_in_tile(tile):
-            free_of_entities = False
+            is_free_of_entities = False
     # Loop through all special entites
     for entity in list(g.special_entity_list.values()):
         if entity.corner_in_tile(tile):
-            free_of_entities = False
-    return free_of_entities
-                    
+            is_free_of_entities = False
+    return is_free_of_entities

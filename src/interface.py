@@ -8,7 +8,7 @@
     
     Module handling interfaces, menus and prompts
 """
-import os, sys, time
+import sys, time
 
 import pygame
 import pygame.locals as pgl
@@ -16,6 +16,8 @@ import pygame.locals as pgl
 import constants as c
 import globals as g
 import tiles
+import maps
+import entities
 
 
 def key_reconfig():
@@ -48,14 +50,14 @@ def key_reconfig():
             elif event.type == pgl.KEYDOWN:
                 set_key = event.key
         # If the user pressed a key
-        if set_key != None:
+        if set_key is not None:
             for key in new_keys:
                 if set_key == key:
                     invalid_key_timer = c.CONFIG_KEYS_INVALID_TIMER
                     set_key = None
                     screen_updated = True
                     break
-            if set_key == None:
+            if set_key is None:
                 continue
             new_keys.append(set_key)
             screen_updated = True
@@ -159,7 +161,7 @@ class Menu(object):
         # Check if each button should stay by looking at the tile filter.
         filter_tile = (g.map[g.special_entity_list["player"].get_aim_tile()[0]]
                        [g.special_entity_list["player"].get_aim_tile()[1]].type)
-        print(filter_tile)
+
         for i in range(len(buttons)-1, -1, -1):
             button = buttons[i]
             if button.tile_filter:
@@ -372,6 +374,26 @@ def _close():
     return True
 
 
+def _regenerate_map():
+    maps.load_map(maps.generate_map())
+    g.force_update = True
+    return True
+
+
+def _create_pather():
+    x, y = g.special_entity_list["player"].get_aim_tile()
+    entities.PathingEntity(x=x*c.TILE_SIZE, y=y*c.TILE_SIZE, image="robot_empty",
+                           movement_speed=30, custom_name="pather")
+    return True
+
+
+def _set_pather_target():
+    if g.special_entity_list["pather"] is not None:
+        x, y = g.special_entity_list["player"].get_aim_tile()
+        g.special_entity_list["pather"].set_target_tile(x, y)
+        return True
+
+
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
     """
@@ -379,9 +401,14 @@ class BuildMenu(Menu):
         """ Sets the menu up.
         """
 
-
         super().__init__("menu_background", [
-            MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], tile_filter=["package_tile"]),
-            MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], tile_filter=["ore-package"]),
+            MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
+                       tile_filter=["package_tile"]),
+            MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
+                       tile_filter=["ore-package"]),
+            MenuButton("Create Pather", "button1", _create_pather, recommended=True, tile_filter=["grass"]),
+            MenuButton("Set Pather Target", "button2", _set_pather_target, recommended=True,
+                       tile_filter=["grass", "ore", "stump"]),
+            MenuButton("Reload Map", "button", _regenerate_map),
             MenuButton("Close", "button_close", _close)
         ])

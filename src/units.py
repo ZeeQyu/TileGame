@@ -12,12 +12,12 @@ import math, os, sys
 from random import randint
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-from entities import Entity
+import entities
 import tiles
 import globals as g
 import constants as c
 
-class Animal(Entity):
+class Animal(entities.Entity):
     """ Base class for harmless entites that randomly roam about
     """
     def __init__(self, x, y, image, movement_speed, max_travel, collides = True,
@@ -61,7 +61,8 @@ class Animal(Entity):
         """
         super(Animal, self).tick()
         self.movement_timer -= 1
-        
+
+
 class Beetle(Animal):
     """ Harmless roaming little beetle that will be able to be
         infected in the future by enemies to become some kind of zombie beetle
@@ -73,103 +74,8 @@ class Beetle(Animal):
                                      c.BEETLE_MAX_TRAVEL_PX, collides=collides,
                                      rotates=rotates, wall_collides=wall_collides) 
 
-class FollowingEntity(Entity):
-    """ A subclass of Entity that attaches itself to another entity and follows it around.
-        Made for packages, could potentially be reused.
-    """     
-    def __init__(self, x, y, image, movement_speed, attached_entity, pull_min, pull_max,
-                 rotates=True, collides=True, wall_collides=True, custom_name=None):
-        """ Initalizes the FollowingEntity. 
-        """
-        super(FollowingEntity, self).__init__(x, y, image=image, movement_speed=movement_speed,
-                                              rotates=rotates, collides=collides, wall_collides=wall_collides)
-        if attached_entity != None:
-            if g.special_entity_list[attached_entity].following_entity == None:
-                g.special_entity_list[attached_entity].following_entity = attached_entity + "-" + image 
-        self.attached_entity = attached_entity
-        self.pull_min = pull_min
-        self.pull_max = pull_max
-        # The coordinates the entity currently is travelling towards.
-        # Should be None if it's currently following the attached_entity.
-        # Otherwise, it should be pixel coordinates (example: (45, 120)) 
-        self.target_coords = None
-        if custom_name:
-            g.special_entity_list[custom_name] = self
-        else:
-            g.special_entity_list[attached_entity + "-" + image] = self
-        
-    def update(self, time_diff):
-        if self.target_coords is None and self.attached_entity is not None:
-            # The horizontal and vertical distances between the middle of FollowingEntity
-            # and the middle of attached_entity.
-            x_dist = (self.x + self.width/2) - (g.special_entity_list[self.attached_entity].x +
-                                                g.special_entity_list[self.attached_entity].width / 2)
-            y_dist = (self.y + self.height/2) - (g.special_entity_list[self.attached_entity].y +
-                                                 g.special_entity_list[self.attached_entity].height / 2)
-            # The diagonal distance between the entities.
-            dist = math.hypot(self.x - g.special_entity_list[self.attached_entity].x,
-                              self.y - g.special_entity_list[self.attached_entity].y)
-            pull_max = self.pull_max
-            pull_min = self.pull_min
-        elif self.target_coords is not None:
-            # The entity is currently travelling towards some coordinates.
-            x_dist = self.x - self.target_coords[0]
-            y_dist = self.y - self.target_coords[1]
-            # The diagonal distance between the entities.
-            dist = math.hypot(x_dist, y_dist)            
-            pull_min = 0
-            pull_max = g.width*c.TILE_SIZE + g.height*c.TILE_SIZE
-        else:
-            return
-        # If the diagonal distance isn't too far
-        if dist < pull_max * 1.5:
-            # If it's positive, move left
-            if pull_min < x_dist < pull_max:
-                self.x_minus = True
-                self.x_plus = False
-            # If it's negative, move right
-            elif -pull_min > x_dist > -pull_max:
-                self.x_plus = True
-                self.x_minus = False
-            # If it is outside the range, stop moving
-            else:
-                self.x_plus = self.x_minus = False
-                
-            # If it's positive, move up
-            if pull_min < y_dist < pull_max:
-                self.y_minus = True
-                self.y_plus = False
-            # If it's negative, move down
-            elif -pull_min > y_dist > -pull_max:
-                self.y_plus = True
-                self.y_minus = False
-            # If it is outside the range, stop moving
-            else:
-                self.y_plus = self.y_minus = False
-        else:
-            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
-        super(FollowingEntity, self).update(time_diff)
-        # Code for not getting stuck on terrain.
-        if self.collided and not self.has_moved(update=False):
-            moved = False
-            if x_dist > 0:
-                self.x -= 1
-                moved = True
-            elif x_dist < 0:
-                self.x += 1
-                moved = True
 
-            if y_dist > 0:
-                self.y -= 1
-                moved = True
-            elif y_dist < 0:
-                self.y += 1
-                moved = True
-            if moved:
-                self.collision_check
-
-
-class Package(FollowingEntity):
+class Package(entities.FollowingEntity):
     """ The detached version of the package, used as building parts for buildings.
         Supposed to be placed where you want to build a building and be a package of
         resources to build with.
@@ -181,8 +87,8 @@ class Package(FollowingEntity):
                                       attached_entity=attached_entity, pull_min=c.PACKAGE_PULL_MIN,
                                       pull_max=c.PACKAGE_PULL_MAX, rotates=False, custom_name=custom_name)
         # Compensate for the package image being smaller than package_tile image
-        self.x = self.x + (c.TILE_SIZE - self.width) / 2
-        self.y = self.y + (c.TILE_SIZE - self.height) / 2
+        self.x += (c.TILE_SIZE - self.width) / 2
+        self.y += (c.TILE_SIZE - self.height) / 2
         # The kind of tile this package will become if placed
         self.tile = "package_tile"
         # Variable used only for checking if the Package just got target coords
@@ -193,15 +99,20 @@ class Package(FollowingEntity):
         """
         if self.target_coords and not self.had_target_coords:
             self.had_target_coords = True
-            self.target_coords[0] = self.target_coords[0] + (c.TILE_SIZE - self.width) / 2
-            self.target_coords[1] = self.target_coords[1] + (c.TILE_SIZE - self.height) / 2
+            self.target_coords[0] += (c.TILE_SIZE - self.width) / 2
+            self.target_coords[1] += (c.TILE_SIZE - self.height) / 2
             
         if self.target_coords == [int(self.x), int(self.y)]:
             x, y = self.get_tile()
             tiles.make_tile(self.tile, x, y)
-            if self.attached_entity != None:
+            if self.attached_entity is not None:
                 g.special_entity_list[self.attached_entity].following_entity = None
-            del g.special_entity_list[self.attached_entity + "-" + self.image]
+                del g.special_entity_list[self.attached_entity + "-" + self.image]
+            elif self.custom_name:
+                del g.special_entity_list[self.custom_name]
+            else:
+                del self
+
             return "deleted"
         super(Package, self).update(time_diff)
 
