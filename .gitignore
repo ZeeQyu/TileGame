@@ -37,3 +37,6 @@ nosetests.xml
 # Thumbnails
 *Thumbs*
 uydfql24.n0c.txt
+
+# Workspace
+workspace.xml
