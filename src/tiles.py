@@ -51,7 +51,7 @@ class Tile(object):
         else:
             self.timer = 0          
 
-        if c.IMAGES[type].random:
+        if c.IMAGES[type].random and not c.DEACTIVATE_RANDOM_TEXTURES:
             image_keys = []
             for image in list(c.IMAGES.keys()):
                 if image.startswith(type) and (image[len(type):].isdigit() or len(image) == len(type)):
