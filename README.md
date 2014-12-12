@@ -1,5 +1,6 @@
 TileGame
 ========
+Test
 An experimental tile-based game
 
 Requires Python 3.2 and Pygame for Python 3.2.
