@@ -14,18 +14,14 @@ ZeeQyu TODO list:
 	Turrets shooting said projectiles at enemies
 	Projectile collision
 
-Pokemania00 Graphics TODO list:
+Pethax Graphics TODO list:
 
 High priority
-   	1 ore with sapling
-    1 ore with tree
-    1 ore with stump
-    1 ore with package on it
     1 Wreckage (broken package)
     1 Stone-crusher (a machine with pistons aiming each of the four directions,
         so they like crush the rocks around them. 32x32px)
-    1 Fallen trees on grass, for when you chop down a tree
-    1 ore with fallen tree
+    1 Fallen trees on grass, for when you chop down a tree ?
+    1 ore with fallen tree ?
 
     These three tiles are like a progress bar of how long there is left until a building being built is done.
         1 16x16 just started building-construction site (A package that is opened)
@@ -40,10 +36,10 @@ Low priority
 
     2 more ore with sapling
     2 more ore with tree
-    2 more ore with fallen tree
+    2 more ore with fallen tree ?
     2 more ore with stump
     2 more ore with package on it
-    4 more Fallen trees on grass, for when you chop down a tree
+    4 more Fallen trees on grass, for when you chop down a tree ?
 
     Make colliding tiles (trees and rocks) stretch further to the edges
     10 rocks
