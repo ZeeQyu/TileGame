@@ -10,12 +10,16 @@
 """
 import pygame.locals as pgl
 
-# Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
-FORCE_UPDATE = True
 
 # Activates various debug callouts that normally should be on, like fps meter.
 NORMAL_DEBUG = False
 SPECIAL_DEBUG = True
+
+if NORMAL_DEBUG:
+    # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
+    FORCE_UPDATE = True
+else:
+    FORCE_UPDATE = False
 
 
 class Img(object):
@@ -244,9 +248,10 @@ TILE_SIZE = 16
 # Names of special entities
 PLAYER_NAME = "player"
 # The speed various entities moves at. Any number greater than or equal to 0
-PLAYER_MOVEMENT_SPEED = 50
-BEETLE_MOVEMENT_SPEED = 80
-PACKAGE_MOVEMENT_SPEED = 50
+PLAYER_MOVEMENT_SPEED = 80
+BEETLE_MOVEMENT_SPEED = 90
+PACKAGE_MOVEMENT_SPEED = 80
+PATHER_MOVEMENT_SPEED = 120
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels

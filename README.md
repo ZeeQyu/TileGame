@@ -28,9 +28,8 @@ Generates a game world and lets you move a character with collision and turning.
         (Aiming at a package (not an endless package) will let you build a launcher and aiming at a package on a
         piece of ore (which currently has a green placeholder texture) will let you build an ore miner.
         None of the structures currently do anything.    
-        Aiming at grass lets you play around with my test version of pathfinding with a small robot
-        (currently stupid to the point where it travels in a straight line to the point you directed it at,
-        with no care at all for obstacles))
+        Aiming at grass lets you play around with my test version of pathfinding with a small robot, which you can
+        set targets for with the menu button
    
 - Press **Space** to select the button you're currently aiming at. (Because Enter is too far away on the keyboard.)
 - Press **Insert** to rebind all keys other than Insert.

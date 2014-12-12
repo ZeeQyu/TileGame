@@ -99,8 +99,8 @@ class Entity(object):
                     self.y += self.movement_speed * delta
                 if self.y_minus:
                     self.y -= self.movement_speed * delta
-                        
                 self.collision_check()
+
         if self.rotates:
             # Rotation logic, which direction is the entity facing and how many degrees should it rotate
             # Uses last angle if the entity is not moving
@@ -125,7 +125,8 @@ class Entity(object):
                     self.angle = 180
                 else:
                     self.angle = self.last_angle
-            # Update the player if he's aiming in a new direction
+
+            # Update the entity if he's aiming in a new direction
             if self.angle != self.last_angle:
                 g.force_update = True
             # Remember the angle until next time
@@ -357,6 +358,7 @@ class FollowingEntity(Entity):
         super(FollowingEntity, self).update(time_diff)
         # Code for not getting stuck on terrain.
         if self.collided and not self.has_moved(update=False):
+            last_coords = (self.x, self.y)
             moved = False
             if x_dist > 0:
                 self.x -= 1
@@ -372,7 +374,11 @@ class FollowingEntity(Entity):
                 self.y += 1
                 moved = True
             if moved:
-                self.collision_check
+                self.collision_check()
+                if last_coords == (self.x, self.y):
+                    i, j = self.get_tile()
+                    self.target_coords = (i*c.TILE_SIZE + (c.TILE_SIZE - self.width) / 2,
+                                          j*c.TILE_SIZE + (c.TILE_SIZE - self.height) / 2)
 
 
 class PathingEntity(FollowingEntity):
@@ -387,7 +393,9 @@ class PathingEntity(FollowingEntity):
                                             rotates=rotates, collides=collides, wall_collides=wall_collides,
                                             target_coords=target_coords, custom_name=custom_name)
         self.target_coords = target_coords
+        self.target_tile = None
         self.came_from = []
+        self.path = []
 
     def update(self, time_diff):
         """ Calls the super update function as well as check for if the package should be turned into a tile.
@@ -397,40 +405,116 @@ class PathingEntity(FollowingEntity):
     def _heuristic_cost_estimate(self, start, end):
         return abs(start[0] - end[0]) + abs(start[1] - end[1])
 
-    def pathfind(self, start, end):
-        """ Finds a path from start to end
+    def pathfind(self, end):
+        """ Finds a path from start to end tiles using A* algorithm
             "start" and "end" are tuples with x and y coordinates of a tile
         """
-        closed_list = []
-        open_list = {start: self._heuristic_cost_estimate(start, end)}
-        print(open_list[start])
+        start = self.get_tile()
+        # The open_dict and closed_dict both follow the format:
+        # (key_x, key_y): [f, g, h, (came_from_x, came_from_y)]
+        # F, G and H. G is the length to the start tile, H is the Heuristics
+        # estimate of the distance to the end tile and F = G + H
+        if type(start) != tuple or type(end) != tuple:
+            raise Exception("Value passed to PathingEntity.pathfind() is not tuple")
+
+        # The open dictionary is a dictionary keeping the currently checkable tiles
+        open_dict = {start: [self._heuristic_cost_estimate(start, end), 0,
+                             self._heuristic_cost_estimate(start, end)]}
+        # The closed dictionary is a dicionary keeping the currently checked tiles
+        closed_dict = {}
 
         self.came_from = []
-        for i in len[g.map]:
+        for i in range(len(g.map)):
             self.came_from.append([])
-            for j in len(g.map[i]):
+            for j in range(len(g.map[i])):
                 self.came_from[i].append([])
 
-        while open_list is not []:
+        current = None
+        while len(open_dict.keys()) > 0:
             lowest_value = None
-            for value in open_list:
+            # Get the lowest value
+            for key in open_dict.keys():
+                value = open_dict[key][0]
                 if lowest_value is None:
                     lowest_value = value
+                    current = key
+                else:
+                    if value < lowest_value:
+                        lowest_value = value
+                        current = key
+            # Move current from the open dictionary to the closed one
+            closed_dict[current] = open_dict[current]
+            del open_dict[current]
+
+            # If we're done here
+            if current == end:
+                closed_dict[current]
+                full_path = []
+                while len(closed_dict[current]) > 3:
+                    full_path.append(current)
+                    current = closed_dict[current][3]
+                full_path.reverse()
+                self.path = full_path
+                self.next_target_tile()
+                return
+
+            # Move through all neighbours
+            neighbours = [(current[0]+1, current[1]),
+                          (current[0]-1, current[1]),
+                          (current[0], current[1]+1),
+                          (current[0], current[1]-1)]
+
+            for neighbour in neighbours:
+                if 0 <= neighbour[0] < len(g.map) and 0 <= neighbour[1] < len(g.map[0]):
+                    g_score = closed_dict[current][1] + 1
+                    if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                        # Check if this neighbour can be added the the open_dict and do so if so
+                        if neighbour not in closed_dict.keys():
+                            if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][1]:
+                                h_score = self._heuristic_cost_estimate(neighbour, end)
+                                f_score = g_score + h_score
+                                open_dict[neighbour] = [f_score, g_score, h_score, current]
+                    else:
+                        closed_dict[neighbour] = None
+        self.path = []
+        self.stop_moving()
+        return "Couldn't find path"
 
     def update(self, time_diff):
         """ Calls the super update function as well as check for if the package should be turned into a tile.
         """
         if self.target_coords == [int(self.x), int(self.y)]:
-            self.target_coords = None
-            if self.rotates:
-                self.angle = 0
+            self.stop_moving()
+            self.next_target_tile()
+        if self.target_tile is not None:
+            if g.get_img(*self.target_tile).collides:
+                if len(self.path) > 0:
+                    self.pathfind(self.path[-1])
+                else:
+                    self.stop_moving()
+                    self.path = []
         super(PathingEntity, self).update(time_diff)
+
+    def stop_moving(self):
+        self.target_coords = None
+        if self.rotates:
+            self.angle = 0
 
     def set_target_tile(self, x, y):
         """ Sets the target coordinates this entity will move towards.
         """
+        self.target_tile = (x, y)
         self.target_coords = [x * c.TILE_SIZE + (c.TILE_SIZE - self.width) / 2,
                               y * c.TILE_SIZE + (c.TILE_SIZE - self.height) / 2]
+
+    def next_target_tile(self):
+        """ Selects the next target tile in the self.path list. The part of pathfinding that actually does the moving.
+        """
+        if len(self.path) > 0:
+            x, y = self.path.pop(0)
+            self.set_target_tile(x, y)
+        else:
+            self.target_coords = None
 
 
 def free_of_entities(tile):

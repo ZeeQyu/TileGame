@@ -383,15 +383,17 @@ def _regenerate_map():
 def _create_pather():
     x, y = g.special_entity_list["player"].get_aim_tile()
     entities.PathingEntity(x=x*c.TILE_SIZE, y=y*c.TILE_SIZE, image="robot_empty",
-                           movement_speed=30, custom_name="pather")
+                           movement_speed=c.PATHER_MOVEMENT_SPEED, custom_name="pather")
     return True
 
 
 def _set_pather_target():
-    if g.special_entity_list["pather"] is not None:
+    if "pather" in g.special_entity_list:
         x, y = g.special_entity_list["player"].get_aim_tile()
-        g.special_entity_list["pather"].set_target_tile(x, y)
+        g.special_entity_list["pather"].pathfind((x, y))
         return True
+    else:
+        return False
 
 
 class BuildMenu(Menu):

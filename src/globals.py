@@ -64,3 +64,10 @@ create_key_dict(key_list)
 
 def update_key_dict():
     create_key_dict(key_list)
+
+
+def get_img(x, y):
+    """ Gets the Img class from constants.IMAGES of the tile at x, y.
+        returns an Img object
+    """
+    return c.IMAGES[map[x][y].type]
