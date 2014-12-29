@@ -48,17 +48,20 @@ class Player(Entity):
         """ Paints the player and its aim indicator on the screen.
         """
         super(Player, self).paint()
+
         if self.removing_tile:
-            g.screen.blit(g.images["remove_aim"].get(),
-                                (self.last_aim_tile[0]*c.TILE_SIZE,
-                                 self.last_aim_tile[1]*c.TILE_SIZE))
+            if g.get_img(*self.get_aim_tile()).destroy is not None:
+                aim = "remove_aim"
+            else:
+                aim = "remove_aim_fail"
         else:
-            x = ((self.last_aim_tile[0]*c.TILE_SIZE) +
-                (c.TILE_SIZE - g.images["aim"].get_size()[0]) / 2)
-            y = ((self.last_aim_tile[1]*c.TILE_SIZE) +
-                (c.TILE_SIZE - g.images["aim"].get_size()[1]) / 2)
-            g.screen.blit(g.images["aim"].get(), (x, y))
-            
+            aim = "aim"
+        x = ((self.last_aim_tile[0]*c.TILE_SIZE) +
+             (c.TILE_SIZE - g.images[aim].get_size()[0]) / 2)
+        y = ((self.last_aim_tile[1]*c.TILE_SIZE) +
+             (c.TILE_SIZE - g.images[aim].get_size()[1]) / 2)
+        g.screen.blit(g.images[aim].get(), (x, y))
+
     def update(self, time_diff):
         """ Calls the superclass update and updates the state of the aim marker.
             Manages if the player is placing or destroying a block.
@@ -111,7 +114,7 @@ class Player(Entity):
         # Removing tile
         if self.removing_tile and not self.placing_tile:
             # If the timer isn't None (is removable)
-            if self.remove_timer != None:
+            if self.remove_timer is not None:
                 # If remove_timer has reached 0 which means the countdown is done
                 if self.remove_timer < 1:
                     tiles.destroy_tile(x, y)

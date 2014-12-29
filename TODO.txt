@@ -1,5 +1,6 @@
 ZeeQyu TODO list:
 
+    Fix too few ticks happening
     Fix menu selecting empty spaces
 	Multitile structures
 	Simple pathfinding (Going towards player) with robots?
@@ -17,11 +18,8 @@ ZeeQyu TODO list:
 Pethax Graphics TODO list:
 
 High priority
-    1 Wreckage (broken package)
     1 Stone-crusher (a machine with pistons aiming each of the four directions,
         so they like crush the rocks around them. 32x32px)
-    1 Fallen trees on grass, for when you chop down a tree ?
-    1 ore with fallen tree ?
 
     These three tiles are like a progress bar of how long there is left until a building being built is done.
         1 16x16 just started building-construction site (A package that is opened)
@@ -32,20 +30,21 @@ Low priority
     3x3 tile (48*48px) HQ that has an opening where packages can come out.
     1 Endless Package
 
+    1 Smeltery 16x16
+
     Higher-res picture for the buttons that I mocked up.
 
     2 more ore with sapling
     2 more ore with tree
-    2 more ore with fallen tree ?
     2 more ore with stump
     2 more ore with package on it
-    4 more Fallen trees on grass, for when you chop down a tree ?
 
-    Make colliding tiles (trees and rocks) stretch further to the edges
     10 rocks
     Like 10 more grass in the same style with flowers and stuff, feel free to reuse some(and then, no more grass)
 	A less dark robot than the current one
 	Bullet factory. (32x32)
+
+    Make colliding tiles (trees and rocks) stretch further to the edges
 
 	Maybe:
 	3 32x32 megaores (with miners)

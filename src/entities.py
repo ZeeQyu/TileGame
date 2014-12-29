@@ -80,6 +80,23 @@ class Entity(object):
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         """
+        # Check if the entity has a limit on how far it should travel
+        x_lim = y_lim = None
+        if type(self.x_plus) is float or type(self.x_plus) is int:
+            x_lim = self.x_plus
+        if type(self.x_minus) is float or type(self.x_minus) is int:
+            if x_lim is None:
+                x_lim = self.x_minus
+            else:
+                x_lim -= self.x_minus
+        if type(self.y_plus) is float or type(self.y_plus) is int:
+            y_lim = self.y_plus
+        if type(self.y_minus) is float or type(self.y_minus) is int:
+            if y_lim is None:
+                y_lim = self.y_minus
+            else:
+                y_lim -= self.y_minus
+
         # If the delta value (the time passed) is too large, make sure the entity doesn't move more than one pixel.
         if self.movement_speed > 0:
             while delta_remainder > 0:
@@ -89,16 +106,37 @@ class Entity(object):
                 else:
                     delta = delta_remainder
                     delta_remainder = 0
+
+                # if c.SPECIAL_DEBUG:
+                #     print("X_lim: {}, Y_lim: {}, X_plus: {}, x_minus: {}, y_plus: {}, y_minus: {}, delta: {}, delta_remainder: {}, movementspeed * delta: {}, ".format(
+                #             x_lim, y_lim, self.x_plus, self.x_minus, self.y_plus, self.y_minus, delta, delta_remainder, self.movement_speed*delta))
+
                 # Variables for checking if the entity changed pixel
                 # Move the entity in the direction the variables denote it should be.
                 if self.x_plus:
-                    self.x += self.movement_speed * delta
+                    if x_lim is not None and x_lim > 0:
+                        self.x += min(self.movement_speed * delta, x_lim)
+                        x_lim -= min(self.movement_speed * delta, x_lim)
+                    elif x_lim is None:
+                        self.x += self.movement_speed * delta
                 if self.x_minus:
-                    self.x -= self.movement_speed * delta
+                    if x_lim is not None and x_lim < 0:
+                        self.x -= min(self.movement_speed * delta, abs(x_lim))
+                        x_lim += min(self.movement_speed * delta, abs(x_lim))
+                    elif x_lim is None:
+                        self.x -= self.movement_speed * delta
                 if self.y_plus:
-                    self.y += self.movement_speed * delta
+                    if y_lim is not None and y_lim > 0:
+                        self.y += min(self.movement_speed * delta, y_lim)
+                        y_lim -= min(self.movement_speed * delta, y_lim)
+                    elif y_lim is None:
+                        self.y += self.movement_speed * delta
                 if self.y_minus:
-                    self.y -= self.movement_speed * delta
+                    if y_lim is not None and y_lim < 0:
+                        self.y -= min(self.movement_speed * delta, abs(y_lim))
+                        y_lim += min(self.movement_speed * delta, abs(y_lim))
+                    elif y_lim is None:
+                        self.y -= self.movement_speed * delta
                 self.collision_check()
 
         if self.rotates:
@@ -131,7 +169,7 @@ class Entity(object):
                 g.force_update = True
             # Remember the angle until next time
             self.last_angle = self.angle
-            
+
     def tick(self):
         """ Dummy method for what happens every tick
         """
@@ -332,11 +370,11 @@ class FollowingEntity(Entity):
         if dist < pull_max * 1.5:
             # If it's positive, move left
             if pull_min < x_dist < pull_max:
-                self.x_minus = True
+                self.x_minus = -x_dist
                 self.x_plus = False
             # If it's negative, move right
             elif -pull_min > x_dist > -pull_max:
-                self.x_plus = True
+                self.x_plus = -x_dist
                 self.x_minus = False
             # If it is outside the range, stop moving
             else:
@@ -344,11 +382,11 @@ class FollowingEntity(Entity):
 
             # If it's positive, move up
             if pull_min < y_dist < pull_max:
-                self.y_minus = True
+                self.y_minus = -y_dist
                 self.y_plus = False
             # If it's negative, move down
             elif -pull_min > y_dist > -pull_max:
-                self.y_plus = True
+                self.y_plus = -y_dist
                 self.y_minus = False
             # If it is outside the range, stop moving
             else:
@@ -397,13 +435,8 @@ class PathingEntity(FollowingEntity):
         self.came_from = []
         self.path = []
 
-    def update(self, time_diff):
-        """ Calls the super update function as well as check for if the package should be turned into a tile.
-        """
-        pass
-
     def _heuristic_cost_estimate(self, start, end):
-        return abs(start[0] - end[0]) + abs(start[1] - end[1])
+        return 10 * (abs(start[0] - end[0]) + abs(start[1] - end[1]))
 
     def pathfind(self, end):
         """ Finds a path from start to end tiles using A* algorithm
@@ -458,24 +491,42 @@ class PathingEntity(FollowingEntity):
                 self.next_target_tile()
                 return
 
-            # Move through all neighbours
-            neighbours = [(current[0]+1, current[1]),
-                          (current[0]-1, current[1]),
-                          (current[0], current[1]+1),
-                          (current[0], current[1]-1)]
 
-            for neighbour in neighbours:
-                if 0 <= neighbour[0] < len(g.map) and 0 <= neighbour[1] < len(g.map[0]):
-                    g_score = closed_dict[current][1] + 1
-                    if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
-                        # Check if this neighbour can be added the the open_dict and do so if so
-                        if neighbour not in closed_dict.keys():
-                            if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][1]:
-                                h_score = self._heuristic_cost_estimate(neighbour, end)
-                                f_score = g_score + h_score
-                                open_dict[neighbour] = [f_score, g_score, h_score, current]
-                    else:
-                        closed_dict[neighbour] = None
+            # Move through all neighbours
+            for i in range(current[0]-1, current[0]+2):
+                for j in range(current[1]-1, current[1]+2):
+                    neighbour = (i, j)
+                    if 0 <= neighbour[0] < len(g.map) and 0 <= neighbour[1] < len(g.map[0]):
+
+                        # Get the G score, the cost to go back to the start
+                        if neighbour[0] == current[0]:
+                            if neighbour[1] == current[1]:
+                                continue
+                            else:
+                                g_score = closed_dict[current][1] + 10
+                        else:
+                            if neighbour[1] == current[1]:
+                                g_score = closed_dict[current][1] + 10
+                            else:
+                                # Make sure the pathfinding doesn't try to go through blocks diagonally.
+                                if (g.get_img(neighbour[0], current[1]).collides and
+                                        g.get_img(current[0], neighbour[1]).collides):
+                                    # If the blocks on either side of the diagonal walk is collidable, skip this one
+                                    closed_dict[neighbour] = None
+                                    continue
+
+                                # Otherwise, give it a cost of the square root of two.
+                                g_score = closed_dict[current][1] + 14
+
+                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                            # Check if this neighbour can be added the the open_dict and do so if so
+                            if neighbour not in closed_dict.keys():
+                                if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][1]:
+                                    h_score = self._heuristic_cost_estimate(neighbour, end)
+                                    f_score = g_score + h_score
+                                    open_dict[neighbour] = [f_score, g_score, h_score, current]
+                        else:
+                            closed_dict[neighbour] = None
         self.path = []
         self.stop_moving()
         return "Couldn't find path"
@@ -487,7 +538,9 @@ class PathingEntity(FollowingEntity):
             self.stop_moving()
             self.next_target_tile()
         if self.target_tile is not None:
-            if g.get_img(*self.target_tile).collides:
+            if (g.get_img(*self.target_tile).collides or
+                    (g.get_img(self.get_tile()[0], self.target_tile[1]).collides and
+                     g.get_img(self.target_tile[0], self.get_tile()[1]).collides)):
                 if len(self.path) > 0:
                     self.pathfind(self.path[-1])
                 else:

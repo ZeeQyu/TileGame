@@ -69,13 +69,14 @@ class Img(object):
         self.evolve = evolve
         self.grabbable = grabbable
         self.multi_tile = multi_tile
-        
+
 # This is the folder for the resources (pictures) of the project
 RES_FOLDER = "res"
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
     # tiles
+    # "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
     "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
     "grass2": Img("grassTile2.png"),
     "grass3": Img("grassTile3.png"),
@@ -97,7 +98,7 @@ IMAGES = {
     "dirt3": Img("dirt3.png"),
     "dirt4": Img("dirt4.png"),
     "dirt5": Img("dirt5.png"),
-    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[10, "stump"]),
+    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
     "tree2": Img("tree2.png"),
     "tree3": Img("tree3.png"),
     "tree4": Img("tree4.png"),
@@ -118,7 +119,7 @@ IMAGES = {
     "tree19": Img("tree19.png"),
     "tree20": Img("tree20.png"),
     "megatree": Img("multiTree.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
-    "stump": Img("stump.png", random=True, destroy=[15, "dirt"]),
+    "stump": Img("stump.png", random=True, destroy=[5, "dirt"]),
     "stump2": Img("stump2.png"),
     "stump3": Img("stump3.png"),
     "sapling": Img("sapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
@@ -144,17 +145,22 @@ IMAGES = {
     "ore_mine3": Img("oreMine3.png"),
     "ore_mine4": Img("oreMine4.png"),
     "ore_mine5": Img("oreMine5.png"),
-    "ore-sapling": Img("flower.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
-    "ore-tree": Img("flower2.png", collides=True, destroy=[10, "ore-stump"]),
-    "ore-stump": Img("flower3.png", destroy=[15, "ore"]),
+    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
+    "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
+    "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
     "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
     "large_ore2": Img("large_ore2.png"),
     "large_ore3": Img("large_ore3.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "package_tile": Img("package.png", color_code=(255, 0, 0)),
-    "ore-package": Img("placeholder.png"),
-    "launcher": Img("launcher.png", collides=True, destroy=[40, "package_tile"]),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"]),
+
+    "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
+    "wreckage": Img("wreckage.png", destroy=[10, "grass"]),
+    "ore-package": Img("orePackage.png", destroy=[20, "ore-wreckage"]),
+    "ore-wreckage": Img("oreWreckage.png", destroy=[10, "ore"]),
+    "dirt-package": Img("dirtPackage.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
+    "dirt-wreckage": Img("dirtWreckage.png", destroy=[10, "dirt"]),
     "endless_package": Img("endless_package_tile.png", color_code=(0, 255, 0), placeable=True),
 
     "pointer": Img("emptyPixel.png"),
@@ -173,6 +179,7 @@ IMAGES = {
     "map": Img("map.png"),
     "aim": Img("aim.png"),
     "remove_aim": Img("removeAim.png"),
+    "remove_aim_fail": Img("removeAimFail.png"),
     "icon": Img("logo.png"),
     "menu_background": Img("menuBackground.png"),
     "button": Img("placeholder_button.png"),
@@ -216,6 +223,7 @@ DEFAULT_TILE = "grass"
 SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
                        "sapling+ore": "ore-sapling",
                        "package_tile+ore": "ore-package",
+                       "package_tile+dirt": "dirt-package",
 
                        "package_tile+endless_package": "endless_package",
                        "sapling+endless_package": "endless_package"}
@@ -224,6 +232,7 @@ SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
 # Syntax is {"tile_that_become_a_package": "tile_that_is_left_when_you_grab_a_package"}
 PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
                       "ore-package": "ore",
+                      "dirt-package": "dirt",
                       "endless_package": "endless_package"}
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -291,9 +300,9 @@ GEN_MAP_SIZE = (60, 50)
 GEN_TREE_PER_MILLE = 500
 GEN_ORE_PER_MILLE = 5
 GEN_ROCK_PER_MILLE = 5
-# Number of times the terrain should be smoothed
+# Number of times the terrain should be smoothed (3)
 GEN_ITERATIONS = 3
 # The chance of ore clusters evolving from ores every iteration
 GEN_ORE_CHANCE = 20
-# The number of times the rock formations should be evolved
+# The number of times the rock formations should be evolved (16)
 GEN_ROCK_ITERATIONS = 16

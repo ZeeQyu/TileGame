@@ -42,6 +42,8 @@ def main():
 
     # Make map
     maps.load_map(maps.generate_map())
+    # maps.load_map()
+
     # Initiate player
     g.special_entity_list["player"] = players.Player(g.player_start_x, g.player_start_y)
     # Creates a window just the size to fit all the tiles in the map file.
@@ -98,10 +100,8 @@ def main():
         # Tick: Make sure certain things happen on a more regular basis than every frame 
         time_now = time.clock()
         time_diff = time_now - time_prev
-        # If the time has been more than two seconds, movement might jerk out, so a cycle should be skipped
-        if time_prev + 2 < time_now:
-            skip_cycle = True
         time_prev = time_now
+
         # Skip the rest of this cycle if a menu was accessed until now
         if skip_cycle:
             skip_cycle = False
@@ -118,6 +118,7 @@ def main():
             time_updates = 0
             time_start = time_now
         # What happens every tick?
+        # if # TODO Fix ticks
         if time_last_tick + c.TICK_FREQ < time_now:
             time_last_tick = time_last_tick + c.TICK_FREQ
             # Tick all the entities (let them do whatever they do every tick

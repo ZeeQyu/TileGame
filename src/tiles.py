@@ -86,7 +86,7 @@ class Tile(object):
             Exchanges this tile for the appropriate tile specified in the c.IMAGES variable
         """
         # Check if the entity evolves
-        if c.IMAGES[self.type].evolve != None:
+        if c.IMAGES[self.type].evolve is not None:
             has_entities = False
             # Check if any entity is on that tile
             if c.IMAGES[c.IMAGES[self.type].evolve[2]].collides:
@@ -115,6 +115,7 @@ class Tile(object):
         """
         return self.type != other.type
 
+
 class MultiTileHead(Tile):
     """ The top-left tile of any multi-tile. Paints the actual image
     """
@@ -122,7 +123,8 @@ class MultiTileHead(Tile):
         super(MultiTileHead, self).__init__(type, x, y)
         self.width = width
         self.height = height
-    
+
+
 class MultiTilePointer(Tile):
     """ The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel.
     """
@@ -136,7 +138,15 @@ class MultiTilePointer(Tile):
         template = "{id} tile of type {type} at x {x} y {y} pointing at {target}"
         return template.format(id=self.type, x=self.x, y=self.y,
                                type=type(self), target=self.target)
-        
+
+
+class FactoryTile(Tile):
+    """ A FactoryTile is a tile that gives out or takes in resources and might do something else.
+    """
+    def __init__(self, type, x, y):
+        super(FactoryTile, self).__init__(type, x, y)
+
+
 def area_is_free(x, y, width, height):
     """ Checks an area for if a multitile can be placed there
         "x" and "y" is the top left corner tile in the area.
@@ -200,7 +210,6 @@ def make_tile(type, x, y, target=None):
         
         tile = MultiTileHead(type, x, y, width, height)
     else:
-        timer = 0
         # Check if target was specified. If so, this tile is a pointer.
         if target is not None:
             tile = MultiTilePointer(type, x, y, *target)
@@ -209,7 +218,11 @@ def make_tile(type, x, y, target=None):
     # Change and update the map
     g.map[x][y] = tile
     g.update_map = True
-    return tile 
+    # Make sure the player doesn't have to move to remove a newly placed package
+    if "player" in g.special_entity_list:
+        if g.special_entity_list["player"].get_aim_tile() == (x, y):
+            g.special_entity_list["player"].update_aim_tile = True
+    return tile
 
 
 def destroy_tile(x, y):

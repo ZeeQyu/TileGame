@@ -47,7 +47,7 @@ class Animal(entities.Entity):
                    float(c.TICK_FREQ))
                 # The amount of ticks until direction change, which is a random int
                 # between half of tick_max and tick_max
-                self.movement_timer =  randint(int(tick_max / 2), tick_max)
+                self.movement_timer = randint(int(tick_max / 2), tick_max)
                 # Set a random direction
                 self.x_plus = bool(randint(0, 1))
                 self.x_minus = bool(randint(0, 1))

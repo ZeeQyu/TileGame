@@ -405,7 +405,7 @@ class BuildMenu(Menu):
 
         super().__init__("menu_background", [
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
-                       tile_filter=["package_tile"]),
+                       tile_filter=["package_tile", "dirt-package"]),
             MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
                        tile_filter=["ore-package"]),
             MenuButton("Create Pather", "button1", _create_pather, recommended=True, tile_filter=["grass"]),
