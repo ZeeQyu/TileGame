@@ -174,8 +174,7 @@ class Menu(object):
         self.button_places = []
         self.needs_scroll = False
         self.background_width, self.background_height = g.images["menu_background"].get_size()
-        self.target_x = self.target_y = "Empty"
-        self.target = (self.target_x, self.target_y)
+        self.target = (g.build_menu_coords[0], g.build_menu_coords[1])
         # If the build menu should be painted
         self.show = True
 
@@ -253,22 +252,22 @@ class Menu(object):
         # Put the target variable in the end of the screen the player isn't in.
         # X Coordinate
         if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
-            self.target_x = c.BORDER_MARGINS
+            g.build_menu_coords[0] = c.BORDER_MARGINS
         elif player_x < g.width * c.TILE_SIZE / 3.0:
-            self.target_x = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
-        elif self.target_x is "Empty":
-            self.target_x = c.BORDER_MARGINS
+            g.build_menu_coords[0] = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
+        elif g.build_menu_coords[0] is "Empty":
+            g.build_menu_coords[0] = c.BORDER_MARGINS
 
         # Y Coordinate
         if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
-            self.target_y = c.BORDER_MARGINS
+            g.build_menu_coords[1] = c.BORDER_MARGINS
         elif player_y < g.height * c.TILE_SIZE / 3.0:
-            self.target_y = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
-        elif self.target_y is "Empty":
-            self.target_y = c.BORDER_MARGINS
+            g.build_menu_coords[1] = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
+        elif g.build_menu_coords[1] is "Empty":
+            g.build_menu_coords[1] = c.BORDER_MARGINS
 
         # Set the variable the outside refers to.
-        self.target = (self.target_x, self.target_y)
+        self.target = (g.build_menu_coords[0], g.build_menu_coords[1])
 
     def update_buffer(self):
         """ Updates the buffer that is painted to the screen with the paint function.
@@ -375,9 +374,19 @@ def _close():
 
 
 def _regenerate_map():
-    maps.load_map(maps.generate_map())
-    g.force_update = True
-    return True
+    if c.GEN_DEMO_MODE is False:
+        maps.load_map(maps.generate_map())
+        g.force_update = True
+        return True
+    else:
+        if g.map_generator is None:
+            g.map_generator = maps.generate_map_generator()
+        try:
+            maps.load_map(g.map_generator.__next__())
+        except StopIteration:
+            g.map_generator = None
+            return True
+        g.force_update = True
 
 
 def _create_pather():

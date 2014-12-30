@@ -161,6 +161,44 @@ def generate_map():
     return return_image
 
 
+def _yield_image_conversion(return_image):
+    # Put out a random endless package in the middle
+    return_image.set_at((return_image.get_width() // 2, return_image.get_height() // 2),
+                        c.IMAGES["endless_package"].color_code)
+    return_image.set_at((return_image.get_width() // 2 + 1, return_image.get_height() // 2),
+                        c.IMAGES["start_tile"].color_code)
+    return return_image
+
+
+def generate_map_generator():
+    """ A generator version for the cellular automata function above that lets the player
+        step through the stages of generation of the maps.
+    """
+    return_image = pygame.Surface(c.GEN_MAP_SIZE)
+    return_image.fill(c.IMAGES["grass"].color_code)
+    for i in range(return_image.get_width()):
+        for j in range(return_image.get_width()):
+            random_number = random.randint(1, 1000)
+            if random_number <= c.GEN_TREE_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["tree"].color_code)
+            elif random_number >= 1000 - c.GEN_ORE_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["ore"].color_code)
+            elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["rock"].color_code)
+            else:
+                return_image.set_at((i, j), c.IMAGES["grass"].color_code)
+
+    yield _yield_image_conversion(return_image)
+
+    for i in range(c.GEN_ITERATIONS):
+        return_image = _iterate_generation(return_image)
+        yield _yield_image_conversion(return_image)
+
+    for i in range(c.GEN_ROCK_ITERATIONS):
+        return_image = _iterate_rocks(return_image)
+        yield _yield_image_conversion(return_image)
+
+
 map_image = None
 
 

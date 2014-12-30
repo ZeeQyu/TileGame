@@ -42,8 +42,14 @@ map_screen_buffer = None
 # If the map should be rerendered
 update_map = True
 
+# The position of build menus. Is carried over between different times that the menu created.
+build_menu_coords = ["Empty", "Empty"]
+
 # The selection coordinate for the current on-screen menu
 selected = [0, 0]
+
+# A variable for storing the map generator temporarily while showing off the map generation
+map_generator = None
 
 
 def create_key_dict(key_list):

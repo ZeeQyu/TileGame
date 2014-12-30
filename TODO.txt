@@ -1,9 +1,9 @@
 ZeeQyu TODO list:
 
-    Fix too few ticks happening
     Fix menu selecting empty spaces
 	Multitile structures
-	Simple pathfinding (Going towards player) with robots?
+	Factories
+
 	Simple enemies that try to attack you
 	Health
 	Combat

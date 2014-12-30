@@ -23,13 +23,11 @@ import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.path.join(os.getcwd(), "src"))
-import tiles, graphics, units, players, interface
-import maps
+import tiles, graphics, units, players, interface, maps, key_input
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
 import globals as g
 import constants as c
-import pygame.locals as pgl
 
     
 def main():
@@ -66,96 +64,78 @@ def main():
         if c.FORCE_UPDATE:
             g.force_update = True
         # Event checker. Allows closing of the program and passes keypresses to the player instance
-        for event in pygame.event.get():
-            # Quit code
-            if event.type == pgl.QUIT:
-                sys.exit()
-            if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
-                # Create beetle with (default) a
-                if event.type == pgl.KEYDOWN and event.key == g.key_dict["spawn_beetle"][0]:
-                    g.entity_list.append(units.Beetle(g.special_entity_list["player"].x,
-                                                            g.special_entity_list["player"].y))
-                # Duplicate all beetles with (default) D
-                elif event.type == pgl.KEYDOWN and event.key == g.key_dict["duplicate_beetles"][0]:
-                    # Make an empty list to temporarily store the added beetles, so no infinite loop appears
-                    temp_entity_list = []
-                    for entity in g.entity_list:
-                        if type(entity) == units.Beetle:
-                            temp_entity_list.append(units.Beetle(entity.x, entity.y))
-                    g.entity_list.extend(temp_entity_list)
-                # Remove all beetles
-                elif event.type == pgl.KEYDOWN and event.key == g.key_dict["remove_beetles"][0]:
-                    # Loop backwards through the g.entity_list
-                    for i in range(len(g.entity_list)-1, -1, -1):
-                        if type(g.entity_list[i]) == units.Beetle:
-                            del g.entity_list[i]
-                    g.force_update = True
-                # Key configuration
-                elif event.type == pgl.KEYDOWN and event.key == c.CONFIG_KEYS_KEY:
-                    skip_cycle = g.force_update = True
-                    interface.key_reconfig()
-                # Otherwise, check for if the player should move
-                g.special_entity_list["player"].event_check(event)
-                
-        # Tick: Make sure certain things happen on a more regular basis than every frame 
+        key_input.event_check()
+        # Tick: Make sure certain things happen on a more regular basis than every frame
+        # time_big_diff is the time the cycle took.
+        # time_diff (defined below) is the simulated time difference that
+        # the entities move after before ticking again in case of a lag spike.
         time_now = time.clock()
-        time_diff = time_now - time_prev
+        time_big_diff = time_now - time_prev
         time_prev = time_now
 
         # Skip the rest of this cycle if a menu was accessed until now
         if skip_cycle:
             skip_cycle = False
             continue
-        # FPS meter (shown in console).
+        # FPS meter (shown in console). Broken since updating ticks TODO fix fps meter
         # checks the amount of times this code is run every second and prints that every second.
         time_cycles += 1
         if time_start + 1 < time_now:
             if time_updates == 1 and time_cycles == 1:
-                time_updates = 1.0 / time_diff
+                time_updates = 1.0 / time_big_diff
             if c.NORMAL_DEBUG:
                 print(time_start, "seconds from start,",  time_cycles, "cycles,", time_updates, "fps")
             time_cycles = 0
             time_updates = 0
             time_start = time_now
-        # What happens every tick?
-        # if # TODO Fix ticks
-        if time_last_tick + c.TICK_FREQ < time_now:
-            time_last_tick = time_last_tick + c.TICK_FREQ
-            # Tick all the entities (let them do whatever they do every tick
-            for i in range(len(g.entity_list)-1, -1, -1):
-                entity = g.entity_list[i]
-                entity.tick()
-            for entity in list(g.special_entity_list.values()):
-                entity.tick()
-            for tile in g.tick_tiles:
-                g.map[tile[0]][tile[1]].tick()
-        # Make sure the loop doesn't go too quickly and bog the processor down
-        if time_last_sleep < c.SLEEP_TIME:
-            time.sleep(c.SLEEP_TIME - time_last_sleep)
 
-        # Update map buffer if needed
-        if g.update_map:
-            g.update_map = False
-            g.force_update = True
-            g.map_screen_buffer = maps.update_map()
-        # update all entities
-        entity_has_moved = False
-        if g.entity_list:
-            for i in range(len(g.entity_list)-1, -1, -1):
-                entity = g.entity_list[i]
-                entity.update(time_diff)
-                # Check if any of them have moved
-                if entity.has_moved():
-                    entity_has_moved = True
-        if g.special_entity_list:
-            for entity in list(g.special_entity_list.values()):
-                # Update all entities and check for if any of them is a package that just finished moving.
-                # If so, skip the has_moved check.
-                if entity.update(time_diff) == "deleted":
-                    continue
-                if entity.has_moved():
-                    entity_has_moved = True
-        
+        # What happens every tick?
+        while time_big_diff > 0:
+            if time_big_diff >= c.TICK_FREQ:
+                time_diff = c.TICK_FREQ
+                time_big_diff -= time_diff
+            else:
+                time_diff = time_big_diff
+                time_big_diff = 0
+
+            if time_last_tick + c.TICK_FREQ <= time_now:
+                time_last_tick = time_last_tick + c.TICK_FREQ
+                # Tick all the entities (let them do whatever they do every tick
+                for i in range(len(g.entity_list)-1, -1, -1):
+                    entity = g.entity_list[i]
+                    entity.tick()
+                for entity in list(g.special_entity_list.values()):
+                    entity.tick()
+                for tile in g.tick_tiles:
+                    g.map[tile[0]][tile[1]].tick()
+            # Make sure the loop doesn't go too quickly and bog the processor down
+            if time_last_sleep < c.SLEEP_TIME:
+                time.sleep(c.SLEEP_TIME - time_last_sleep)
+
+            # update all entities
+            entity_has_moved = False
+            if g.entity_list:
+                for i in range(len(g.entity_list)-1, -1, -1):
+                    entity = g.entity_list[i]
+                    entity.update(time_diff)
+                    # Check if any of them have moved
+                    if entity.has_moved():
+                        entity_has_moved = True
+            if g.special_entity_list:
+                for entity in list(g.special_entity_list.values()):
+                    # Update all entities and check for if any of them is a package that just finished moving.
+                    # If so, skip the has_moved check.
+                    if entity.update(time_diff) == "deleted":
+                        continue
+                    if entity.has_moved():
+                        entity_has_moved = True
+
+            # Update map buffer if needed
+            if g.update_map:
+                g.update_map = False
+                g.force_update = True
+                g.map_screen_buffer = maps.update_map()
+
         # If any entity moved, redraw the screen
         if entity_has_moved or g.force_update:
             g.force_update = False

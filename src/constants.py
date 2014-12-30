@@ -17,7 +17,7 @@ SPECIAL_DEBUG = True
 
 if NORMAL_DEBUG:
     # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
-    FORCE_UPDATE = True
+    FORCE_UPDATE = False
 else:
     FORCE_UPDATE = False
 
@@ -306,3 +306,6 @@ GEN_ITERATIONS = 3
 GEN_ORE_CHANCE = 20
 # The number of times the rock formations should be evolved (16)
 GEN_ROCK_ITERATIONS = 16
+
+# Special mode for showing off the map generation
+GEN_DEMO_MODE = True
