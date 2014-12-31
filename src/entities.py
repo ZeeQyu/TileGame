@@ -569,11 +569,9 @@ class PathingEntity(FollowingEntity):
 
             # If we're done here
             done = False
-            print(str(g.get_img(*current).factory))
             if g.get_img(*current).factory is not None:
                 for good in g.get_img(*current).factory[2]:
                     if good:
-                        print(target_goods)
                         if good[0] == target_goods:
                             done = True
                             break

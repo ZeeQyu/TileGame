@@ -150,7 +150,6 @@ class FactoryTile(Tile):
         if len(c.IMAGES[self.type].factory) > 1 and c.IMAGES[self.type].factory[1]:
             g.tick_tiles.append([self.x, self.y])
 
-
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
         """
@@ -184,10 +183,8 @@ class FactoryTile(Tile):
                                            self.y * c.TILE_SIZE,
                                            c.GOODS[good[0]],
                                            c.ROBOT_MOVEMENT_SPEED)
-            # print(robot.pathfind((g.special_entity_list["player"].x//c.TILE_SIZE,
-            #                       g.special_entity_list["player"].y//c.TILE_SIZE)))
+            robot.goods_pathfind(good[0])
             g.entity_list.append(robot)
-
 
     def recieve_goods(self, goods_type):
         """ Adds the recieved goods to the inventory of this tile.
