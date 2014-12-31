@@ -145,6 +145,57 @@ class FactoryTile(Tile):
     """
     def __init__(self, type, x, y):
         super(FactoryTile, self).__init__(type, x, y)
+        self.goods_timer = -1
+        self.inventory = {}
+        if len(c.IMAGES[self.type].factory) > 1 and c.IMAGES[self.type].factory[1]:
+            g.tick_tiles.append([self.x, self.y])
+
+
+    def tick(self):
+        """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
+        """
+        # If the timer's up, add a timer until the goods can be sent.
+        if self.goods_timer == -1:
+            can_send = True
+            if len(c.IMAGES[self.type].factory) > 2:
+                for good in c.IMAGES[self.type].factory[2]:
+                    if good:
+                        # If the entity has the good
+                        if good[0] in self.inventory:
+                            # If the entity has enough of said goods.
+                            if self.inventory[good[0]] >= good[1]:
+                                can_send = False
+                                break
+                        else:
+                            can_send = False
+                            break
+            if can_send:
+                self.goods_timer = c.IMAGES[self.type].factory[0]
+        if self.goods_timer == 0:
+            self.send_goods()
+        if self.goods_timer >= 0:
+            self.goods_timer -= 1
+
+    def send_goods(self):
+        """ Sends its goods with a pathfinding robot to the nearest applicable factory.
+        """
+        for good in c.IMAGES[self.type].factory[1]:
+            robot = entities.PathingEntity(self.x * c.TILE_SIZE,
+                                           self.y * c.TILE_SIZE,
+                                           c.GOODS[good[0]],
+                                           c.ROBOT_MOVEMENT_SPEED)
+            # print(robot.pathfind((g.special_entity_list["player"].x//c.TILE_SIZE,
+            #                       g.special_entity_list["player"].y//c.TILE_SIZE)))
+            g.entity_list.append(robot)
+
+
+    def recieve_goods(self, goods_type):
+        """ Adds the recieved goods to the inventory of this tile.
+        """
+        if goods_type in self.inventory.keys():
+            self.inventory[goods_type] += 1
+        else:
+            self.inventory[goods_type] = 1
 
 
 def area_is_free(x, y, width, height):
@@ -213,6 +264,8 @@ def make_tile(type, x, y, target=None):
         # Check if target was specified. If so, this tile is a pointer.
         if target is not None:
             tile = MultiTilePointer(type, x, y, *target)
+        elif c.IMAGES[type].factory is not None:
+            tile = FactoryTile(type, x, y)
         else:
             tile = Tile(type, x, y)
     # Change and update the map

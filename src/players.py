@@ -13,11 +13,9 @@ import os, sys
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
 import units, tiles
-import pygame.locals as pgl
 from entities import Entity
 import globals as g
 import constants as c
-import interface
 
 
 class Player(Entity):

@@ -1,8 +1,16 @@
 ZeeQyu TODO list:
 
+	Factories
+	    Factory tile with input/output
+	    Inventories in the factories.
+	    Pathfinding robots from next to one of the fatories to next to the other one and back again
+
+	    Dummy function that are triggered when it gets supplied with something.
+	    More specific amounts of things in the demands for creating things, like you need 5 ore to make one iron and
+	        then you also get some rust or whatever.
+
     Fix menu selecting empty spaces
 	Multitile structures
-	Factories
 
 	Simple enemies that try to attack you
 	Health

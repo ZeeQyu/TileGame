@@ -77,7 +77,7 @@ def main():
         if skip_cycle:
             skip_cycle = False
             continue
-        # FPS meter (shown in console). Broken since updating ticks TODO fix fps meter
+        # FPS meter (shown in console).
         # checks the amount of times this code is run every second and prints that every second.
         time_cycles += 1
         if time_start + 1 < time_now:

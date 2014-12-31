@@ -27,8 +27,7 @@ class Img(object):
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     """
     def __init__(self, png, color_code=None, random=False, collides=False,
-                 placeable=False, destroy=None, evolve=None, grabbable=None,
-                 multi_tile=None):
+                 placeable=False, destroy=None, evolve=None, multi_tile=None, factory=None):
         """ Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -50,11 +49,17 @@ class Img(object):
             "evolve" should be a list containing the minimum time it takes for the tile
                 to evolve (change into another tile), makimum time in ticks and which tile
                 it should evolve to (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
-            "grabbable" should be a string with the class name of the entity it should become
-                if the grab key is used on that Tile. (example: Package) Leave as None if
-                it shouldn't be grabbable.
             "multi_tile" should be a tuple of the width and height in tiles of the tile if
                 it is a multi-tile. (example: (3, 3))
+            "factory" should be a list with 3 values if the tile is a factory. A factory is a tile that
+                recieves and/or sends goods. The first value should be the time in ticks it takes
+                for the factory to produce the output goods from the tick it realizes it has
+                all the required ingredients. The second value should be a list containing lists, where each nested
+                list has two values where the first is the type of goods that will be produced after the given time
+                and the second is the amount that will be produced.
+                The third value is a list with lists where every nested list has materials required for producing
+                the output, following the same syntax as the input goods above.
+                (example: [15, [["banana", 3], ["leaves", 15]], [["banana_seeds", 1], ["fertilizer", 5]]]  )
         """
         self.type = type
         if "." in png:
@@ -67,8 +72,8 @@ class Img(object):
         self.placeable = placeable
         self.destroy = destroy
         self.evolve = evolve
-        self.grabbable = grabbable
         self.multi_tile = multi_tile
+        self.factory = factory
 
 # This is the folder for the resources (pictures) of the project
 RES_FOLDER = "res"
@@ -140,7 +145,7 @@ IMAGES = {
     "ore3": Img("ore3.png"),
     "ore4": Img("ore4.png"),
     "ore5": Img("ore5.png"),
-    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True),
+    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True, factory=[40, [["ore", 2]], [[]]]),
     "ore_mine2": Img("oreMine2.png"),
     "ore_mine3": Img("oreMine3.png"),
     "ore_mine4": Img("oreMine4.png"),
@@ -153,7 +158,7 @@ IMAGES = {
     "large_ore3": Img("large_ore3.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"]),
+    "launcher": Img("launcher.png", destroy=[15, "package_tile"], factory=[-1, [[]], [["ore", 15]]]),
 
     "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
     "wreckage": Img("wreckage.png", destroy=[10, "grass"]),
@@ -235,6 +240,12 @@ PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
                       "dirt-package": "dirt",
                       "endless_package": "endless_package"}
 
+# The list of all the goods there is. The format is {"goods_name": "image_name_of_the_entity_carrying_it"}
+GOODS = {
+    "empty": "robot_empty",
+    "ore": "robot_ore"
+}
+
 BACKGROUND_COLOR = (0, 0, 0)
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
 # calculations that should be more periodical than cycles or frames
@@ -261,6 +272,7 @@ PLAYER_MOVEMENT_SPEED = 80
 BEETLE_MOVEMENT_SPEED = 90
 PACKAGE_MOVEMENT_SPEED = 80
 PATHER_MOVEMENT_SPEED = 120
+ROBOT_MOVEMENT_SPEED = 70
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
@@ -308,4 +320,4 @@ GEN_ORE_CHANCE = 20
 GEN_ROCK_ITERATIONS = 16
 
 # Special mode for showing off the map generation
-GEN_DEMO_MODE = True
+GEN_DEMO_MODE = False

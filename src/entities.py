@@ -71,6 +71,8 @@ class Entity(object):
         self.following_entity = None
         # If the entity has collided since last check.
         self.collided = False
+        # Update screen
+        g.force_update = True
         
     def update(self, delta_remainder):
         """ Updates the entity location if any of the plus and minus variables are set to True
@@ -430,6 +432,8 @@ class PathingEntity(FollowingEntity):
                                             attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
                                             rotates=rotates, collides=collides, wall_collides=wall_collides,
                                             target_coords=target_coords, custom_name=custom_name)
+        self.x += (c.TILE_SIZE - self.width) / 2
+        self.y += (c.TILE_SIZE - self.height) / 2
         self.target_coords = target_coords
         self.target_tile = None
         self.came_from = []
@@ -451,16 +455,11 @@ class PathingEntity(FollowingEntity):
             raise Exception("Value passed to PathingEntity.pathfind() is not tuple")
 
         # The open dictionary is a dictionary keeping the currently checkable tiles
+        # The starting tile is identified as not having a came_from-tuple.
         open_dict = {start: [self._heuristic_cost_estimate(start, end), 0,
                              self._heuristic_cost_estimate(start, end)]}
         # The closed dictionary is a dicionary keeping the currently checked tiles
         closed_dict = {}
-
-        self.came_from = []
-        for i in range(len(g.map)):
-            self.came_from.append([])
-            for j in range(len(g.map[i])):
-                self.came_from[i].append([])
 
         current = None
         while len(open_dict.keys()) > 0:
@@ -515,7 +514,7 @@ class PathingEntity(FollowingEntity):
                                     closed_dict[neighbour] = None
                                     continue
 
-                                # Otherwise, give it a cost of the square root of two.
+                                # If it can travel diagonally, give it a cost of the square root of two.
                                 g_score = closed_dict[current][1] + 14
 
                         if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
@@ -525,6 +524,101 @@ class PathingEntity(FollowingEntity):
                                     h_score = self._heuristic_cost_estimate(neighbour, end)
                                     f_score = g_score + h_score
                                     open_dict[neighbour] = [f_score, g_score, h_score, current]
+                        else:
+                            closed_dict[neighbour] = None
+        self.path = []
+        self.stop_moving()
+        return "Couldn't find path"
+
+    def goods_pathfind(self, target_goods):
+        """ Finds a path from the start tile, (the current tile of the entity) to the nearest factory tile that
+            can recieve the passed-in goods type.
+            "goods" should be a string with the type of goods that the entity will be carrying.
+        """
+
+        start = self.get_tile()
+        # The open_dict and closed_dict both follow the format:
+        # (key_x, key_y): [g, (came_from_x, came_from_y)]
+        # This is a simplified version of the pathfind function. It doesn't use heuristics because it doesn't
+        # know where to go yet. It only uses the G value, which is the distance to the tile it came from.
+        if type(start) != tuple:
+            raise Exception("Value got by self.get_tile() is not tuple")
+
+        # The open dictionary is a dictionary keeping the currently checkable tiles
+        # The starting tile is identified as not having a came_from-tuple.
+        open_dict = {start: [0]}
+        # The closed dictionary is a dicionary keeping the currently checked tiles
+        closed_dict = {}
+
+        current = None
+        while len(open_dict.keys()) > 0:
+            lowest_value = None
+            # Get the lowest value
+            for key in open_dict.keys():
+                value = open_dict[key][0]
+                if lowest_value is None:
+                    lowest_value = value
+                    current = key
+                else:
+                    if value < lowest_value:
+                        lowest_value = value
+                        current = key
+            # Move current from the open dictionary to the closed one
+            closed_dict[current] = open_dict[current]
+            del open_dict[current]
+
+            # If we're done here
+            done = False
+            print(str(g.get_img(*current).factory))
+            if g.get_img(*current).factory is not None:
+                for good in g.get_img(*current).factory[2]:
+                    if good:
+                        print(target_goods)
+                        if good[0] == target_goods:
+                            done = True
+                            break
+
+            if done is True:
+                full_path = []
+                while len(closed_dict[current]) > 1:
+                    full_path.append(current)
+                    current = closed_dict[current][1]
+                full_path.reverse()
+                self.path = full_path
+                self.next_target_tile()
+                return
+
+            # Move through all neighbours
+            for i in range(current[0]-1, current[0]+2):
+                for j in range(current[1]-1, current[1]+2):
+                    neighbour = (i, j)
+                    if 0 <= neighbour[0] < len(g.map) and 0 <= neighbour[1] < len(g.map[0]):
+
+                        # Get the G score, the cost to go back to the start
+                        if neighbour[0] == current[0]:
+                            if neighbour[1] == current[1]:
+                                continue
+                            else:
+                                g_score = closed_dict[current][0] + 10
+                        else:
+                            if neighbour[1] == current[1]:
+                                g_score = closed_dict[current][0] + 10
+                            else:
+                                # Make sure the pathfinding doesn't try to go through blocks diagonally.
+                                if (g.get_img(neighbour[0], current[1]).collides and
+                                        g.get_img(current[0], neighbour[1]).collides):
+                                    # If the blocks on either side of the diagonal walk is collidable, skip this one
+                                    closed_dict[neighbour] = None
+                                    continue
+
+                                # If it can travel diagonally, give it a cost of the square root of two.
+                                g_score = closed_dict[current][0] + 14
+
+                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                            # Check if this neighbour can be added the the open_dict and do so if so
+                            if neighbour not in closed_dict.keys():
+                                if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:
+                                    open_dict[neighbour] = [g_score, current]
                         else:
                             closed_dict[neighbour] = None
         self.path = []
