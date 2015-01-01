@@ -18,6 +18,8 @@ import globals as g
 import constants as c
 from graphics import Graphics
 
+import json
+
 
 class InvalidCallParameterException(Exception):
     """ A fancy class name for if the programmer (me) somehow mistook what variables
@@ -428,16 +430,17 @@ class PathingEntity(FollowingEntity):
                  collides=True, wall_collides=True, target_coords=None, custom_name=None):
         """ Initalizes the PathingEntity.
         """
-        super(PathingEntity, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed,
-                                            attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
-                                            rotates=rotates, collides=collides, wall_collides=wall_collides,
-                                            target_coords=target_coords, custom_name=custom_name)
+        super().__init__(x=x, y=y, image=image, movement_speed=movement_speed,
+                         attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
+                         rotates=rotates, collides=collides, wall_collides=wall_collides,
+                         target_coords=target_coords, custom_name=custom_name)
         self.x += (c.TILE_SIZE - self.width) / 2
         self.y += (c.TILE_SIZE - self.height) / 2
         self.target_coords = target_coords
         self.target_tile = None
         self.came_from = []
         self.path = []
+        self.paths_end_func = self.stop_moving # TODO make a robot subclass which gives the end func of give goods and make this stop moving.
 
     def _heuristic_cost_estimate(self, start, end):
         return 10 * (abs(start[0] - end[0]) + abs(start[1] - end[1]))
@@ -559,10 +562,9 @@ class PathingEntity(FollowingEntity):
                 if lowest_value is None:
                     lowest_value = value
                     current = key
-                else:
-                    if value < lowest_value:
-                        lowest_value = value
-                        current = key
+                elif value < lowest_value:
+                    lowest_value = value
+                    current = key
             # Move current from the open dictionary to the closed one
             closed_dict[current] = open_dict[current]
             del open_dict[current]
@@ -578,13 +580,22 @@ class PathingEntity(FollowingEntity):
 
             if done is True:
                 full_path = []
+                # print(closed_dict)
                 while len(closed_dict[current]) > 1:
                     full_path.append(current)
                     current = closed_dict[current][1]
+                    # print(current)
+                    # print(closed_dict[current])
+                    # print(type(closed_dict[current]))
+                    # print(full_path)
                 full_path.reverse()
                 self.path = full_path
                 self.next_target_tile()
                 return
+
+            if g.get_img(*current).collides:
+                closed_dict[current] = None
+                continue
 
             # Move through all neighbours
             for i in range(current[0]-1, current[0]+2):
@@ -612,13 +623,13 @@ class PathingEntity(FollowingEntity):
                                 # If it can travel diagonally, give it a cost of the square root of two.
                                 g_score = closed_dict[current][0] + 14
 
-                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
-                            # Check if this neighbour can be added the the open_dict and do so if so
-                            if neighbour not in closed_dict.keys():
-                                if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:
-                                    open_dict[neighbour] = [g_score, current]
-                        else:
-                            closed_dict[neighbour] = None
+                        # if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                        # Check if this neighbour can be added the the open_dict and do so if so
+                        if neighbour not in closed_dict.keys():
+                            if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:
+                                open_dict[neighbour] = [g_score, current]
+                        # else:
+                        #     closed_dict[neighbour] = None
         self.path = []
         self.stop_moving()
         return "Couldn't find path"
@@ -627,7 +638,6 @@ class PathingEntity(FollowingEntity):
         """ Calls the super update function as well as check for if the package should be turned into a tile.
         """
         if self.target_coords == [int(self.x), int(self.y)]:
-            self.stop_moving()
             self.next_target_tile()
         if self.target_tile is not None:
             if (g.get_img(*self.target_tile).collides or
@@ -636,12 +646,13 @@ class PathingEntity(FollowingEntity):
                 if len(self.path) > 0:
                     self.pathfind(self.path[-1])
                 else:
-                    self.stop_moving()
+                    self.paths_end_func()
                     self.path = []
         super(PathingEntity, self).update(time_diff)
 
     def stop_moving(self):
         self.target_coords = None
+        self.target_tile = None
         if self.rotates:
             self.angle = 0
 
@@ -659,7 +670,21 @@ class PathingEntity(FollowingEntity):
             x, y = self.path.pop(0)
             self.set_target_tile(x, y)
         else:
-            self.target_coords = None
+            self.paths_end_func()
+
+    def give_goods(self):
+        self.stop_moving()
+        print("give_goods()")
+
+class Robot(PathingEntity):
+    """ Class for entities that carry goods from one tile to another.
+    """
+    def __init__(self, x, y, image, movement_speed, rotates=True,
+                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
+        super().__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
+                         collides=collides, wall_collides=wall_collides,
+                         target_coords=target_coords, custom_name=custom_name)
+        self.paths_end_func = self.give_goods
 
 
 def free_of_entities(tile):

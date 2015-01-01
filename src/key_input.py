@@ -113,9 +113,6 @@ def event_check():
                             g.special_entity_list["player"].browsing_menu = False
 
 
-
-
-
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
     """

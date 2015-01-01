@@ -158,7 +158,7 @@ IMAGES = {
     "large_ore3": Img("large_ore3.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "launcher": Img("launcher.png", destroy=[15, "package_tile"], factory=[-1, [[]], [["ore", 15]]]),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory=[-1, [[]], [["ore", 15]]]),
 
     "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
     "wreckage": Img("wreckage.png", destroy=[10, "grass"]),

@@ -147,6 +147,7 @@ class FactoryTile(Tile):
         super(FactoryTile, self).__init__(type, x, y)
         self.goods_timer = -1
         self.inventory = {}
+        print("Factorytile created at " + str(x) + ", " + str(y))
         if len(c.IMAGES[self.type].factory) > 1 and c.IMAGES[self.type].factory[1]:
             g.tick_tiles.append([self.x, self.y])
 
@@ -179,10 +180,10 @@ class FactoryTile(Tile):
         """ Sends its goods with a pathfinding robot to the nearest applicable factory.
         """
         for good in c.IMAGES[self.type].factory[1]:
-            robot = entities.PathingEntity(self.x * c.TILE_SIZE,
-                                           self.y * c.TILE_SIZE,
-                                           c.GOODS[good[0]],
-                                           c.ROBOT_MOVEMENT_SPEED)
+            robot = entities.Robot(self.x * c.TILE_SIZE,
+                                   self.y * c.TILE_SIZE,
+                                   c.GOODS[good[0]],
+                                   c.ROBOT_MOVEMENT_SPEED)
             robot.goods_pathfind(good[0])
             g.entity_list.append(robot)
 

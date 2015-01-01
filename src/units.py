@@ -21,8 +21,8 @@ import constants as c
 class Animal(entities.Entity):
     """ Base class for harmless entites that randomly roam about
     """
-    def __init__(self, x, y, image, movement_speed, max_travel, collides = True,
-                 rotates = True, wall_collides = True):
+    def __init__(self, x, y, image, movement_speed, max_travel, collides=True,
+                 rotates=True, wall_collides=True):
         """ Calls the entity init and creates another variable
         """
         super(Animal, self).__init__(x, y, image, movement_speed, collides=collides,
