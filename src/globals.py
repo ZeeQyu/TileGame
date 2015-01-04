@@ -72,6 +72,10 @@ def update_key_dict():
     create_key_dict(key_list)
 
 
+def in_map(x, y):
+    return 0 <= x < width and 0 <= y < height
+
+
 def get_img(x, y):
     """ Gets the Img class from constants.IMAGES of the tile at x, y.
         returns an Img object

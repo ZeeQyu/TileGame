@@ -82,6 +82,8 @@ RES_FOLDER = "res"
 IMAGES = {
     # tiles
     # "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
+
+    # Nature
     "grass": Img("grassTile1.png", color_code=(255, 255, 255), random=True, placeable=True),
     "grass2": Img("grassTile2.png"),
     "grass3": Img("grassTile3.png"),
@@ -145,28 +147,37 @@ IMAGES = {
     "ore3": Img("ore3.png"),
     "ore4": Img("ore4.png"),
     "ore5": Img("ore5.png"),
-    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True, factory=[40, [["ore", 2]], [[]]]),
+    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
+    "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
+    "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
+
+    # Large Nature
+    "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
+    "large_ore2": Img("large_ore2.png"),
+    "large_ore3": Img("large_ore3.png"),
+
+    # Structures
+    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True, factory=[40, [["ore", 1]], [[]]]),
     "ore_mine2": Img("oreMine2.png"),
     "ore_mine3": Img("oreMine3.png"),
     "ore_mine4": Img("oreMine4.png"),
     "ore_mine5": Img("oreMine5.png"),
-    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
-    "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
-    "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
-    "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
-    "large_ore2": Img("large_ore2.png"),
-    "large_ore3": Img("large_ore3.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory=[-1, [[]], [["ore", 15]]]),
+    "furnace": Img("furnaceOff.png", collides=False, destroy=[15, "package_tile"],
+                   factory=[5, [["iron", 1]], [["ore", 3]]]),
+    "furnace_on": Img("furnace.png"),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"],
+                    factory=[-1, [[]], [["iron", 1]]]),
 
-    "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
-    "wreckage": Img("wreckage.png", destroy=[10, "grass"]),
-    "ore-package": Img("orePackage.png", destroy=[20, "ore-wreckage"]),
-    "ore-wreckage": Img("oreWreckage.png", destroy=[10, "ore"]),
-    "dirt-package": Img("dirtPackage.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
-    "dirt-wreckage": Img("dirtWreckage.png", destroy=[10, "dirt"]),
+    # Packages
     "endless_package": Img("endless_package_tile.png", color_code=(0, 255, 0), placeable=True),
+    "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
+    "ore-package": Img("orePackage.png", destroy=[20, "ore-wreckage"]),
+    "dirt-package": Img("dirtPackage.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
+    "wreckage": Img("wreckage.png", destroy=[10, "grass"]),
+    "ore-wreckage": Img("oreWreckage.png", destroy=[10, "ore"]),
+    "dirt-wreckage": Img("dirtWreckage.png", destroy=[10, "dirt"]),
 
     "pointer": Img("emptyPixel.png"),
     "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -178,8 +189,9 @@ IMAGES = {
     "ufo": Img("enemyUfo.png"),
     "robot_empty": Img("robotEmpty.png"),
     "robot_ore": Img("robotOre.png"),
+    "robot_iron": Img("robotIron.png"),
 
-    # other
+    # interface
     "empty": Img("emptyPixel.png"),
     "map": Img("map.png"),
     "aim": Img("aim.png"),
@@ -191,7 +203,8 @@ IMAGES = {
     "button1": Img("button1.png"),
     "button2": Img("button2.png"),
     "button3": Img("button3.png"),
-    "launcher_button": Img("launcher_button.png"),
+    "launcher_button": Img("launcherButton.png"),
+    "furnace_button": Img("furnaceButton.png"),
     "ore_mine_button": Img("oreMineButton.png"),
     "button_border": Img("button_border.png"),
     "button_close": Img("close_button.png")
@@ -243,7 +256,8 @@ PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
 # The list of all the goods there is. The format is {"goods_name": "image_name_of_the_entity_carrying_it"}
 GOODS = {
     "empty": "robot_empty",
-    "ore": "robot_ore"
+    "ore": "robot_ore",
+    "iron": "robot_iron"
 }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -278,6 +292,8 @@ BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels
 PACKAGE_PULL_MIN = 10
 PACKAGE_PULL_MAX = 24
+# Standard time in ticks for robots to deliver wares to a position
+ROBOT_DELIVER_TIME = 25
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT

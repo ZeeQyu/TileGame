@@ -147,7 +147,8 @@ class FactoryTile(Tile):
         super(FactoryTile, self).__init__(type, x, y)
         self.goods_timer = -1
         self.inventory = {}
-        print("Factorytile created at " + str(x) + ", " + str(y))
+        self.robots = []
+        print("Factorytile created at " + str(x) + ", " + str(y) + " of type " + self.type + ".")
         if len(c.IMAGES[self.type].factory) > 1 and c.IMAGES[self.type].factory[1]:
             g.tick_tiles.append([self.x, self.y])
 
@@ -160,12 +161,16 @@ class FactoryTile(Tile):
             if len(c.IMAGES[self.type].factory) > 2:
                 for good in c.IMAGES[self.type].factory[2]:
                     if good:
-                        # If the entity has the good
+                        # If the tile has the good
                         if good[0] in self.inventory:
                             # If the entity has enough of said goods.
+                            # If the goods in the inventory >= the amount of goods in the IMAGES list required
                             if self.inventory[good[0]] >= good[1]:
-                                can_send = False
+                                can_send = True
+                                self.inventory[good[0]] -= good[1]
                                 break
+                            else:
+                                can_send = False
                         else:
                             can_send = False
                             break
@@ -179,13 +184,26 @@ class FactoryTile(Tile):
     def send_goods(self):
         """ Sends its goods with a pathfinding robot to the nearest applicable factory.
         """
+        i = 0
         for good in c.IMAGES[self.type].factory[1]:
-            robot = entities.Robot(self.x * c.TILE_SIZE,
-                                   self.y * c.TILE_SIZE,
-                                   c.GOODS[good[0]],
-                                   c.ROBOT_MOVEMENT_SPEED)
-            robot.goods_pathfind(good[0])
-            g.entity_list.append(robot)
+            if good:
+                good = good[0]
+                if len(self.robots) > i:
+                    if self.robots[i]:
+                        self.robots[i] = False
+                    else:
+                        continue
+                else:
+                    self.robots.append(False)
+                robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
+                                       c.GOODS[good], c.ROBOT_MOVEMENT_SPEED)
+                if robot.goods_pathfind(good) == "Fail":
+                    robot.delete = True
+                    self.robots[i] = True
+                else:
+                    robot.number = i
+                    robot.goods = good
+                i += 1
 
     def recieve_goods(self, goods_type):
         """ Adds the recieved goods to the inventory of this tile.
@@ -194,6 +212,17 @@ class FactoryTile(Tile):
             self.inventory[goods_type] += 1
         else:
             self.inventory[goods_type] = 1
+        if self.image == "furnace":
+            self.image = "furnace_on"
+            g.update_map = True
+        print("Recieved")
+        print(self.inventory)
+
+    def robot_returned(self, number):
+        if len(self.robots) > number:
+            self.robots[number] = True
+        else:
+            self.robots.append(True)
 
 
 def area_is_free(x, y, width, height):

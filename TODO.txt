@@ -1,9 +1,8 @@
 ZeeQyu TODO list:
 
 	Factories
-	    Factory tile with input/output
-	    Inventories in the factories.
 	    Pathfinding robots from next to one of the fatories to next to the other one and back again
+	    Inventories in the factories.
 
 	    Dummy function that are triggered when it gets supplied with something.
 	    More specific amounts of things in the demands for creating things, like you need 5 ore to make one iron and

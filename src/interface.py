@@ -413,6 +413,8 @@ class BuildMenu(Menu):
         """
 
         super().__init__("menu_background", [
+            MenuButton("Build Furnace", "furnace_button", _put_tile, ["furnace"], recommended=True,
+                       tile_filter=["package_tile", "dirt-package"]),
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package_tile", "dirt-package"]),
             MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,

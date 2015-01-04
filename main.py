@@ -103,8 +103,9 @@ def main():
                 # Tick all the entities (let them do whatever they do every tick
                 for i in range(len(g.entity_list)-1, -1, -1):
                     entity = g.entity_list[i]
-                    if entity.tick() == "deleteme":
+                    if entity.tick() == "delete":
                         del g.entity_list[i]
+                        g.force_update = True
                 for entity in list(g.special_entity_list.values()):
                     entity.tick()
                 for tile in g.tick_tiles:
