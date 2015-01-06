@@ -27,7 +27,8 @@ class Img(object):
         Uses a short name because it shouldn't ever be used outside of this file and saves screen space.
     """
     def __init__(self, png, color_code=None, random=False, collides=False,
-                 placeable=False, destroy=None, evolve=None, multi_tile=None, factory=None):
+                 placeable=False, destroy=None, evolve=None, multi_tile=None,
+                 factory_input=[], factory_output=[], factory_timer=0, factory_alt_image=None):
         """ Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -55,11 +56,22 @@ class Img(object):
                 recieves and/or sends goods. The first value should be the time in ticks it takes
                 for the factory to produce the output goods from the tick it realizes it has
                 all the required ingredients. The second value should be a list containing lists, where each nested
-                list has two values where the first is the type of goods that will be produced after the given time
-                and the second is the amount that will be produced.
-                The third value is a list with lists where every nested list has materials required for producing
-                the output, following the same syntax as the input goods above.
-                (example: [15, [["banana", 3], ["leaves", 15]], [["banana_seeds", 1], ["fertilizer", 5]]]  )
+                list has two values where the first is the type of goods that is needed to produce the output goods
+                and the second is the amount of goods required of theat type
+                The third value is a list with lists where every nested list has the output goods that will be
+                produced after the timer runs out, following the same syntax as the input goods above.
+                (example: [15, [["banana_seeds", 1], ["fertilizer", 5]], [["banana", 3], ["leaves", 15]]]  )
+            "factory_input" should be a list containing lists where each nested list has two values
+                where the first is the type of goods that is needed to produce the output goods
+                and the second is the amount of goods required of that goods.
+                (example: [["banana_seeds", 1], ["fertilizer", 5]] )
+            "factory_output" should be a list with lists where every nested list has the output goods that will be
+                produced after the timer runs out, following the same syntax as the input goods above.
+                (example: [["banana", 3], ["leaves", 15]] )
+            "factory_timer" should be the time in ticks the factory needs to produce the output
+                goods from when it recieves the input goods. Defaults to 0.
+            "factory_alt_img" should be a string with an identifier of an image in the
+                IMAGES list that is used when the factory is working.
         """
         self.type = type
         if "." in png:
@@ -73,7 +85,10 @@ class Img(object):
         self.destroy = destroy
         self.evolve = evolve
         self.multi_tile = multi_tile
-        self.factory = factory
+        self.factory_timer = factory_timer
+        self.factory_input = factory_input
+        self.factory_output = factory_output
+        self.factory_alt_image = factory_alt_image
 
 # This is the folder for the resources (pictures) of the project
 RES_FOLDER = "res"
@@ -157,18 +172,18 @@ IMAGES = {
     "large_ore3": Img("large_ore3.png"),
 
     # Structures
-    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True, factory=[40, [["ore", 1]], [[]]]),
+    "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True,
+                    factory_output=[["ore", 1]], factory_timer=40),
     "ore_mine2": Img("oreMine2.png"),
     "ore_mine3": Img("oreMine3.png"),
     "ore_mine4": Img("oreMine4.png"),
     "ore_mine5": Img("oreMine5.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "furnace": Img("furnaceOff.png", collides=False, destroy=[15, "package_tile"],
-                   factory=[5, [["iron", 1]], [["ore", 3]]]),
+    "furnace": Img("furnaceOff.png", collides=False, destroy=[15, "package_tile"], factory_input=[["ore", 3]],
+                   factory_output=[["iron", 1]], factory_timer=30, factory_alt_image="furnace_on"),
     "furnace_on": Img("furnace.png"),
-    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"],
-                    factory=[-1, [[]], [["iron", 1]]]),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory_input=[["iron", 1]]),
 
     # Packages
     "endless_package": Img("endless_package_tile.png", color_code=(0, 255, 0), placeable=True),
@@ -294,6 +309,10 @@ PACKAGE_PULL_MIN = 10
 PACKAGE_PULL_MAX = 24
 # Standard time in ticks for robots to deliver wares to a position
 ROBOT_DELIVER_TIME = 25
+# The time between tries of the robot pathfinding of the factory tiles
+ROBOT_RETRY_TIME = 40
+# The time in ticks it takes for a robot that's returned to home to set out again with new goods.
+ROBOT_LOAD_TIME = 10
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT

@@ -126,7 +126,7 @@ def main():
             if g.special_entity_list:
                 for entity in list(g.special_entity_list.values()):
                     # Update all entities and check for if any of them is a package that just finished moving.
-                    # If so, skip the has_moved check.
+                    # If so, skip the has_moved check for that entity.
                     if entity.update(time_diff) == "deleted":
                         continue
                     if entity.has_moved():

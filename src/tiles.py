@@ -148,8 +148,7 @@ class FactoryTile(Tile):
         self.goods_timer = -1
         self.inventory = {}
         self.robots = []
-        print("Factorytile created at " + str(x) + ", " + str(y) + " of type " + self.type + ".")
-        if len(c.IMAGES[self.type].factory) > 1 and c.IMAGES[self.type].factory[1]:
+        if c.IMAGES[self.type].factory_output:
             g.tick_tiles.append([self.x, self.y])
 
     def tick(self):
@@ -157,79 +156,105 @@ class FactoryTile(Tile):
         """
         # If the timer's up, add a timer until the goods can be sent.
         if self.goods_timer == -1:
-            can_send = True
-            if len(c.IMAGES[self.type].factory) > 2:
-                for good in c.IMAGES[self.type].factory[2]:
+            can_start_timer = True
+            if c.IMAGES[self.type].factory_input:
+                for good in c.IMAGES[self.type].factory_input:
                     if good:
+                        good_name, good_amount = good
                         # If the tile has the good
-                        if good[0] in self.inventory:
+                        if good_name in self.inventory:
                             # If the entity has enough of said goods.
                             # If the goods in the inventory >= the amount of goods in the IMAGES list required
-                            if self.inventory[good[0]] >= good[1]:
-                                can_send = True
-                                self.inventory[good[0]] -= good[1]
+                            # start a timer to add the produced goods
+                            if not self.inventory[good_name] >= good_amount:
+                                can_start_timer = False
                                 break
-                            else:
-                                can_send = False
                         else:
-                            can_send = False
+                            can_start_timer = False
                             break
-            if can_send:
-                self.goods_timer = c.IMAGES[self.type].factory[0]
+
+            if can_start_timer and c.IMAGES[self.type].factory_input:
+                for good_name, good_amount in c.IMAGES[self.type].factory_input:
+                    self.inventory[good_name] -= good_amount
+                self.goods_timer = c.IMAGES[self.type].factory_timer
+                # Set the image to the working image
+                if c.IMAGES[self.type].factory_alt_image is not None and not c.IMAGES[self.type].random:
+                    self.image = c.IMAGES[self.type].factory_alt_image
+                    g.update_map = True
+
         if self.goods_timer == 0:
-            self.send_goods()
+            for good in c.IMAGES[self.type].factory_output:
+                if good:
+                    good_name, good_amount = good
+                    if good_name in self.inventory:
+                        self.inventory[good_name] += good_amount
+                    else:
+                        self.inventory[good_name] = good_amount
+            # Reset the image when the factory is done working
+            if c.IMAGES[self.type].factory_alt_image is not None and not c.IMAGES[self.type].random:
+                self.image = self.type
+                g.update_map = True
+
         if self.goods_timer >= 0:
             self.goods_timer -= 1
 
+        self.send_goods()
+
     def send_goods(self):
-        """ Sends its goods with a pathfinding robot to the nearest applicable factory.
+        """ Sends its goods with a pathfinding robot to the nearest applicable factory if the corresponding
+            robot is "home", that is, not outside the building.
+            Should be called about every tick
         """
         i = 0
-        for good in c.IMAGES[self.type].factory[1]:
+        for good in c.IMAGES[self.type].factory_output:
             if good:
-                good = good[0]
+                good_name, good_amount = good
+                if c.IMAGES[self.type].factory_input:
+                    if not (good_name in self.inventory and self.inventory[good_name] > 0):
+                        continue
+
+                # Checks if the robot is at home. True if it is
                 if len(self.robots) > i:
-                    if self.robots[i]:
-                        self.robots[i] = False
-                    else:
+                    if self.robots[i] >= 0:
+                        self.robots[i] -= 1
+                    if self.robots[i] != 0:
                         continue
                 else:
-                    self.robots.append(False)
+                    self.robots.append(c.ROBOT_RETRY_TIME)
                 robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
-                                       c.GOODS[good], c.ROBOT_MOVEMENT_SPEED)
-                if robot.goods_pathfind(good) == "Fail":
+                                       c.GOODS[good_name],
+                                       c.ROBOT_MOVEMENT_SPEED)
+                if robot.goods_pathfind(good_name) == "Fail":
                     robot.delete = True
-                    self.robots[i] = True
+                    self.robots[i] = c.ROBOT_RETRY_TIME
                 else:
+                    self.robots[i] = -1
                     robot.number = i
-                    robot.goods = good
-                i += 1
+                    robot.goods = good_name
+                    if c.IMAGES[self.type].factory_input:
+                        self.inventory[good_name] -= 1
+            i += 1
 
-    def recieve_goods(self, goods_type):
+    def recieve_goods(self, goods_name):
         """ Adds the recieved goods to the inventory of this tile.
         """
-        if goods_type in self.inventory.keys():
-            self.inventory[goods_type] += 1
+        if goods_name in self.inventory:
+            self.inventory[goods_name] += 1
         else:
-            self.inventory[goods_type] = 1
-        if self.image == "furnace":
-            self.image = "furnace_on"
-            g.update_map = True
-        print("Recieved")
-        print(self.inventory)
+            self.inventory[goods_name] = 1
 
     def robot_returned(self, number):
         if len(self.robots) > number:
-            self.robots[number] = True
+            self.robots[number] = c.ROBOT_LOAD_TIME
         else:
-            self.robots.append(True)
+            self.robots.append(c.ROBOT_LOAD_TIME)
 
 
 def area_is_free(x, y, width, height):
     """ Checks an area for if a multitile can be placed there
         "x" and "y" is the top left corner tile in the area.
-        "width" and "height" is the width and height of the area 
-            to be checked. 
+        "width" and "height" is the width and height of the area
+            to be checked.
     """
     is_free = True
 #     for key in g.special_entity_list.keys():
@@ -291,7 +316,7 @@ def make_tile(type, x, y, target=None):
         # Check if target was specified. If so, this tile is a pointer.
         if target is not None:
             tile = MultiTilePointer(type, x, y, *target)
-        elif c.IMAGES[type].factory is not None:
+        elif c.IMAGES[type].factory_input or c.IMAGES[type].factory_output:
             tile = FactoryTile(type, x, y)
         else:
             tile = Tile(type, x, y)

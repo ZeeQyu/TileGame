@@ -488,17 +488,47 @@ class PathingEntity(FollowingEntity):
             del open_dict[current]
 
             # If we're done here
-            if current == end:
+            deliver_tile = None
+            if g.get_img(*end).collides:
+                # Find a tile next to the target tile to stand on if it collides
+                if (g.in_map(current[0] + 1, current[1]) and
+                        (current[0] + 1, current[1]) == end):
+                    deliver_tile = (current[0] + 1, current[1])
+                elif (g.in_map(current[0] - 1, current[1]) and
+                        (current[0] - 1, current[1]) == end):
+                    deliver_tile = (current[0] - 1, current[1])
+                elif (g.in_map(current[0], current[1] + 1) and
+                        (current[0], current[1] + 1) == end):
+                    deliver_tile = (current[0], current[1] + 1)
+                elif (g.in_map(current[0], current[1] - 1) and
+                        (current[0], current[1] - 1) == end):
+                    deliver_tile = (current[0], current[1] - 1)
+            elif current == end:
+                deliver_tile = current
+
+            if deliver_tile is not None:
                 closed_dict[current]
                 full_path = []
                 while len(closed_dict[current]) > 3:
                     full_path.append(current)
                     current = closed_dict[current][3]
                 full_path.reverse()
+                self.deliver_tile = deliver_tile
                 self.path = full_path
                 self.next_target_tile()
                 return
 
+                # if done is True:
+                #     full_path = []
+                #     self.deliver_tile = deliver_tile
+                #     while len(closed_dict[current]) > 1:
+                #         full_path.append(current)
+                #         current = closed_dict[current][1]
+                #     full_path.reverse()
+                #     self.path = full_path
+                #     self.next_target_tile()
+                #     self.home_tile = self.get_tile()
+                #     return
 
             # Move through all neighbours
             for i in range(current[0]-1, current[0]+2):
@@ -577,31 +607,32 @@ class PathingEntity(FollowingEntity):
 
             # If we're done here
             done = False
-            current_relative = None
+            deliver_tile = None
             # This code block makes sure the items are delivered to the tile next to the tile instead of diagonally
 
             if (g.in_map(current[0]+1, current[1]) and
-                    g.get_img(current[0]+1, current[1]).factory is not None):
-                current_relative = (current[0]+1, current[1])
+                    g.get_img(current[0]+1, current[1]).factory_input):
+                deliver_tile = (current[0]+1, current[1])
             elif (g.in_map(current[0]-1, current[1]) and
-                    g.get_img(current[0]-1, current[1]).factory is not None):
-                current_relative = (current[0]-1, current[1])
+                    g.get_img(current[0]-1, current[1]).factory_input):
+                deliver_tile = (current[0]-1, current[1])
             elif (g.in_map(current[0], current[1]+1) and
-                    g.get_img(current[0], current[1]+1).factory is not None):
-                current_relative = (current[0], current[1]+1)
+                    g.get_img(current[0], current[1]+1).factory_input):
+                deliver_tile = (current[0], current[1]+1)
             elif (g.in_map(current[0], current[1]-1) and
-                    g.get_img(current[0], current[1]-1).factory is not None):
-                current_relative = (current[0], current[1]-1)
-            if current_relative is not None:
-                for good in g.get_img(*current_relative).factory[2]:
-                    if good:  # Make sure it isn't empty, which would raise errors.
-                        if good[0] == target_goods:
+                    g.get_img(current[0], current[1]-1).factory_input):
+                deliver_tile = (current[0], current[1]-1)
+            if deliver_tile is not None:
+                for good in g.get_img(*deliver_tile).factory_input:
+                    if good:  # Make sure it isn't empty, which would raise errors.'
+                        good_name = good[0]
+                        if good_name == target_goods:
                             done = True
                             break  # Break out of the goods for loop, not the entire while loop
 
             if done is True:
                 full_path = []
-                self.deliver_tile = current_relative
+                self.deliver_tile = deliver_tile
                 while len(closed_dict[current]) > 1:
                     full_path.append(current)
                     current = closed_dict[current][1]
@@ -662,7 +693,10 @@ class PathingEntity(FollowingEntity):
                     (g.get_img(self.get_tile()[0], self.target_tile[1]).collides and
                      g.get_img(self.target_tile[0], self.get_tile()[1]).collides)):
                 if len(self.path) > 0:
-                    self.pathfind(self.path[-1])
+                    if self.deliver_tile:
+                        self.pathfind(self.deliver_tile)
+                    else:
+                        self.pathfind(self.path[-1])
                 else:
                     self.paths_end_func()
                     self.path = []
@@ -708,18 +742,13 @@ class PathingEntity(FollowingEntity):
             self.paths_end_func()
 
     def give_goods(self):
-        # print("give_goods()")
-        # print(self.home_tile)
-        # print(self.get_tile())
-        # print(self.path)
-        self.paths_end_func = self.come_home
-        self.pathfind(self.home_tile)
         try:
             g.map[self.deliver_tile[0]][self.deliver_tile[1]].recieve_goods(self.goods)
         except AttributeError:
             # If the factory tile was replaced, ignore it
             pass
-        # self.pathfind(g.special_entity_list["player"].get_tile())
+        self.paths_end_func = self.come_home
+        self.pathfind(self.home_tile)
 
     def come_home(self):
         self.delete = True
