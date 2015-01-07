@@ -150,6 +150,7 @@ class FactoryTile(Tile):
         self.robots = []
         if c.IMAGES[self.type].factory_output:
             g.tick_tiles.append([self.x, self.y])
+        print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
 
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
@@ -224,7 +225,7 @@ class FactoryTile(Tile):
                 robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
                                        c.GOODS[good_name],
                                        c.ROBOT_MOVEMENT_SPEED)
-                if robot.goods_pathfind(good_name) == "Fail":
+                if not robot.goods_pathfind(good_name):
                     robot.delete = True
                     self.robots[i] = c.ROBOT_RETRY_TIME
                 else:

@@ -447,6 +447,7 @@ class PathingEntity(FollowingEntity):
         self.number = None
         self.goods = None
         self.deliver_timer = -1
+        self.come_home_timer = None
 
     def _heuristic_cost_estimate(self, start, end):
         return 10 * (abs(start[0] - end[0]) + abs(start[1] - end[1]))
@@ -454,6 +455,8 @@ class PathingEntity(FollowingEntity):
     def pathfind(self, end):
         """ Finds a path from start to end tiles using A* algorithm
             "start" and "end" are tuples with x and y coordinates of a tile
+
+            returns True if it succeded and False if it couldn't find a path
         """
         start = self.get_tile()
         # The open_dict and closed_dict both follow the format:
@@ -516,7 +519,7 @@ class PathingEntity(FollowingEntity):
                 self.deliver_tile = deliver_tile
                 self.path = full_path
                 self.next_target_tile()
-                return
+                return True
 
                 # if done is True:
                 #     full_path = []
@@ -567,12 +570,14 @@ class PathingEntity(FollowingEntity):
                             closed_dict[neighbour] = None
         self.path = []
         self.stop_moving()
-        return "Fail"
+        return False
 
     def goods_pathfind(self, target_goods):
         """ Finds a path from the start tile, (the current tile of the entity) to the nearest factory tile that
             can recieve the passed-in goods type.
             "goods" should be a string with the type of goods that the entity will be carrying.
+
+            returns True if a suitable tile was found and False if no suitable tile was found
         """
 
         start = self.get_tile()
@@ -633,18 +638,19 @@ class PathingEntity(FollowingEntity):
             if done is True:
                 full_path = []
                 self.deliver_tile = deliver_tile
-                while len(closed_dict[current]) > 1:
-                    full_path.append(current)
-                    current = closed_dict[current][1]
+                try:
+                    while current != start:
+                        full_path.append(current)
+                        current = closed_dict[current][1]
+                except:
+                    print(closed_dict)
+                    print(full_path)
+                    raise
                 full_path.reverse()
                 self.path = full_path
                 self.next_target_tile()
                 self.home_tile = self.get_tile()
-                return
-
-            if g.get_img(*current).collides:
-                closed_dict[current] = None
-                continue
+                return True
 
             # Move through all neighbours
             for i in range(current[0]-1, current[0]+2):
@@ -666,22 +672,24 @@ class PathingEntity(FollowingEntity):
                                 if (g.get_img(neighbour[0], current[1]).collides and
                                         g.get_img(current[0], neighbour[1]).collides):
                                     # If the blocks on either side of the diagonal walk is collidable, skip this one
+
                                     closed_dict[neighbour] = None
                                     continue
 
                                 # If it can travel diagonally, give it a cost of the square root of two.
                                 g_score = closed_dict[current][0] + 14
 
-                        # if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
                         # Check if this neighbour can be added the the open_dict and do so if so
-                        if neighbour not in closed_dict.keys():
-                            if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:
-                                open_dict[neighbour] = [g_score, current]
-                        # else:
-                        #     closed_dict[neighbour] = None
+                            if neighbour not in closed_dict.keys():
+                                if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:
+                                    open_dict[neighbour] = [g_score, current]
+                        else:
+                            if neighbour not in closed_dict.keys() and neighbour not in open_dict.keys():
+                                closed_dict[neighbour] = None
         self.path = []
         self.stop_moving()
-        return "Fail"
+        return False
 
     def update(self, time_diff):
         """ Calls the super update function as well as check for if the package should be turned into a tile.
@@ -694,7 +702,9 @@ class PathingEntity(FollowingEntity):
                      g.get_img(self.target_tile[0], self.get_tile()[1]).collides)):
                 if len(self.path) > 0:
                     if self.deliver_tile:
-                        self.pathfind(self.deliver_tile)
+                        if not self.pathfind(self.deliver_tile):
+                            if self.home_tile:
+                                self.come_home()
                     else:
                         self.pathfind(self.path[-1])
                 else:
@@ -715,8 +725,14 @@ class PathingEntity(FollowingEntity):
         if self.deliver_timer > -1:
             self.deliver_timer -= 1
 
+        if self.come_home_timer is not None:
+            self.come_home_timer -= 1
+            if self.come_home_timer <= 0:
+                self.come_home()
+
         if self.delete:
             return "delete"
+
 
     def stop_moving(self):
         self.target_coords = None
@@ -751,11 +767,15 @@ class PathingEntity(FollowingEntity):
         self.pathfind(self.home_tile)
 
     def come_home(self):
-        self.delete = True
-        try:
-            g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number)
-        except AttributeError:
-            pass
+        if self.come_home_timer is not None:
+            if self.come_home_timer <= 0:
+                self.delete = True
+                try:
+                    g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number)
+                except AttributeError:
+                    pass
+        else:
+            self.come_home_timer = c.ROBOT_COME_HOME_TIME
 
     def _set_deliver_timer(self, i=c.ROBOT_DELIVER_TIME):
         self.stop_moving()

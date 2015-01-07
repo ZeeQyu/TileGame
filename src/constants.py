@@ -140,7 +140,6 @@ IMAGES = {
     "tree18": Img("tree18.png"),
     "tree19": Img("tree19.png"),
     "tree20": Img("tree20.png"),
-    "megatree": Img("multiTree.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
     "stump": Img("stump.png", random=True, destroy=[5, "dirt"]),
     "stump2": Img("stump2.png"),
     "stump3": Img("stump3.png"),
@@ -170,6 +169,7 @@ IMAGES = {
     "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
     "large_ore2": Img("large_ore2.png"),
     "large_ore3": Img("large_ore3.png"),
+    "megatree": Img("multiTree.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
 
     # Structures
     "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True,
@@ -180,7 +180,7 @@ IMAGES = {
     "ore_mine5": Img("oreMine5.png"),
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "furnace": Img("furnaceOff.png", collides=False, destroy=[15, "package_tile"], factory_input=[["ore", 3]],
+    "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package_tile"], factory_input=[["ore", 3]],
                    factory_output=[["iron", 1]], factory_timer=30, factory_alt_image="furnace_on"),
     "furnace_on": Img("furnace.png"),
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory_input=[["iron", 1]]),
@@ -272,7 +272,8 @@ PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
 GOODS = {
     "empty": "robot_empty",
     "ore": "robot_ore",
-    "iron": "robot_iron"
+    "iron": "robot_iron",
+    "wood": "robot_iron"
 }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -311,7 +312,9 @@ PACKAGE_PULL_MAX = 24
 ROBOT_DELIVER_TIME = 25
 # The time between tries of the robot pathfinding of the factory tiles
 ROBOT_RETRY_TIME = 40
-# The time in ticks it takes for a robot that's returned to home to set out again with new goods.
+# The time in ticks it takes for a robot that's returned to home to be loaded into the tile
+ROBOT_COME_HOME_TIME = 5
+# The time in ticks it takes for a robot that's been loaded back into its factory to set out again with new goods.
 ROBOT_LOAD_TIME = 10
 
 # Key for key configuration
