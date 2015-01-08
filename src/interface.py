@@ -127,15 +127,20 @@ class MenuButton(object):
         # The tiles that can be marked for this button to appear.
         # Leave empty for no filtering = all tiles are accepted.
         self.tile_filter = tile_filter
+        # Determines if the Button will be usable. If False, it will be grayed out and not usable.
+        self.active = True
 
     def __call__(self, *args, **kwargs):
         """ Calls the predetermined function
         """
         if self.function:
-            if self.vars:
-                return self.function(*self.vars)
+            if self.active:
+                if self.vars:
+                    return self.function(*self.vars)
+                else:
+                    return self.function()
             else:
-                return self.function()
+                return False
 
     def __str__(self):
         return self.text
@@ -166,7 +171,7 @@ class Menu(object):
             button = buttons[i]
             if button.tile_filter:
                 if filter_tile not in button.tile_filter:
-                    del buttons[i]
+                    buttons[i].active = False
 
         # The last known g.selected variable
         self.old_selected = g.selected[:]
@@ -176,7 +181,6 @@ class Menu(object):
         self.background_width, self.background_height = g.images["menu_background"].get_size()
         self.target = (g.build_menu_coords[0], g.build_menu_coords[1])
         # If the build menu should be painted
-        self.show = True
 
         # Note that this is a function
         self.update_position()
@@ -288,6 +292,12 @@ class Menu(object):
                                              self.margin + c.BUTTON_PADDING,
                                              j * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                              c.BUTTON_TOP_PADDING))
+                    if not button.active:
+                        self.screen_buffer.blit(g.images["button_shader"].get(),
+                                                (i * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                                 self.margin + c.BUTTON_PADDING,
+                                                 j * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                                 c.BUTTON_TOP_PADDING))
 
         border_img = g.images["button_border"]
 
@@ -315,10 +325,10 @@ class Menu(object):
             self.screen_buffer.blit(tooltip,
                                     # X coordinate is calculated such that the text is centered in the x-axis
                                     (c.BUTTON_PADDING +
-                                    ((self.background_width - 2 * c.BUTTON_PADDING) - tooltip.get_size()[0]) / 2,
+                                     ((self.background_width - 2 * c.BUTTON_PADDING) - tooltip.get_size()[0]) / 2,
                                      # Y Coordinate is placed below buttons, and centered between the remaining space
                                      c.BUTTON_TOP_PADDING + (len(self.buttons[0])) *
-                                    (c.BUTTON_SIZE + c.BUTTON_SPACING) - c.BUTTON_SPACING +
+                                     (c.BUTTON_SIZE + c.BUTTON_SPACING) - c.BUTTON_SPACING +
                                      (c.BUTTON_BOTTOM_PADDING - tooltip.get_size()[1]) // 2))
 
     def paint(self):
@@ -327,8 +337,7 @@ class Menu(object):
         if g.selected != self.old_selected:
             self.update_buffer()
             self.old_selected = g.selected[:]
-        if self.show:
-            g.screen.blit(self.screen_buffer, self.target)
+        g.screen.blit(self.screen_buffer, self.target)
 
     def select(self):
         """ The function that is called when the select button is pressed when this menu is opened.
@@ -374,10 +383,11 @@ def _close():
 
 
 def _regenerate_map():
+    return_value = False
     if c.GEN_DEMO_MODE is False:
         maps.load_map(maps.generate_map())
         g.force_update = True
-        return True
+        return_value = True
     else:
         if g.map_generator is None:
             g.map_generator = maps.generate_map_generator()
@@ -385,8 +395,19 @@ def _regenerate_map():
             maps.load_map(g.map_generator.__next__())
         except StopIteration:
             g.map_generator = None
-            return True
+            return_value = True
         g.force_update = True
+
+    for i in range(len(g.entity_list)-1, -1, -1):
+        del g.entity_list[i]
+    for key in list(g.special_entity_list.keys())[:]:
+        if key != "player":
+            del g.special_entity_list[key]
+        g.special_entity_list["player"].x = g.player_start_x
+        g.special_entity_list["player"].y = g.player_start_y
+        g.special_entity_list["player"].following_entity = None
+
+    return return_value
 
 
 def _create_pather():
@@ -409,19 +430,19 @@ class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
     """
     def __init__(self):
-        """ Sets the menu up.
+        """ Sets the menu up. Contains the information for the building menu.
         """
 
         super().__init__("menu_background", [
+            MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
+                       tile_filter=["ore-package"]),
             MenuButton("Build Furnace", "furnace_button", _put_tile, ["furnace"], recommended=True,
                        tile_filter=["package_tile", "dirt-package"]),
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package_tile", "dirt-package"]),
-            MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
-                       tile_filter=["ore-package"]),
-            MenuButton("Create Pather", "button1", _create_pather, recommended=True, tile_filter=["grass"]),
-            MenuButton("Set Pather Target", "button2", _set_pather_target, recommended=True,
-                       tile_filter=["grass", "ore", "stump"]),
             MenuButton("Reload Map", "button", _regenerate_map),
+            MenuButton("Create Pather", "button1", _create_pather, tile_filter=["grass"]),
+            MenuButton("Set Pather Target", "button2", _set_pather_target,
+                       tile_filter=["grass", "ore", "stump"]),
             MenuButton("Close", "button_close", _close)
         ])

@@ -154,10 +154,13 @@ def generate_map():
         return_image = _iterate_rocks(return_image)
 
     # Put out a random endless package in the middle
-    return_image.set_at((return_image.get_width() // 2, return_image.get_height() // 2),
-                        c.IMAGES["endless_package"].color_code)
-    return_image.set_at((return_image.get_width() // 2 + 1, return_image.get_height() // 2),
-                        c.IMAGES["start_tile"].color_code)
+    x = return_image.get_width() // 2
+    y = return_image.get_height() // 2
+    for i in range(x-1, x+1):
+        for j in range(y-1, y+1):
+            return_image.set_at((i, j), c.IMAGES["endless_package"].color_code)
+    return_image.set_at((x, y), c.IMAGES["start_tile"].color_code)
+
     return return_image
 
 

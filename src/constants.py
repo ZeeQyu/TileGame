@@ -148,11 +148,11 @@ IMAGES = {
     "sapling3": Img("sapling3.png"),
     "sapling4": Img("sapling4.png"),
     "sapling5": Img("sapling5.png"),
-    "dirt-sapling": Img("dirtSapling.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
-    "dirt-sapling2": Img("dirtSapling2.png"),
-    "dirt-sapling3": Img("dirtSapling3.png"),
-    "dirt-sapling4": Img("dirtSapling4.png"),
-    "dirt-sapling5": Img("dirtSapling5.png"),
+    "dirt-sapling": Img("saplingDirt.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
+    "dirt-sapling2": Img("saplingDirt2.png"),
+    "dirt-sapling3": Img("saplingDirt3.png"),
+    "dirt-sapling4": Img("saplingDirt4.png"),
+    "dirt-sapling5": Img("saplingDirt5.png"),
     "rock": Img("rockTile.png", color_code=(0, 0, 0), random=True, collides=True),
     "rock2": Img("rockTile2.png"),
     "rock3": Img("rockTile3.png"),
@@ -166,9 +166,9 @@ IMAGES = {
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
 
     # Large Nature
-    "large_ore": Img("large_ore1.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
-    "large_ore2": Img("large_ore2.png"),
-    "large_ore3": Img("large_ore3.png"),
+    "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
+    "large_ore2": Img("oreLarge2.png"),
+    "large_ore3": Img("oreLarge3.png"),
     "megatree": Img("multiTree.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
 
     # Structures
@@ -186,13 +186,13 @@ IMAGES = {
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory_input=[["iron", 1]]),
 
     # Packages
-    "endless_package": Img("endless_package_tile.png", color_code=(0, 255, 0), placeable=True),
+    "endless_package": Img("packageGenPackage.png", color_code=(0, 255, 0), placeable=True),
     "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
-    "ore-package": Img("orePackage.png", destroy=[20, "ore-wreckage"]),
-    "dirt-package": Img("dirtPackage.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
-    "wreckage": Img("wreckage.png", destroy=[10, "grass"]),
-    "ore-wreckage": Img("oreWreckage.png", destroy=[10, "ore"]),
-    "dirt-wreckage": Img("dirtWreckage.png", destroy=[10, "dirt"]),
+    "ore-package": Img("packageOre.png", destroy=[20, "ore-wreckage"]),
+    "dirt-package": Img("packageDirt.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
+    "wreckage": Img("packageWreckage.png", destroy=[10, "grass"]),
+    "ore-wreckage": Img("packageWreckageOre.png", destroy=[10, "ore"]),
+    "dirt-wreckage": Img("packageWreckageDirt.png", destroy=[10, "dirt"]),
 
     "pointer": Img("emptyPixel.png"),
     "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -214,15 +214,17 @@ IMAGES = {
     "remove_aim_fail": Img("removeAimFail.png"),
     "icon": Img("logo.png"),
     "menu_background": Img("menuBackground.png"),
-    "button": Img("placeholder_button.png"),
+    "button_shader": Img("buttonShader"),
+
+    "button": Img("buttonPlaceholder.png"),
     "button1": Img("button1.png"),
     "button2": Img("button2.png"),
     "button3": Img("button3.png"),
-    "launcher_button": Img("launcherButton.png"),
-    "furnace_button": Img("furnaceButton.png"),
-    "ore_mine_button": Img("oreMineButton.png"),
-    "button_border": Img("button_border.png"),
-    "button_close": Img("close_button.png")
+    "launcher_button": Img("buttonLauncher.png"),
+    "furnace_button": Img("buttonFurnace.png"),
+    "ore_mine_button": Img("buttonOreMine.png"),
+    "button_border": Img("buttonBorder.png"),
+    "button_close": Img("buttonClose.png")
 }
 
 key_list = [  # Custom keys. Format:
@@ -316,6 +318,7 @@ ROBOT_RETRY_TIME = 40
 ROBOT_COME_HOME_TIME = 5
 # The time in ticks it takes for a robot that's been loaded back into its factory to set out again with new goods.
 ROBOT_LOAD_TIME = 10
+ROBOT_RECONSTRUCT_TIME = 600
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT

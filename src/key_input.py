@@ -107,10 +107,9 @@ def event_check():
                     event.type == pgl.KEYDOWN):
                 # Selects the current menu item
                 if "build_menu" in g.non_entity_list.keys():
-                    if g.non_entity_list["build_menu"].show:
-                        if g.non_entity_list["build_menu"].select():
-                            del g.non_entity_list["build_menu"]
-                            g.special_entity_list["player"].browsing_menu = False
+                    if g.non_entity_list["build_menu"].select():
+                        del g.non_entity_list["build_menu"]
+                        g.special_entity_list["player"].browsing_menu = False
 
 
 def _if_down(down_or_up):

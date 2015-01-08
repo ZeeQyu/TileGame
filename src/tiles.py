@@ -244,11 +244,11 @@ class FactoryTile(Tile):
         else:
             self.inventory[goods_name] = 1
 
-    def robot_returned(self, number):
+    def robot_returned(self, number, time=c.ROBOT_LOAD_TIME):
         if len(self.robots) > number:
-            self.robots[number] = c.ROBOT_LOAD_TIME
+            self.robots[number] = time
         else:
-            self.robots.append(c.ROBOT_LOAD_TIME)
+            self.robots.append(time)
 
 
 def area_is_free(x, y, width, height):

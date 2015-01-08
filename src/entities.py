@@ -112,8 +112,10 @@ class Entity(object):
                     delta_remainder = 0
 
                 # if c.SPECIAL_DEBUG:
-                #     print("X_lim: {}, Y_lim: {}, X_plus: {}, x_minus: {}, y_plus: {}, y_minus: {}, delta: {}, delta_remainder: {}, movementspeed * delta: {}, ".format(
-                #             x_lim, y_lim, self.x_plus, self.x_minus, self.y_plus, self.y_minus, delta, delta_remainder, self.movement_speed*delta))
+                #     print("X_lim: {}, Y_lim: {}, X_plus: {}, x_minus: {}, y_plus: {},
+                #  y_minus: {}, delta: {}, delta_remainder: {}, movementspeed * delta: {}, ".format(
+                #             x_lim, y_lim, self.x_plus, self.x_minus, self.y_plus,
+                # self.y_minus, delta, delta_remainder, self.movement_speed*delta))
 
                 # Variables for checking if the entity changed pixel
                 # Move the entity in the direction the variables denote it should be.
@@ -733,7 +735,6 @@ class PathingEntity(FollowingEntity):
         if self.delete:
             return "delete"
 
-
     def stop_moving(self):
         self.target_coords = None
         self.target_tile = None
@@ -764,14 +765,15 @@ class PathingEntity(FollowingEntity):
             # If the factory tile was replaced, ignore it
             pass
         self.paths_end_func = self.come_home
-        self.pathfind(self.home_tile)
+        if self.pathfind(self.home_tile) is False:
+            self.come_home(c.ROBOT_RECONSTRUCT_TIME)
 
-    def come_home(self):
+    def come_home(self, time=c.ROBOT_COME_HOME_TIME):
         if self.come_home_timer is not None:
             if self.come_home_timer <= 0:
                 self.delete = True
                 try:
-                    g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number)
+                    g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number, time)
                 except AttributeError:
                     pass
         else:
