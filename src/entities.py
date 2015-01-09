@@ -432,7 +432,7 @@ class PathingEntity(FollowingEntity):
                  collides=True, wall_collides=True, target_coords=None, custom_name=None):
         """ Initalizes the PathingEntity.
         """
-        super().__init__(x=x, y=y, image=image, movement_speed=movement_speed,
+        super(PathingEntity, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed,
                          attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
                          rotates=rotates, collides=collides, wall_collides=wall_collides,
                          target_coords=target_coords, custom_name=custom_name)
@@ -715,7 +715,7 @@ class PathingEntity(FollowingEntity):
         super(PathingEntity, self).update(time_diff)
 
     def tick(self):
-        super().tick()
+        super(PathingEntity, self).tick()
 
         if self.deliver_timer == 5:
             self.image = "robot_empty"
@@ -789,7 +789,7 @@ class Robot(PathingEntity):
     """
     def __init__(self, x, y, image, movement_speed, rotates=True,
                  collides=True, wall_collides=True, target_coords=None, custom_name=None):
-        super().__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
+        super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
                          collides=collides, wall_collides=wall_collides,
                          target_coords=target_coords, custom_name=custom_name)
         self.paths_end_func = self._set_deliver_timer

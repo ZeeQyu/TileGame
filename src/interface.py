@@ -433,7 +433,7 @@ class BuildMenu(Menu):
         """ Sets the menu up. Contains the information for the building menu.
         """
 
-        super().__init__("menu_background", [
+        super(BuildMenu, self).__init__("menu_background", [
             MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
                        tile_filter=["ore-package"]),
             MenuButton("Build Furnace", "furnace_button", _put_tile, ["furnace"], recommended=True,

@@ -15,6 +15,9 @@ import pygame.locals as pgl
 NORMAL_DEBUG = False
 SPECIAL_DEBUG = True
 
+# Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
+GAME_SPEED = 1
+
 if NORMAL_DEBUG:
     # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
     FORCE_UPDATE = False
@@ -291,7 +294,7 @@ GOODS = {
 BACKGROUND_COLOR = (0, 0, 0)
 # The frequency of the ticks in seconds (seconds between every tick) A tick is a time unit for
 # calculations that should be more periodical than cycles or frames
-TICK_FREQ = 0.05
+TICK_FREQ = 0.05 / GAME_SPEED
 # The amount of seconds the game should sleep each loop to not bog the processor too much
 if FORCE_UPDATE:
     SLEEP_TIME = 0.00001

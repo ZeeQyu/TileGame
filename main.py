@@ -70,7 +70,7 @@ def main():
         # time_diff (defined below) is the simulated time difference that
         # the entities move after before ticking again in case of a lag spike.
         time_now = time.clock()
-        time_big_diff = time_now - time_prev
+        time_big_diff = (time_now - time_prev) * c.GAME_SPEED
         time_prev = time_now
 
         # Skip the rest of this cycle if a menu was accessed until now

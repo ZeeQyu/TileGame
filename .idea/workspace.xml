@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d2f8a7ad-5881-4d0d-b902-1286de63e537" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\Users\gani\Dropbox\Projects\AA-Python\TileGame\res\packageGenOre.png" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/TODO.txt" afterPath="$PROJECT_DIR$/TODO.txt" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/constants.py" afterPath="$PROJECT_DIR$/src/constants.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/entities.py" afterPath="$PROJECT_DIR$/src/entities.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/interface.py" afterPath="$PROJECT_DIR$/src/interface.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/key_input.py" afterPath="$PROJECT_DIR$/src/key_input.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/maps.py" afterPath="$PROJECT_DIR$/src/maps.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/tiles.py" afterPath="$PROJECT_DIR$/src/tiles.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/units.py" afterPath="$PROJECT_DIR$/src/units.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TileGame.iws" />
@@ -38,38 +34,60 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2139" max-vertical-offset="2856">
-              <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="2856">
+              <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="maps.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/maps.py">
+      <file leaf-file-name="tiles.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/tiles.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1980" max-vertical-offset="4964">
-              <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2618" max-vertical-offset="6460">
+              <caret line="210" column="25" selection-start-line="210" selection-start-column="25" selection-end-line="210" selection-end-column="25" />
+              <folding>
+                <element signature="e#403#417#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="constants.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="constants.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/constants.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3998" max-vertical-offset="6443">
-              <caret line="248" column="59" selection-start-line="248" selection-start-column="59" selection-end-line="248" selection-end-column="59" />
+            <state vertical-scroll-proportion="0.3125" vertical-offset="86" max-vertical-offset="6494">
+              <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="key_input.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="key_input.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/key_input.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.73475176" vertical-offset="1386" max-vertical-offset="2108">
-              <caret line="115" column="20" selection-start-line="115" selection-start-column="20" selection-end-line="115" selection-end-column="20" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2108">
+              <caret line="101" column="7" selection-start-line="101" selection-start-column="7" selection-end-line="101" selection-end-column="7" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="entities.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/entities.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="13277" max-vertical-offset="13855">
+              <caret line="791" column="25" selection-start-line="791" selection-start-column="25" selection-end-line="791" selection-end-column="25" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="interface.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/interface.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="7089" max-vertical-offset="7582">
+              <caret line="435" column="29" selection-start-line="435" selection-start-column="29" selection-end-line="435" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -101,18 +119,18 @@
         <option value="$PROJECT_DIR$/src/input.py" />
         <option value="$PROJECT_DIR$/src/players.py" />
         <option value="$PROJECT_DIR$/src/globals.py" />
-        <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/src/graphics.py" />
         <option value="$PROJECT_DIR$/src/units.py" />
         <option value="$PROJECT_DIR$/PY2/src/units.py" />
         <option value="$PROJECT_DIR$/PY2/src/constants.py" />
         <option value="$PROJECT_DIR$/src/maps.py" />
         <option value="$PROJECT_DIR$/TODO.txt" />
-        <option value="$PROJECT_DIR$/src/entities.py" />
-        <option value="$PROJECT_DIR$/src/tiles.py" />
-        <option value="$PROJECT_DIR$/src/interface.py" />
-        <option value="$PROJECT_DIR$/src/constants.py" />
         <option value="$PROJECT_DIR$/src/key_input.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/src/entities.py" />
+        <option value="$PROJECT_DIR$/src/interface.py" />
+        <option value="$PROJECT_DIR$/src/tiles.py" />
+        <option value="$PROJECT_DIR$/src/constants.py" />
       </list>
     </option>
   </component>
@@ -196,6 +214,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TileGame" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="TileGame" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="res" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -579,7 +611,19 @@
       <option name="project" value="LOCAL" />
       <updated>1420711137942</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Added package generation. Requires a ore mine, furnace and a package factory on the map.">
+      <created>1420806341532</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1420806341532</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Forgot some textures.">
+      <created>1420806430040</created>
+      <option name="number" value="00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1420806430040</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -607,24 +651,24 @@
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1773779" sideWeight="0.48927614" order="1" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32573727" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32864866" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3297587" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32885906" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23971723" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1773779" sideWeight="0.5107239" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1773779" sideWeight="0.4899329" order="1" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3261745" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1773779" sideWeight="0.5100671" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1663113" sideWeight="0.49837837" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36300638" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3261745" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -660,7 +704,9 @@
     <MESSAGE value="Made robots traveling between factories much smoother and prettier." />
     <MESSAGE value="Updated factories to be able to send goods even if it is collidable. Robots now don't get stuck when their path gets completely blocked and instead self-destruct so that their home can send a new robot." />
     <MESSAGE value="Renamed a bunch of tiles and fixed a bug where the robot gets stuck at the deliver position if it's blocked in." />
-    <option name="LAST_COMMIT_MESSAGE" value="Renamed a bunch of tiles and fixed a bug where the robot gets stuck at the deliver position if it's blocked in." />
+    <MESSAGE value="Added package generation. Requires a ore mine, furnace and a package factory on the map." />
+    <MESSAGE value="Forgot some textures." />
+    <option name="LAST_COMMIT_MESSAGE" value="Forgot some textures." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -938,14 +984,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2210" max-vertical-offset="2856">
-          <caret line="130" column="0" selection-start-line="130" selection-start-column="0" selection-end-line="130" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/players.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.36959553" vertical-offset="75" max-vertical-offset="3060">
@@ -990,36 +1028,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/tiles.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3957" max-vertical-offset="6460">
-          <caret line="372" column="41" selection-start-line="372" selection-start-column="41" selection-end-line="372" selection-end-column="41" />
-          <folding>
-            <element signature="e#403#417#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/interface.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.34122562" vertical-offset="6640" max-vertical-offset="7582">
-          <caret line="414" column="61" selection-start-line="414" selection-start-column="61" selection-end-line="414" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/globals.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="663" max-vertical-offset="1496">
           <caret line="39" column="38" selection-start-line="39" selection-start-column="38" selection-end-line="39" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/entities.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8976" max-vertical-offset="13855">
-          <caret line="548" column="40" selection-start-line="548" selection-start-column="40" selection-end-line="548" selection-end-column="40" />
           <folding />
         </state>
       </provider>
@@ -1032,18 +1044,52 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/constants.py">
+    <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3998" max-vertical-offset="6443">
-          <caret line="248" column="59" selection-start-line="248" selection-start-column="59" selection-end-line="248" selection-end-column="59" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="2856">
+          <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/key_input.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.73475176" vertical-offset="1386" max-vertical-offset="2108">
-          <caret line="115" column="20" selection-start-line="115" selection-start-column="20" selection-end-line="115" selection-end-column="20" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1386" max-vertical-offset="2108">
+          <caret line="101" column="7" selection-start-line="101" selection-start-column="7" selection-end-line="101" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/entities.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="13277" max-vertical-offset="13855">
+          <caret line="791" column="25" selection-start-line="791" selection-start-column="25" selection-end-line="791" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/interface.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="7089" max-vertical-offset="7582">
+          <caret line="435" column="29" selection-start-line="435" selection-start-column="29" selection-end-line="435" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/tiles.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2618" max-vertical-offset="6460">
+          <caret line="210" column="25" selection-start-line="210" selection-start-column="25" selection-end-line="210" selection-end-column="25" />
+          <folding>
+            <element signature="e#403#417#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.3125" vertical-offset="86" max-vertical-offset="6494">
+          <caret line="18" column="14" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
           <folding />
         </state>
       </provider>

@@ -210,7 +210,7 @@ class FactoryTile(Tile):
 
         self.send_goods()
 
-        super().tick()
+        super(FactoryTile, self).tick()
 
     def send_goods(self):
         """ Sends its goods with a pathfinding robot to the nearest applicable factory if the corresponding
