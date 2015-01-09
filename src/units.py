@@ -91,7 +91,7 @@ class Package(entities.FollowingEntity):
         self.x += (c.TILE_SIZE - self.width) / 2
         self.y += (c.TILE_SIZE - self.height) / 2
         # The kind of tile this package will become if placed
-        self.tile = "package_tile"
+        self.tile = "package"
         # Variable used only for checking if the Package just got target coords
         self.had_target_coords = False
         

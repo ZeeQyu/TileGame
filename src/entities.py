@@ -514,7 +514,7 @@ class PathingEntity(FollowingEntity):
             if deliver_tile is not None:
                 closed_dict[current]
                 full_path = []
-                while len(closed_dict[current]) > 3:
+                while current != start:
                     full_path.append(current)
                     current = closed_dict[current][3]
                 full_path.reverse()

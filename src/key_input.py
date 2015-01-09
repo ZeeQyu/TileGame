@@ -18,7 +18,6 @@ import globals as g
 import units
 import interface
 import constants as c
-import maps
 
 
 def event_check():
@@ -90,7 +89,8 @@ def event_check():
             elif (event.key == g.key_dict["pick_up_tile"][0] and
                     event.type == pgl.KEYDOWN):
                 # This is handled in g.special_entity_list["player"].update()
-                g.special_entity_list["player"].toggle_grab = True
+                if not g.special_entity_list["player"].browsing_menu:
+                    g.special_entity_list["player"].toggle_grab = True
             elif (event.key == g.key_dict["build_menu"][0] and
                     event.type == pgl.KEYUP):
                 # Shows the build menu
@@ -103,7 +103,7 @@ def event_check():
                     del g.non_entity_list["build_menu"]
                     g.special_entity_list["player"].browsing_menu = False
 
-            elif (event.key == g.key_dict["select"][0] and
+            elif (event.key == g.key_dict["select"][0] or event.key == g.key_dict["select2"][0] and
                     event.type == pgl.KEYDOWN):
                 # Selects the current menu item
                 if "build_menu" in g.non_entity_list.keys():
@@ -111,6 +111,9 @@ def event_check():
                         del g.non_entity_list["build_menu"]
                         g.special_entity_list["player"].browsing_menu = False
 
+            elif (event.key == g.key_dict["change_target"][0] and
+                    event.type == pgl.KEYDOWN):
+                pass
 
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.

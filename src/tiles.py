@@ -45,11 +45,16 @@ class Tile(object):
         self.x = x
         self.y = y
         # If the tile evolves, get a random timer for that
-        if c.IMAGES[type].evolve != None:
-            g.tick_tiles.append([x, y])
-            self.timer = randint(*c.IMAGES[type].evolve[:2])
+        if c.IMAGES[type].evolve is not None:
+            # Make sure it doesn't get added to tick_tiles twice
+            if not c.IMAGES[type].factory_output:
+                g.tick_tiles.append([x, y])
+            if not c.IMAGES[type].factory_input:
+                self.timer = randint(*c.IMAGES[type].evolve[:2])
+            else:
+                self.timer = None
         else:
-            self.timer = 0          
+            self.timer = None
 
         if c.IMAGES[type].random and not c.DEACTIVATE_RANDOM_TEXTURES:
             image_keys = []
@@ -64,10 +69,11 @@ class Tile(object):
         """ Method for counting down the block replacement timer.
             Should only be called if the tile is a transforming tile (for example, sapling)
         """
-        if self.timer < 0:
-            self.time_up()
-        else:
-            self.timer -= 1
+        if self.timer is not None:
+            if self.timer < 0:
+                self.time_up()
+            else:
+                self.timer -= 1
     
     def rect(self):
         """ Returns a pygame.Rect object with the same dimensions and location as the tile
@@ -150,7 +156,7 @@ class FactoryTile(Tile):
         self.robots = []
         if c.IMAGES[self.type].factory_output:
             g.tick_tiles.append([self.x, self.y])
-        print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
+        # print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
 
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
@@ -184,13 +190,16 @@ class FactoryTile(Tile):
                     g.update_map = True
 
         if self.goods_timer == 0:
-            for good in c.IMAGES[self.type].factory_output:
-                if good:
-                    good_name, good_amount = good
-                    if good_name in self.inventory:
-                        self.inventory[good_name] += good_amount
-                    else:
-                        self.inventory[good_name] = good_amount
+            if c.IMAGES[self.type].evolve is not None and self.timer is None:
+                self.timer = randint(*c.IMAGES[self.type].evolve[:2])
+            else:
+                for good in c.IMAGES[self.type].factory_output:
+                    if good:
+                        good_name, good_amount = good
+                        if good_name in self.inventory:
+                            self.inventory[good_name] += good_amount
+                        else:
+                            self.inventory[good_name] = good_amount
             # Reset the image when the factory is done working
             if c.IMAGES[self.type].factory_alt_image is not None and not c.IMAGES[self.type].random:
                 self.image = self.type
@@ -200,6 +209,8 @@ class FactoryTile(Tile):
             self.goods_timer -= 1
 
         self.send_goods()
+
+        super().tick()
 
     def send_goods(self):
         """ Sends its goods with a pathfinding robot to the nearest applicable factory if the corresponding
@@ -264,7 +275,7 @@ def area_is_free(x, y, width, height):
     for i in range(x, x+width):
         for j in range(y, y+height):
             # If any of the tiles aren't placeable, it isn't free.
-            if c.IMAGES[g.map[i][j].type].placeable == False:
+            if c.IMAGES[g.map[i][j].type].placeable is False:
                 is_free = False
             else:
 #                 units.Package(i * c.TILE_SIZE, j * c.TILE_SIZE, custom_name="areapackage" + str(i) + "." + str(j))

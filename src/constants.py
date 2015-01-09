@@ -52,15 +52,6 @@ class Img(object):
                 it should evolve to (example: [30, 60, "tree"]) Leave blank if it doesn't evolve.
             "multi_tile" should be a tuple of the width and height in tiles of the tile if
                 it is a multi-tile. (example: (3, 3))
-            "factory" should be a list with 3 values if the tile is a factory. A factory is a tile that
-                recieves and/or sends goods. The first value should be the time in ticks it takes
-                for the factory to produce the output goods from the tick it realizes it has
-                all the required ingredients. The second value should be a list containing lists, where each nested
-                list has two values where the first is the type of goods that is needed to produce the output goods
-                and the second is the amount of goods required of theat type
-                The third value is a list with lists where every nested list has the output goods that will be
-                produced after the timer runs out, following the same syntax as the input goods above.
-                (example: [15, [["banana_seeds", 1], ["fertilizer", 5]], [["banana", 3], ["leaves", 15]]]  )
             "factory_input" should be a list containing lists where each nested list has two values
                 where the first is the type of goods that is needed to produce the output goods
                 and the second is the amount of goods required of that goods.
@@ -72,6 +63,11 @@ class Img(object):
                 goods from when it recieves the input goods. Defaults to 0.
             "factory_alt_img" should be a string with an identifier of an image in the
                 IMAGES list that is used when the factory is working.
+
+            If factory_input and evolve is present in the same tile,
+                said tile will evolve the evolve-time in ticks after the required goods are delivered.
+
+
         """
         self.type = type
         if "." in png:
@@ -161,7 +157,7 @@ IMAGES = {
     "ore3": Img("ore3.png"),
     "ore4": Img("ore4.png"),
     "ore5": Img("ore5.png"),
-    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[100, 200, "ore-tree"]),
+    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[150, 250, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
 
@@ -173,26 +169,33 @@ IMAGES = {
 
     # Structures
     "ore_mine": Img("oreMine.png", destroy=[10, "ore-package"], random=True,
-                    factory_output=[["ore", 1]], factory_timer=40),
+                    factory_output=[["ore", 1]]),
     "ore_mine2": Img("oreMine2.png"),
     "ore_mine3": Img("oreMine3.png"),
     "ore_mine4": Img("oreMine4.png"),
     "ore_mine5": Img("oreMine5.png"),
-    "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package_tile"], multi_tile=(2, 2)),
+    "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
-    "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package_tile"], factory_input=[["ore", 3]],
+    "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package"], factory_input=[["ore", 3]],
                    factory_output=[["iron", 1]], factory_timer=30, factory_alt_image="furnace_on"),
     "furnace_on": Img("furnace.png"),
-    "launcher": Img("launcher.png", collides=True, destroy=[15, "package_tile"], factory_input=[["iron", 1]]),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package"], factory_input=[["iron", 1]]),
+    "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
+                       evolve=[1, 1, "package_gen_iron"], factory_input=[["iron", 1]]),
+    "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
+    "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
 
     # Packages
     "endless_package": Img("packageGenPackage.png", color_code=(0, 255, 0), placeable=True),
-    "package_tile": Img("package.png", color_code=(255, 0, 0), destroy=[20, "wreckage"]),
+    "package": Img("package.png", color_code=(255, 0, 0), destroy=[50, "wreckage"]),
     "ore-package": Img("packageOre.png", destroy=[20, "ore-wreckage"]),
-    "dirt-package": Img("packageDirt.png", evolve=[75, 100, "package_tile"], destroy=[20, "dirt-wreckage"]),
+    "dirt-package": Img("packageDirt.png", evolve=[75, 100, "package"], destroy=[20, "dirt-wreckage"]),
     "wreckage": Img("packageWreckage.png", destroy=[10, "grass"]),
     "ore-wreckage": Img("packageWreckageOre.png", destroy=[10, "ore"]),
     "dirt-wreckage": Img("packageWreckageDirt.png", destroy=[10, "dirt"]),
+    # This is a package that instantly becomes a normal package, becaues the package_gen
+    # can't be destroyed into a package otherwise.
+    "blink_package": Img("package.png", evolve=[0, 0, "package"], destroy=[500, "package"]),
 
     "pointer": Img("emptyPixel.png"),
     "collide_pointer": Img("emptyPixel.png", collides=True),
@@ -223,6 +226,7 @@ IMAGES = {
     "launcher_button": Img("buttonLauncher.png"),
     "furnace_button": Img("buttonFurnace.png"),
     "ore_mine_button": Img("buttonOreMine.png"),
+    "package_gen_button": Img("buttonPackageGen.png"),
     "button_border": Img("buttonBorder.png"),
     "button_close": Img("buttonClose.png")
 }
@@ -242,11 +246,13 @@ key_list = [  # Custom keys. Format:
     ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
     ["build_menu", pgl.K_q, "opening a menu of what can be built."],
     ["select", pgl.K_SPACE, "selecting the current menu item."],
+    ["select2", 13, "the second key for selecting current menu item."], # Enter Key
+    ["change_target", pgl.K_w, "changing the target of a factory tile."],
     # ["select", pgl., "selecting the current menu item."],
 
-    ["spawn_beetle", pgl.K_a, "spawning a beetle at the player's feet."],
-    ["duplicate_beetles", pgl.K_s, "activating the beetles' self-duplicating process."],
-    ["remove_beetles", pgl.K_w, "removing all beetles."]
+    ["spawn_beetle", pgl.K_z, "spawning a beetle at the player's feet."],
+    ["duplicate_beetles", pgl.K_x, "activating the beetles' self-duplicating process."],
+    ["remove_beetles", pgl.K_c, "removing all beetles."]
 ]
 
 # The identifier of the tile that should be used
@@ -257,18 +263,22 @@ DEFAULT_TILE = "grass"
 # Syntax is {"tile_to_be_placed+tile_being_placed_on": "resulting tile"}
 SPECIAL_PLACE_TILES = {"sapling+dirt": "dirt-sapling",
                        "sapling+ore": "ore-sapling",
-                       "package_tile+ore": "ore-package",
-                       "package_tile+dirt": "dirt-package",
+                       "package+ore": "ore-package",
+                       "package+dirt": "dirt-package",
 
-                       "package_tile+endless_package": "endless_package",
-                       "sapling+endless_package": "endless_package"}
+                       "package+endless_package": "endless_package",
+                       "sapling+endless_package": "endless_package",
+
+                       "package+package_gen": "package_gen_package",
+                       "sapling+package_gen": "package_gen"}
 
 # A list of tiles that you can grab a package from.
 # Syntax is {"tile_that_become_a_package": "tile_that_is_left_when_you_grab_a_package"}
-PACKAGE_TILE_NAMES = {"package_tile": DEFAULT_TILE,
+PACKAGE_TILE_NAMES = {"package": DEFAULT_TILE,
                       "ore-package": "ore",
                       "dirt-package": "dirt",
-                      "endless_package": "endless_package"}
+                      "endless_package": "endless_package",
+                      "package_gen_package": "package_gen"}
 
 # The list of all the goods there is. The format is {"goods_name": "image_name_of_the_entity_carrying_it"}
 GOODS = {
@@ -349,7 +359,7 @@ MENU_FONT_COLOR = (255, 255, 255)
 # Map generation
 # Size of the generated map
 GEN_MAP_SIZE = (60, 50)
-# Per mille chance of generating that tile at first generation
+# Per mille chance of generating that tile at the first generation
 GEN_TREE_PER_MILLE = 500
 GEN_ORE_PER_MILLE = 5
 GEN_ROCK_PER_MILLE = 5

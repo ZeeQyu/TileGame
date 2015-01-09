@@ -1,12 +1,10 @@
 ZeeQyu TODO list:
 
-	Factories
-	    Pathfinding robots from next to one of the fatories to next to the other one and back again
-	    Inventories in the factories.
+	Pathfinding
+		Queue system
 
-	    Dummy function that are triggered when it gets supplied with something.
-	    More specific amounts of things in the demands for creating things, like you need 5 ore to make one iron and
-	        then you also get some rust or whatever.
+	Factories
+		Request system, making sure no more than the needed amount of resources is sent to a place.
 
     Fix menu selecting empty spaces
 	Multitile structures
@@ -18,7 +16,7 @@ ZeeQyu TODO list:
 	Beetle death animation
 	Healing
 	Enemy structure that spawns enemies
-	Projectiles (Entities moving f.ex 30 degrees) using some trigonometry function
+	Projectiles (Entities moving f.ex 30 degrees) using matrices and vectors
 	Turrets shooting said projectiles at enemies
 	Projectile collision
 
