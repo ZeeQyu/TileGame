@@ -227,8 +227,9 @@ class FactoryTile(Tile):
 
                 # Checks if the robot is at home. True if it is
                 if len(self.robots) > i:
-                    if self.robots[i] >= 0:
+                    if type(self.robots[i]) is int and  self.robots[i] >= 0:
                         self.robots[i] -= 1
+                    # If it's zero, all the below code happens.
                     if self.robots[i] != 0:
                         continue
                 else:
@@ -240,7 +241,7 @@ class FactoryTile(Tile):
                     robot.delete = True
                     self.robots[i] = c.ROBOT_RETRY_TIME
                 else:
-                    self.robots[i] = -1
+                    self.robots[i] = robot
                     robot.number = i
                     robot.goods = good_name
                     if c.IMAGES[self.type].factory_input:
@@ -285,7 +286,7 @@ def area_is_free(x, y, width, height):
     return is_free
 
     
-def make_tile(type, x, y, target=None):
+def make_tile(tile_type, x, y, target=None):
     """ Function to create a tile of the appropriate type (Standard, Random and multi-tile)
         Should be used instead of directly creating a specific tile unless it is certain which type
         is needed.
@@ -300,12 +301,12 @@ def make_tile(type, x, y, target=None):
   
     # Check if where you're placing the tile is subject to a special tile.
     if g.map[x][y]:
-        if c.SPECIAL_PLACE_TILES.__contains__(type + "+" + str(g.map[x][y].type)):
-            return make_tile(c.SPECIAL_PLACE_TILES[type + "+" + str(g.map[x][y].type)], x, y)
+        if c.SPECIAL_PLACE_TILES.__contains__(tile_type + "+" + str(g.map[x][y].type)):
+            return make_tile(c.SPECIAL_PLACE_TILES[tile_type + "+" + str(g.map[x][y].type)], x, y)
 
     # If it is a multi-tile
-    if c.IMAGES[type].multi_tile is not None:
-        width, height = c.IMAGES[type].multi_tile
+    if c.IMAGES[tile_type].multi_tile is not None:
+        width, height = c.IMAGES[tile_type].multi_tile
         if not area_is_free(x, y, width, height):
             raise AreaNotFreeException("The area at x " + x + ", y " + y +
                                        ", with the width " + width + " and the height " +
@@ -318,20 +319,27 @@ def make_tile(type, x, y, target=None):
                 if x == i and y == j:
                     continue
                 # On all others, make pointers
-                if c.IMAGES[type].collides:
+                if c.IMAGES[tile_type].collides:
                     make_tile("collide_pointer", i, j, (x, y))
                 else:
                     make_tile("pointer", i, j, (x, y))
         
-        tile = MultiTileHead(type, x, y, width, height)
+        tile = MultiTileHead(tile_type, x, y, width, height)
     else:
+        # Remove all robots if it's a robot sending factory tile.
+
+        if g.map[x][y] is not None and g.get_img(x, y).factory_output:
+            for robot in g.map[x][y].robots:
+                if type(robot) is not int:
+                    robot.delete = True
+
         # Check if target was specified. If so, this tile is a pointer.
         if target is not None:
-            tile = MultiTilePointer(type, x, y, *target)
-        elif c.IMAGES[type].factory_input or c.IMAGES[type].factory_output:
-            tile = FactoryTile(type, x, y)
+            tile = MultiTilePointer(tile_type, x, y, *target)
+        elif c.IMAGES[tile_type].factory_input or c.IMAGES[tile_type].factory_output:
+            tile = FactoryTile(tile_type, x, y)
         else:
-            tile = Tile(type, x, y)
+            tile = Tile(tile_type, x, y)
     # Change and update the map
     g.map[x][y] = tile
     g.update_map = True
