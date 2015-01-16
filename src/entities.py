@@ -21,6 +21,8 @@ import globals as g
 import constants as c
 from graphics import Graphics
 
+import json
+
 
 class InvalidCallParameterException(Exception):
     """ A fancy class name for if the programmer (me) somehow mistook what variables
@@ -83,6 +85,23 @@ class Entity(object):
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         """
+        # Check if the entity has a limit on how far it should travel
+        x_lim = y_lim = None
+        if type(self.x_plus) is float or type(self.x_plus) is int:
+            x_lim = self.x_plus
+        if type(self.x_minus) is float or type(self.x_minus) is int:
+            if x_lim is None:
+                x_lim = self.x_minus
+            else:
+                x_lim -= self.x_minus
+        if type(self.y_plus) is float or type(self.y_plus) is int:
+            y_lim = self.y_plus
+        if type(self.y_minus) is float or type(self.y_minus) is int:
+            if y_lim is None:
+                y_lim = self.y_minus
+            else:
+                y_lim -= self.y_minus
+
         # If the delta value (the time passed) is too large, make sure the entity doesn't move more than one pixel.
         if self.movement_speed > 0:
             while delta_remainder > 0:
@@ -94,11 +113,11 @@ class Entity(object):
                     delta_remainder = 0
                 # Variables for checking if the entity changed pixel
                 if self.x_move_limit is not None:
-                    self.x += min(self.movement_speed * delta, self.x_move_limit) * self.dir[0]
+                    self.x += min(self.movement_speed * delta, abs(self.x_move_limit)) * self.dir[0]
                 else:
                     self.x += self.movement_speed * delta * self.dir[0]
                 if self.y_move_limit is not None:
-                    self.y += min(self.movement_speed * delta, self.y_move_limit) * self.dir[1]
+                    self.y += min(self.movement_speed * delta, abs(self.y_move_limit)) * self.dir[1]
                 else:
                     self.y += self.movement_speed * delta * self.dir[1]
 
@@ -323,8 +342,8 @@ class FollowingEntity(Entity):
             pull_min = self.pull_min
         elif self.target_coords is not None:
             # The entity is currently travelling towards some coordinates.
-            x_dist = self.target_coords[0] - self.x
-            y_dist = self.target_coords[1] - self.y
+            x_dist = self.x - self.target_coords[0]
+            y_dist = self.y - self.target_coords[1]
             # The diagonal distance between the entities.
             dist = math.hypot(x_dist, y_dist)
             pull_min = 0

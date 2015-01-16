@@ -237,7 +237,7 @@ class FactoryTile(Tile):
                 else:
                     self.robots.append(c.ROBOT_RETRY_TIME)
                 robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
-                                       c.GOODS[good_name],
+                                       c.GOODS[good_name][0],
                                        c.ROBOT_MOVEMENT_SPEED)
                 if not robot.goods_pathfind(good_name):
                     robot.delete = True
