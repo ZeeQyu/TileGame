@@ -48,6 +48,8 @@ build_menu_coords = ["Empty", "Empty"]
 # The selection coordinate for the current on-screen menu
 selected = [0, 0]
 
+# Temporary variable for where the target of the tile should be while selecting it
+
 # A variable for storing the map generator temporarily while showing off the map generation
 map_generator = None
 

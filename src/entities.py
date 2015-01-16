@@ -647,7 +647,11 @@ class PathingEntity(FollowingEntity):
                 except:
                     print(closed_dict)
                     print(full_path)
-                    raise
+                    # Trying to understand the heisenbug! D:
+                    import pdb, sys
+                    e, m, tb = sys.exc_info()
+                    pdb.post_mortem(tb)
+
                 full_path.reverse()
                 self.path = full_path
                 self.next_target_tile()
@@ -674,14 +678,14 @@ class PathingEntity(FollowingEntity):
                                 if (g.get_img(neighbour[0], current[1]).collides and
                                         g.get_img(current[0], neighbour[1]).collides):
                                     # If the blocks on either side of the diagonal walk is collidable, skip this one
-
-                                    closed_dict[neighbour] = None
+                                    if neighbour not in closed_dict:
+                                        closed_dict[neighbour] = None
                                     continue
 
                                 # If it can travel diagonally, give it a cost of the square root of two.
                                 g_score = closed_dict[current][0] + 14
 
-                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False:
+                        if c.IMAGES[g.map[neighbour[0]][neighbour[1]].type].collides is False or neighbour == start:
                         # Check if this neighbour can be added the the open_dict and do so if so
                             if neighbour not in closed_dict.keys():
                                 if neighbour not in open_dict.keys() or g_score < open_dict[neighbour][0]:

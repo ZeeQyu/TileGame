@@ -184,7 +184,7 @@ IMAGES = {
     "furnace_on": Img("furnace.png"),
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"], factory_input=[["iron", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
-                       evolve=[1, 1, "package_gen_iron"], factory_input=[["iron", 1]]),
+                       evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
     "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
     "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
 

@@ -113,7 +113,7 @@ def event_check():
 
             elif (event.key == g.key_dict["change_target"][0] and
                     event.type == pgl.KEYDOWN):
-                pass
+                g.special_entity_list["player"].browsing_menu = True
 
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
