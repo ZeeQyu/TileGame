@@ -8,7 +8,8 @@
     
     Units module, containing classes for all friendly and passive units.
 """
-import math, os, sys
+import os
+import sys
 from random import randint
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))

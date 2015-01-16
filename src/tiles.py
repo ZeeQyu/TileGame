@@ -11,7 +11,8 @@
     They have a texture associated, the type attribute 
     corresponds to the c.py IMAGES dictionary paths.
 """
-import os, sys
+import os
+import sys
 from random import choice, randint
 
 import pygame
@@ -217,8 +218,9 @@ class FactoryTile(Tile):
             robot is "home", that is, not outside the building.
             Should be called about every tick
         """
-        i = 0
+        i = -1
         for good in c.IMAGES[self.type].factory_output:
+            i += 1
             if good:
                 good_name, good_amount = good
                 if c.IMAGES[self.type].factory_input:
@@ -227,7 +229,7 @@ class FactoryTile(Tile):
 
                 # Checks if the robot is at home. True if it is
                 if len(self.robots) > i:
-                    if type(self.robots[i]) is int and  self.robots[i] >= 0:
+                    if type(self.robots[i]) is int and self.robots[i] >= 0:
                         self.robots[i] -= 1
                     # If it's zero, all the below code happens.
                     if self.robots[i] != 0:
@@ -246,7 +248,6 @@ class FactoryTile(Tile):
                     robot.goods = good_name
                     if c.IMAGES[self.type].factory_input:
                         self.inventory[good_name] -= 1
-            i += 1
 
     def recieve_goods(self, goods_name):
         """ Adds the recieved goods to the inventory of this tile.

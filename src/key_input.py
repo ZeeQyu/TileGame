@@ -8,7 +8,8 @@
 
     Module for controlling input from the user. Note that the key rebinding happens separately in interface.py
 """
-import os, sys
+import os
+import sys
 
 import pygame
 import pygame.locals as pgl
@@ -18,7 +19,14 @@ import globals as g
 import units
 import interface
 import constants as c
+import entities
 
+player_dirs = {
+    (1, 0): False,
+    (-1, 0): False,
+    (0, 1): False,
+    (0, -1): False
+}
 
 def event_check():
     for event in pygame.event.get():
@@ -51,36 +59,16 @@ def event_check():
                 interface.key_reconfig()
 
             elif event.key == g.key_dict["move_up"][0]:
-                if not g.special_entity_list["player"].browsing_menu:
-                    g.special_entity_list["player"].y_minus = _if_down(event.type)
-                else:
-                    if _if_down(event.type):
-                        g.selected[1] -= 1
-                        g.force_update = True
+                _move(event, (0, -1))
 
             elif event.key == g.key_dict["move_down"][0]:
-                if not g.special_entity_list["player"].browsing_menu:
-                    g.special_entity_list["player"].y_plus = _if_down(event.type)
-                else:
-                    if _if_down(event.type):
-                        g.selected[1] += 1
-                        g.force_update = True
+                _move(event, (0, 1))
 
             elif event.key == g.key_dict["move_left"][0]:
-                if not g.special_entity_list["player"].browsing_menu:
-                    g.special_entity_list["player"].x_minus = _if_down(event.type)
-                else:
-                    if _if_down(event.type):
-                        g.selected[0] -= 1
-                        g.force_update = True
+                _move(event, (-1, 0))
 
             elif event.key == g.key_dict["move_right"][0]:
-                if not g.special_entity_list["player"].browsing_menu:
-                    g.special_entity_list["player"].x_plus = _if_down(event.type)
-                else:
-                    if _if_down(event.type):
-                        g.selected[0] += 1
-                        g.force_update = True
+                _move(event, (1, 0))
 
             elif event.key == g.key_dict["place_tile"][0]:
                 g.special_entity_list["player"].placing_tile = _if_down(event.type)
@@ -94,28 +82,95 @@ def event_check():
             elif (event.key == g.key_dict["build_menu"][0] and
                     event.type == pgl.KEYUP):
                 # Shows the build menu
-                g.force_update = True
-                g.special_entity_list["player"].y_minus = g.special_entity_list["player"].y_plus = g.special_entity_list["player"].x_minus = g.special_entity_list["player"].x_plus = False
-                if "build_menu" not in g.non_entity_list.keys():
-                    g.non_entity_list["build_menu"] = interface.BuildMenu()
-                    g.special_entity_list["player"].browsing_menu = True
-                else:
-                    del g.non_entity_list["build_menu"]
-                    g.special_entity_list["player"].browsing_menu = False
+                if g.tile_target_selection is None:
+                    g.force_update = True
+                    g.special_entity_list["player"].y_minus = g.special_entity_list["player"].y_plus =\
+                        g.special_entity_list["player"].x_minus = g.special_entity_list["player"].x_plus = False
+                    if "menu" not in g.non_entity_list.keys():
+                        g.non_entity_list["menu"] = interface.BuildMenu()
+                        g.special_entity_list["player"].browsing_menu = True
+                    else:
+                        del g.non_entity_list["menu"]
+                        g.special_entity_list["player"].browsing_menu = False
 
             elif (event.key == g.key_dict["select"][0] or event.key == g.key_dict["select2"][0] and
                     event.type == pgl.KEYDOWN):
                 # Selects the current menu item
-                if "build_menu" in g.non_entity_list.keys():
-                    if g.non_entity_list["build_menu"].select():
-                        del g.non_entity_list["build_menu"]
+                if "menu" in g.non_entity_list.keys():
+                    if g.non_entity_list["menu"].select():
+                        del g.non_entity_list["menu"]
+                        g.special_entity_list["player"].browsing_menu = False
+                elif "tile_target" in g.special_entity_list:
+                    if g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                        good_names = []
+                        for good in g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                            good_names.append(good[0])
+                        g.non_entity_list["menu"] = interface.TileTargetMenu(good_names)
+                        g.force_update = True
+                    else:
+                        g.tile_target_selection = None
+                        del g.special_entity_list["tile_target"]
                         g.special_entity_list["player"].browsing_menu = False
 
             elif (event.key == g.key_dict["change_target"][0] and
                     event.type == pgl.KEYDOWN):
-                g.special_entity_list["player"].browsing_menu = True
+                if not g.special_entity_list["player"].browsing_menu:
+                    if g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                        g.special_entity_list["player"].browsing_menu = True
+                        g.special_entity_list["player"].y_minus = g.special_entity_list["player"].y_plus = \
+                            g.special_entity_list["player"].x_minus = g.special_entity_list["player"].x_plus = False
+                        g.tile_target_selection = list(g.special_entity_list["player"].get_aim_tile())
+                        x, y = g.special_entity_list["player"].get_aim_tile()
+                        g.special_entity_list["tile_target"] =\
+                            entities.Entity(x*c.TILE_SIZE, y*c.TILE_SIZE, "tile_target_aim",
+                                            0, rotates=False, collides=False)
+                elif g.tile_target_selection is not None:
+                    g.special_entity_list["player"].browsing_menu = False
+                    g.tile_target_selection = None
+                    del g.special_entity_list["tile_target"]
+                    g.force_update = True
+
 
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.
     """
     return down_or_up == pgl.KEYDOWN
+
+
+def _move(event, direction):
+    if not g.special_entity_list["player"].browsing_menu:
+        player_dirs[direction] = _if_down(event.type)
+        dirs = [0, 0]
+        for key in player_dirs:
+            if player_dirs[key]:
+                dirs[0] += key[0]
+                dirs[1] += key[1]
+
+        g.special_entity_list["player"].dir = dirs
+
+    else:
+        if _if_down(event.type):
+            if g.tile_target_selection is not None:
+                if "menu" in g.non_entity_list:
+                    g.tile_target_menu_selection[0] += direction[0]
+                    g.tile_target_menu_selection[1] += direction[1]
+                else:
+                    g.tile_target_selection[0] += direction[0]
+                    g.tile_target_selection[1] += direction[1]
+            else:
+                g.build_menu_selection[0] += direction[0]
+                g.build_menu_selection[1] += direction[1]
+            g.force_update = True
+
+            # if not g.special_entity_list["player"].browsing_menu:
+            #     g.special_entity_list["player"].y_minus = _if_down(event.type)
+            # else:
+            #     if _if_down(event.type):
+            #         if g.tile_target_selection is not None:
+            #             if "menu" in g.non_entity_list:
+            #                 g.tile_target_menu_selection[1] -= 1
+            #             else:
+            #                 g.tile_target_selection[1] -= 1
+            #         else:
+            #             g.build_menu_selection[1] -= 1
+            #         g.force_update = True

@@ -11,7 +11,8 @@
     which is used for painting the game world on the screen.
     It can be edited easily by replacing an index with a new tile instance.
 """
-import os, sys
+import os
+import sys
 import random
 
 import pygame

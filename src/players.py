@@ -9,16 +9,18 @@
     Module containing the player class.
     Also handles key press events for movement of the player.
 """
-import os, sys
+import os
+import sys
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import units, tiles
-from entities import Entity
+import units
+import tiles
+import entities
 import globals as g
 import constants as c
 
 
-class Player(Entity):
+class Player(entities.Entity):
     """ Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py
     """
     
@@ -148,15 +150,15 @@ class Player(Entity):
         """
         x = 0
         y = 0
-        if self.x_plus:
-            x += 1
-        if self.x_minus:
-            x -= 1
-        if self.y_plus:
-            y += 1
-        if self.y_minus:
-            y -= 1
-            
+        if self.dir[0] > 0:
+            x = 1
+        elif self.dir[0] < 0:
+            x = -1
+        if self.dir[1] > 0:
+            y = 1
+        elif self.dir[1] < 0:
+            y = -1
+
         if x == 0 and y == 0:
             return self.last_relative_aim_tile
         else:

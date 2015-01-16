@@ -8,7 +8,8 @@
 
     Module for initating global variables that should be available in all modules
 """
-import os, sys
+import os
+import sys
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
 import graphics
@@ -46,9 +47,10 @@ update_map = True
 build_menu_coords = ["Empty", "Empty"]
 
 # The selection coordinate for the current on-screen menu
-selected = [0, 0]
+build_menu_selection = [0, 0]
 
 # Temporary variable for where the target of the tile should be while selecting it
+tile_target_selection = None
 
 # A variable for storing the map generator temporarily while showing off the map generation
 map_generator = None
@@ -64,10 +66,10 @@ def create_key_dict(key_list):
 # Dictionary that is copied from key_config. key_config exists because interface.py key_reconfig 
 # should ask for the keys in a proper order.
 key_dict = {}
+create_key_dict(c.key_list)
 
+# This is created because key_reconfig references it.
 key_list = c.key_list
-
-create_key_dict(key_list)
 
 
 def update_key_dict():

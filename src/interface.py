@@ -8,7 +8,8 @@
     
     Module handling interfaces, menus and prompts
 """
-import sys, time
+import sys
+import time
 
 import pygame
 import pygame.locals as pgl
@@ -173,8 +174,8 @@ class Menu(object):
                 if filter_tile not in button.tile_filter:
                     buttons[i].active = False
 
-        # The last known g.selected variable
-        self.old_selected = g.selected[:]
+        # The last known g.build_menu_selection variable
+        self.old_selected = g.build_menu_selection[:]
 
         self.button_places = []
         self.needs_scroll = False
@@ -310,16 +311,16 @@ class Menu(object):
 
         # Paint the button border that is the selected button identifier.
         self.screen_buffer.blit(border_img.get(),
-                                (g.selected[0] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                (g.build_menu_selection[0] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                  self.margin + c.BUTTON_PADDING - button_border_margin_width,
-                                 g.selected[1] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                 g.build_menu_selection[1] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                  c.BUTTON_TOP_PADDING - button_border_margin_height))
 
         # Tooltips
         # Render the tooltip only if the selected spot has a button.
-        if self.buttons[g.selected[0]][g.selected[1]] is not None:
+        if self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]] is not None:
             # Generate the tooltip
-            tooltip = pygame.font.Font("freesansbold.ttf", 20).render(self.buttons[g.selected[0]][g.selected[1]].text,
+            tooltip = pygame.font.Font("freesansbold.ttf", 20).render(self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]].text,
                                                                       True, c.MENU_FONT_COLOR)
             # Blit it onto the the buffer
             self.screen_buffer.blit(tooltip,
@@ -334,9 +335,9 @@ class Menu(object):
     def paint(self):
         """ Paints the screen buffer to the screen.
         """
-        if g.selected != self.old_selected:
+        if g.build_menu_selection != self.old_selected:
             self.update_buffer()
-            self.old_selected = g.selected[:]
+            self.old_selected = g.build_menu_selection[:]
         g.screen.blit(self.screen_buffer, self.target)
 
     def select(self):
@@ -346,10 +347,10 @@ class Menu(object):
             Returns true if the menu closed
         """
         self.loop_selector()
-        if (self.buttons[g.selected[0]][g.selected[1]] is not None and
-                self.buttons[g.selected[0]][g.selected[1]].function is not False):
+        if (self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]] is not None and
+                self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]].function is not False):
 
-            if self.buttons[g.selected[0]][g.selected[1]]():
+            if self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]]():
                 self.show = False
                 g.force_update = True
                 # Returns that it is true that it closed
@@ -362,15 +363,29 @@ class Menu(object):
         """ Makes sure the selector stays inside the bounds by putting it on the other end of the menu if it's outside.
         """
         # Loop the selector
-        while g.selected[0] >= len(self.buttons):
-            g.selected[0] -= len(self.buttons)
-        while g.selected[0] < 0:
-            g.selected[0] += len(self.buttons)
+        while g.build_menu_selection[0] >= len(self.buttons):
+            g.build_menu_selection[0] -= len(self.buttons)
+        while g.build_menu_selection[0] < 0:
+            g.build_menu_selection[0] += len(self.buttons)
 
-        while g.selected[1] >= len(self.buttons[0]):
-            g.selected[1] -= len(self.buttons[0])
-        while g.selected[1] < 0:
-            g.selected[1] += len(self.buttons[0])
+        while g.build_menu_selection[1] >= len(self.buttons[0]):
+            g.build_menu_selection[1] -= len(self.buttons[0])
+        while g.build_menu_selection[1] < 0:
+            g.build_menu_selection[1] += len(self.buttons[0])
+
+
+def _set_target_tile(good):
+    return  # TODO
+
+
+class TileTargetMenu(Menu):
+    """ A menu for selecting the target to which a specific tile should send its goods.
+    """
+    def __init__(self, goods):
+        buttons = []
+        for good in goods:
+            buttons.append(MenuButton(good.capitalize(), c.GOODS[good][1], _set_target_tile, [good]))
+        super(TileTargetMenu, self).__init__("menu_background", buttons)
 
 
 def _put_tile(tile_id):

@@ -9,7 +9,8 @@
     Module containing the Graphics class.
     Uses pygame image objects.
 """
-import os, sys
+import os
+import sys
 
 import pygame
 

@@ -119,7 +119,8 @@ IMAGES = {
     "dirt3": Img("dirt3.png"),
     "dirt4": Img("dirt4.png"),
     "dirt5": Img("dirt5.png"),
-    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
+    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"],
+                factory_input=[["waste", 1]]),
     "tree2": Img("tree2.png"),
     "tree3": Img("tree3.png"),
     "tree4": Img("tree4.png"),
@@ -180,8 +181,9 @@ IMAGES = {
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
     "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package"], factory_input=[["ore", 3]],
-                   factory_output=[["iron", 1]], factory_timer=30, factory_alt_image="furnace_on"),
+                   factory_output=[["iron", 1], ["waste", 4]], factory_timer = 30, factory_alt_image = "furnace_on"),
     "furnace_on": Img("furnace.png"),
+
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"], factory_input=[["iron", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
@@ -211,6 +213,7 @@ IMAGES = {
     "robot_empty": Img("robotEmpty.png"),
     "robot_ore": Img("robotOre.png"),
     "robot_iron": Img("robotIron.png"),
+    "robot_waste": Img("robotWaste.png"),
 
     # interface
     "empty": Img("emptyPixel.png"),
@@ -218,6 +221,7 @@ IMAGES = {
     "aim": Img("aim.png"),
     "remove_aim": Img("removeAim.png"),
     "remove_aim_fail": Img("removeAimFail.png"),
+    "tile_target_aim": Img("tileTargetAim.png"),
     "icon": Img("logo.png"),
     "menu_background": Img("menuBackground.png"),
     "button_shader": Img("buttonShader"),
@@ -285,10 +289,11 @@ PACKAGE_TILE_NAMES = {"package": DEFAULT_TILE,
 
 # The list of all the goods there is. The format is {"goods_name": "image_name_of_the_entity_carrying_it"}
 GOODS = {
-    "empty": "robot_empty",
-    "ore": "robot_ore",
-    "iron": "robot_iron",
-    "wood": "robot_iron"
+    "empty": ["robot_empty"],
+    "ore": ["robot_ore", "ore"],
+    "iron": ["robot_iron", "package_gen_iron"],
+    "wood": ["robot_iron", "tree"],
+    "waste": ["robot_waste", "dirt"]
 }
 
 BACKGROUND_COLOR = (0, 0, 0)

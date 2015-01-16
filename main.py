@@ -16,14 +16,18 @@
 """
 
 # import normal modules
-import sys, os, time
+import sys
+import os
+import time
 
 # Third party modules
 import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.path.join(os.getcwd(), "src"))
-import tiles, graphics, units, players, interface, maps, key_input
+import players
+import maps
+import key_input
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
 import globals as g
@@ -48,7 +52,7 @@ def main():
     pygame.display.set_icon(g.images["icon"].get())
     pygame.display.set_caption("TileGame by ZeeQyu", "TileGame")
     g.screen = pygame.display.set_mode((g.width * c.TILE_SIZE,
-                                              g.height * c.TILE_SIZE))
+                                        g.height * c.TILE_SIZE))
     
     # A variable for skipping a single cycle after f.ex. accessing a menu, so that
     # the entities won't fly across the screen
@@ -131,6 +135,19 @@ def main():
                         continue
                     if entity.has_moved():
                         entity_has_moved = True
+            if "tile_target" in g.special_entity_list:
+                while g.tile_target_selection[0] >= g.width:
+                    g.tile_target_selection[0] -= g.width
+                while g.tile_target_selection[0] < 0:
+                    g.tile_target_selection[0] += g.width
+
+                while g.tile_target_selection[1] >= g.height:
+                    g.tile_target_selection[1] -= g.height
+                while g.tile_target_selection[1] < 0:
+                    g.tile_target_selection[1] += g.height
+
+                g.special_entity_list["tile_target"].x = g.tile_target_selection[0] * c.TILE_SIZE
+                g.special_entity_list["tile_target"].y = g.tile_target_selection[1] * c.TILE_SIZE
 
             # Update map buffer if needed
             if g.update_map:

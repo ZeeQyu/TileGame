@@ -10,15 +10,16 @@
     Also handles key press events for movement of the player.
 """
 
-import pygame, sys, os, math
+import pygame
+import sys
+import os
+import math
 from pygame import Rect
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
 import globals as g
 import constants as c
 from graphics import Graphics
-
-import json
 
 
 class InvalidCallParameterException(Exception):
@@ -32,7 +33,7 @@ class Entity(object):
     """ Entity base class for all the other entities to build upon.
     """
     
-    def __init__(self, x, y, image, movement_speed, rotates = True, collides = True, wall_collides = True):
+    def __init__(self, x, y, image, movement_speed, rotates=True, collides=True, wall_collides=True):
 
         """ "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
@@ -44,12 +45,10 @@ class Entity(object):
         self.y = y
         # Getting width and height from image file
         self.width, self.height = g.images[image].get_size()
-        # Variables for checking if the entity should move.
-        self.x_plus = False
-        self.x_minus = False
-        self.y_plus = False
-        self.y_minus = False
-        
+        # The current direction the entity is moving.
+        self.dir = [0, 0]
+        self.x_move_limit = self.y_move_limit = None
+
         # Variables for checking if the entity has moved.
         self.old_x = x
         self.old_y = y
@@ -84,23 +83,6 @@ class Entity(object):
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         """
-        # Check if the entity has a limit on how far it should travel
-        x_lim = y_lim = None
-        if type(self.x_plus) is float or type(self.x_plus) is int:
-            x_lim = self.x_plus
-        if type(self.x_minus) is float or type(self.x_minus) is int:
-            if x_lim is None:
-                x_lim = self.x_minus
-            else:
-                x_lim -= self.x_minus
-        if type(self.y_plus) is float or type(self.y_plus) is int:
-            y_lim = self.y_plus
-        if type(self.y_minus) is float or type(self.y_minus) is int:
-            if y_lim is None:
-                y_lim = self.y_minus
-            else:
-                y_lim -= self.y_minus
-
         # If the delta value (the time passed) is too large, make sure the entity doesn't move more than one pixel.
         if self.movement_speed > 0:
             while delta_remainder > 0:
@@ -110,62 +92,39 @@ class Entity(object):
                 else:
                     delta = delta_remainder
                     delta_remainder = 0
-
-                # if c.SPECIAL_DEBUG:
-                #     print("X_lim: {}, Y_lim: {}, X_plus: {}, x_minus: {}, y_plus: {},
-                #  y_minus: {}, delta: {}, delta_remainder: {}, movementspeed * delta: {}, ".format(
-                #             x_lim, y_lim, self.x_plus, self.x_minus, self.y_plus,
-                # self.y_minus, delta, delta_remainder, self.movement_speed*delta))
-
                 # Variables for checking if the entity changed pixel
-                # Move the entity in the direction the variables denote it should be.
-                if self.x_plus:
-                    if x_lim is not None and x_lim > 0:
-                        self.x += min(self.movement_speed * delta, x_lim)
-                        x_lim -= min(self.movement_speed * delta, x_lim)
-                    elif x_lim is None:
-                        self.x += self.movement_speed * delta
-                if self.x_minus:
-                    if x_lim is not None and x_lim < 0:
-                        self.x -= min(self.movement_speed * delta, abs(x_lim))
-                        x_lim += min(self.movement_speed * delta, abs(x_lim))
-                    elif x_lim is None:
-                        self.x -= self.movement_speed * delta
-                if self.y_plus:
-                    if y_lim is not None and y_lim > 0:
-                        self.y += min(self.movement_speed * delta, y_lim)
-                        y_lim -= min(self.movement_speed * delta, y_lim)
-                    elif y_lim is None:
-                        self.y += self.movement_speed * delta
-                if self.y_minus:
-                    if y_lim is not None and y_lim < 0:
-                        self.y -= min(self.movement_speed * delta, abs(y_lim))
-                        y_lim += min(self.movement_speed * delta, abs(y_lim))
-                    elif y_lim is None:
-                        self.y -= self.movement_speed * delta
+                if self.x_move_limit is not None:
+                    self.x += min(self.movement_speed * delta, self.x_move_limit) * self.dir[0]
+                else:
+                    self.x += self.movement_speed * delta * self.dir[0]
+                if self.y_move_limit is not None:
+                    self.y += min(self.movement_speed * delta, self.y_move_limit) * self.dir[1]
+                else:
+                    self.y += self.movement_speed * delta * self.dir[1]
+
                 self.collision_check()
 
         if self.rotates:
             # Rotation logic, which direction is the entity facing and how many degrees should it rotate
             # Uses last angle if the entity is not moving
-            if self.x_plus and not self.x_minus:
-                if self.y_plus and not self.y_minus:
+            if self.dir[0] > 0:
+                if self.dir[1] > 0:
                     self.angle = 45
-                elif self.y_minus and not self.y_plus:
+                elif self.dir[1] < 0:
                     self.angle = 135
                 else:
                     self.angle = 90
-            elif self.x_minus and not self.x_plus:
-                if self.y_plus and not self.y_minus:
+            elif self.dir[0] < 0:
+                if self.dir[1] > 0:
                     self.angle = -45
-                elif self.y_minus and not self.y_plus:
+                elif self.dir[1] < 0:
                     self.angle = -135
                 else:
                     self.angle = -90
             else:
-                if self.y_plus and not self.y_minus:
+                if self.dir[1] > 0:
                     self.angle = 0
-                elif self.y_minus and not self.y_plus:
+                elif self.dir[1] < 0:
                     self.angle = 180
                 else:
                     self.angle = self.last_angle
@@ -364,8 +323,8 @@ class FollowingEntity(Entity):
             pull_min = self.pull_min
         elif self.target_coords is not None:
             # The entity is currently travelling towards some coordinates.
-            x_dist = self.x - self.target_coords[0]
-            y_dist = self.y - self.target_coords[1]
+            x_dist = self.target_coords[0] - self.x
+            y_dist = self.target_coords[1] - self.y
             # The diagonal distance between the entities.
             dist = math.hypot(x_dist, y_dist)
             pull_min = 0
