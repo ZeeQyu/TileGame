@@ -376,6 +376,7 @@ class Menu(object):
             x_move, y_move = self.selection_queue.pop()
             g.menu_selection[0] += x_move
             g.menu_selection[1] += y_move
+            self.loop_selector()
             while self.buttons[g.menu_selection[0]][g.menu_selection[1]] is None:
                 g.menu_selection[0] += x_move
                 g.menu_selection[1] += y_move
@@ -506,6 +507,8 @@ class BuildMenu(Menu):
                        tile_filter=["package", "dirt-package"]),
             MenuButton("Build Package Factory", "package_gen_button", _put_tile, ["package_gen"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
+            MenuButton("Build Battery Factory", "battery_factory_button", _put_tile, ["battery_factory"],
+                       recommended=True, tile_filter=["package", "dirt-package"]),
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
             MenuButton("Reload Map", "button", _regenerate_map),

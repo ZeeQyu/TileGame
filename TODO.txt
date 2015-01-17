@@ -5,7 +5,6 @@ ZeeQyu TODO list:
 
 	Fix whatever is making packages go around corners really slow.
 
-    Fix menu selecting empty spaces
 	Multitile structures
 
 	Simple enemies that try to attack you

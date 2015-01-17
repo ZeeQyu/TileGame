@@ -87,9 +87,25 @@ class Img(object):
         self.evolve = evolve
         self.multi_tile = multi_tile
         self.factory_timer = factory_timer
-        self.factory_input = factory_input
-        self.factory_output = factory_output
         self.factory_alt_image = factory_alt_image
+
+        # The following code makes sure the factory input and output are lists in lists and not just lists.
+        for item in factory_input:
+            if type(item) is not list:
+                self.factory_input = [factory_input]
+                print(self.factory_input)
+                break
+        else:
+            self.factory_input = factory_input
+
+        for item in factory_output:
+            if type(item) is not list:
+                self.factory_output = [factory_output]
+                print(self.factory_output)
+                break
+        else:
+            self.factory_output = factory_output
+
 
 # This is the folder for the resources (pictures) of the project
 RES_FOLDER = "res"
@@ -186,11 +202,15 @@ IMAGES = {
                    factory_output=[["iron", 1], ["waste", 2]], factory_timer = 30, factory_alt_image = "furnace_on"),
     "furnace_on": Img("furnace.png"),
 
-    "launcher": Img("launcher.png", collides=True, destroy=[15, "package"], factory_input=[["iron", 1]]),
+    "launcher": Img("launcher.png", collides=True, destroy=[15, "package"],
+                    factory_input=[["iron", 5], ["battery", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
     "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
     "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
+    "battery_factory": Img("batteryFactoryOff.png", destroy=[15, "package"], factory_alt_image="battery_factory_on",
+                           factory_input=[["iron", 5]], factory_output=[["battery", 1]], factory_timer=65),
+    "battery_factry_on": Img("batteryFactoryOn.png"),
 
     # Packages
     "endless_package": Img("packageGenPackage.png", color_code=(0, 255, 0), placeable=True),
@@ -216,6 +236,7 @@ IMAGES = {
     "robot_ore": Img("robotOre.png"),
     "robot_iron": Img("robotIron.png"),
     "robot_waste": Img("robotWaste.png"),
+    "robot_battery": Img("robotBattery.png"),
 
     # interface
     "empty": Img("emptyPixel.png"),
@@ -236,8 +257,9 @@ IMAGES = {
     "furnace_button": Img("buttonFurnace.png"),
     "ore_mine_button": Img("buttonOreMine.png"),
     "package_gen_button": Img("buttonPackageGen.png"),
+    "battery_factory_button": Img("buttonBatteryFactory.png"),
     "button_border": Img("buttonBorder.png"),
-    "button_close": Img("buttonClose.png")
+    "button_close": Img("buttonClose.png"),
 }
 
 key_list = [  # Custom keys. Format:
@@ -293,8 +315,8 @@ GOODS = {
     "empty": ["robot_empty"],
     "ore": ["robot_ore", "ore"],
     "iron": ["robot_iron", "package_gen_iron"],
-    "wood": ["robot_iron", "tree"],
-    "waste": ["robot_waste", "dirt"]
+    "waste": ["robot_waste", "dirt"],
+    "battery": ["robot_battery", "battery_gen"]
 }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -332,7 +354,7 @@ PACKAGE_PULL_MAX = 24
 # Standard time in ticks for robots to deliver wares to a position
 ROBOT_DELIVER_TIME = 25
 # The time between tries of the robot pathfinding of the factory tiles
-ROBOT_RETRY_TIME = 40
+ROBOT_RETRY_TIME = 70
 # The time in ticks it takes for a robot that's returned to home to be loaded into the tile
 ROBOT_COME_HOME_TIME = 5
 # The time in ticks it takes for a robot that's been loaded back into its factory to set out again with new goods.
@@ -379,5 +401,5 @@ GEN_ORE_CHANCE = 20
 # The number of times the rock formations should be evolved (16)
 GEN_ROCK_ITERATIONS = 16
 
-# Special mode for showing off the map generation
+# Special mode for showing off the map generation. Makes a difference when using the buildmenu regen map button.
 GEN_DEMO_MODE = False
