@@ -14,12 +14,13 @@ import sys
 import pygame
 import pygame.locals as pgl
 
+
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import globals as g
-import units
-import interface
-import constants as c
-import entities
+from src import globals as g
+from src import units
+from src import interface
+from src import constants as c
+from src import entities
 
 player_dirs = {
     (1, 0): False,

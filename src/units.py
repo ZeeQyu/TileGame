@@ -13,10 +13,9 @@ import sys
 import random
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import entities
-import tiles
-import globals as g
-import constants as c
+from src import tiles, entities
+import src.globals as g
+import src.constants as c
 
 
 class Animal(entities.Entity):

@@ -16,18 +16,20 @@
 '''
 
 # import normal modules
-import sys, os, time
+import sys
+import os
+import time
 
 # Third party modules
 import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.getcwd() + "\\src")
-import tiles, graphics, maps, units, players, interface
+import players, units, maps, interface
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
-import globals as g
-import constants as c
+import src.globals as g
+import src.constants as c
 import pygame.locals as pgl
 
     

@@ -14,9 +14,11 @@ import sys
 
 import pygame
 
+
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import constants as c
-   
+from src import constants as c
+
+
 class Graphics(object):
     """ Graphics object containing an image. Loads the image by itself.
     """

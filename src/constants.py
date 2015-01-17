@@ -12,14 +12,15 @@ import pygame.locals as pgl
 
 
 # Activates various debug callouts that normally should be on, like fps meter.
-NORMAL_DEBUG = False
+NORMAL_DEBUG = True
 SPECIAL_DEBUG = True
 
 # Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
 GAME_SPEED = 1
 
 if NORMAL_DEBUG:
-    # Change this to True if you want the screen to update every cycle (all the time) and get max FPS (change sleep time)
+    # Change this to True if you want the screen to
+    # update every cycle (all the time) and get max FPS (change sleep time)
     FORCE_UPDATE = False
 else:
     FORCE_UPDATE = False
@@ -57,7 +58,8 @@ class Img(object):
                 it is a multi-tile. (example: (3, 3))
             "factory_input" should be a list containing lists where each nested list has two values
                 where the first is the type of goods that is needed to produce the output goods
-                and the second is the amount of goods required of that goods.
+                and the second is the amount of goods required of that goods. If the amount is less than zero,
+                infinite amounts will be recieved.
                 (example: [["banana_seeds", 1], ["fertilizer", 5]] )
             "factory_output" should be a list with lists where every nested list has the output goods that will be
                 produced after the timer runs out, following the same syntax as the input goods above.
@@ -181,7 +183,7 @@ IMAGES = {
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
     "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package"], factory_input=[["ore", 3]],
-                   factory_output=[["iron", 1], ["waste", 4]], factory_timer = 30, factory_alt_image = "furnace_on"),
+                   factory_output=[["iron", 1], ["waste", 2]], factory_timer = 30, factory_alt_image = "furnace_on"),
     "furnace_on": Img("furnace.png"),
 
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"], factory_input=[["iron", 1]]),

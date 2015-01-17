@@ -10,11 +10,13 @@
     Also handles key press events for movement of the player.
 '''
 
-import units, tiles
 import pygame.locals as pgl
+
+import tiles, units
 from entities import Entity
 import globals as g
 import constants as c
+
 
 class Player(Entity):
     ''' Player class. Uses the image from the "player" key from the IMAGES dictionary in c.py

@@ -8,13 +8,11 @@
 
     Module for initating global variables that should be available in all modules
 '''
-import pygame
 import pygame.locals as pgl
 
-from maps import generate_map
+# Making some variables that should be available for use in all modules
 import graphics
 
-# Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None
 images = {}
 

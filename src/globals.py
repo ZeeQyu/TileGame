@@ -12,8 +12,7 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import graphics
-import constants as c
+from src import constants as c, graphics
 
 # Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None

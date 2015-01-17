@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-""" Module /main.py
+""" Module /src/main.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
@@ -25,18 +25,18 @@ import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.path.join(os.getcwd(), "src"))
-import players
-import maps
-import key_input
+from src import key_input
+from src import players
+from src import maps
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
-import globals as g
-import constants as c
+from src import globals as g
+from src import constants as c
 
     
 def main():
     """ Main function, initializes various variables and contains the main program loop.
-        Should not be called any other way than running the file.
+        Should not be called any other way than running the file or running launch.
         Takes no arguments and returns nothing.
     """
     # initialize pygame

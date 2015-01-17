@@ -17,10 +17,9 @@ import random
 
 import pygame
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
-import tiles
-import constants as c
-import globals as g
+from src import tiles
+import src.constants as c
+import src.globals as g
 
 
 def load_map(map_image=None):

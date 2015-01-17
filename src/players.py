@@ -13,11 +13,9 @@ import os
 import sys
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import units
-import tiles
-import entities
-import globals as g
-import constants as c
+from src import tiles, units, entities
+import src.globals as g
+import src.constants as c
 
 
 class Player(entities.Entity):

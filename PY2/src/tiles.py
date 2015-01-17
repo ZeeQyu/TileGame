@@ -15,9 +15,11 @@ from random import choice, randint
 
 import pygame
 
-import entities, units
 import globals as g
 import constants as c
+import entities
+
+
 class AreaNotFreeException(Exception):
     ''' Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
         make_tile() is called.

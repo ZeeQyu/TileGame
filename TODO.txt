@@ -3,9 +3,6 @@ ZeeQyu TODO list:
 	Pathfinding
 		Queue system
 
-	Factories
-		Request system, making sure no more than the needed amount of resources is sent to a place.
-
 	Fix whatever is making packages go around corners really slow.
 
     Fix menu selecting empty spaces

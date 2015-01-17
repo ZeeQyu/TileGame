@@ -16,6 +16,7 @@ import tiles
 import globals as g
 import constants as c
 
+
 class Animal(Entity):
     ''' Base class for harmless entites that randomly roam about
     '''

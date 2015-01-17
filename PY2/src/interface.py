@@ -8,7 +8,8 @@
     
     Module handling interfaces, menus and prompts
 '''
-import sys, time
+import sys
+import time
 
 import pygame
 import pygame.locals as pgl

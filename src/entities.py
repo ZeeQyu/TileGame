@@ -10,18 +10,18 @@
     Also handles key press events for movement of the player.
 """
 
-import pygame
 import sys
 import os
 import math
+
+import pygame
 from pygame import Rect
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
-import globals as g
-import constants as c
-from graphics import Graphics
 
-import json
+sys.path.append(os.path.join(os.getcwd(), "sys"))
+from src import globals as g
+from src import constants as c
+from src.graphics import Graphics
 
 
 class InvalidCallParameterException(Exception):
@@ -474,7 +474,7 @@ class PathingEntity(FollowingEntity):
                 deliver_tile = current
 
             if deliver_tile is not None:
-                closed_dict[current]
+                # closed_dict[current]
                 full_path = []
                 while current != start:
                     full_path.append(current)
@@ -576,28 +576,34 @@ class PathingEntity(FollowingEntity):
 
             # If we're done here
             done = False
-            deliver_tile = None
+            deliver_tiles = []
             # This code block makes sure the items are delivered to the tile next to the tile instead of diagonally
 
             if (g.in_map(current[0]+1, current[1]) and
                     g.get_img(current[0]+1, current[1]).factory_input):
-                deliver_tile = (current[0]+1, current[1])
+                deliver_tiles.append((current[0]+1, current[1]))
             elif (g.in_map(current[0]-1, current[1]) and
                     g.get_img(current[0]-1, current[1]).factory_input):
-                deliver_tile = (current[0]-1, current[1])
+                deliver_tiles.append((current[0]-1, current[1]))
             elif (g.in_map(current[0], current[1]+1) and
                     g.get_img(current[0], current[1]+1).factory_input):
-                deliver_tile = (current[0], current[1]+1)
+                deliver_tiles.append((current[0], current[1]+1))
             elif (g.in_map(current[0], current[1]-1) and
                     g.get_img(current[0], current[1]-1).factory_input):
-                deliver_tile = (current[0], current[1]-1)
-            if deliver_tile is not None:
-                for good in g.get_img(*deliver_tile).factory_input:
-                    if good:  # Make sure it isn't empty, which would raise errors.'
-                        good_name = good[0]
-                        if good_name == target_goods:
-                            done = True
-                            break  # Break out of the goods for loop, not the entire while loop
+                deliver_tiles.append((current[0], current[1]-1))
+            if deliver_tiles:
+                for deliver_tile in deliver_tiles:
+                    try:
+                        for good_name in list(g.map[deliver_tile[0]][deliver_tile[1]].requests.keys()):
+                            if good_name == target_goods:
+                                if g.map[deliver_tile[0]][deliver_tile[1]].requests[target_goods] > 0:
+                                    done = True
+                                    g.map[deliver_tile[0]][deliver_tile[1]].requests[target_goods] -= 1
+                                    break  # Break out of the goods for loop, not the entire while loop
+                        if done:
+                            break
+                    except AttributeError:
+                        pass
 
             if done is True:
                 full_path = []
@@ -671,8 +677,11 @@ class PathingEntity(FollowingEntity):
                 if len(self.path) > 0:
                     if self.deliver_tile:
                         if not self.pathfind(self.deliver_tile):
+                            # If all else fails, destroy the robot
                             if self.home_tile:
                                 self.come_home()
+                                if self.deliver_tile != self.home_tile:
+                                    g.map[self.deliver_tile[0]][self.deliver_tile[1]].requests[self.goods] += 1
                     else:
                         self.pathfind(self.path[-1])
                 else:
@@ -682,21 +691,6 @@ class PathingEntity(FollowingEntity):
 
     def tick(self):
         super(PathingEntity, self).tick()
-
-        if self.deliver_timer == 5:
-            self.image = "robot_empty"
-            g.force_update = True
-        if self.deliver_timer == 0:
-            self.give_goods()
-            self.image = "robot_empty"
-            g.force_update = True
-        if self.deliver_timer > -1:
-            self.deliver_timer -= 1
-
-        if self.come_home_timer is not None:
-            self.come_home_timer -= 1
-            if self.come_home_timer <= 0:
-                self.come_home()
 
         if self.delete:
             return "delete"
@@ -724,6 +718,59 @@ class PathingEntity(FollowingEntity):
         else:
             self.paths_end_func()
 
+
+class Robot(PathingEntity):
+    """ Class for entities that carry goods from one tile to another.
+    """
+    def __init__(self, x, y, image, movement_speed, rotates=True,
+                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
+        super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
+                         collides=collides, wall_collides=wall_collides,
+                         target_coords=target_coords, custom_name=custom_name)
+        self.paths_end_func = self._set_deliver_timer
+
+    def goods_pathfind(self, target_goods):
+        if super(Robot, self).goods_pathfind(target_goods):
+            self.goods = target_goods
+            return True
+        else:
+            return False
+
+    def _set_deliver_timer(self, i=c.ROBOT_DELIVER_TIME):
+        self.stop_moving()
+        self.deliver_timer = i
+
+    def pathfind(self, end, target_goods=None):
+        if target_goods is not None:
+            if super(Robot, self).pathfind(end):
+                self.goods = target_goods
+                x, y = self.deliver_tile
+                g.map[x][y].requests[self.goods] -= 1
+                return True
+            else:
+                return False
+        else:
+            return super(Robot, self).pathfind(end)
+
+    def tick(self):
+        if self.deliver_timer == 5:
+            self.image = "robot_empty"
+            g.force_update = True
+        if self.deliver_timer == 0:
+            self.give_goods()
+            self.image = "robot_empty"
+            g.force_update = True
+        if self.deliver_timer > -1:
+            self.deliver_timer -= 1
+
+        if self.come_home_timer is not None:
+            self.come_home_timer -= 1
+            if self.come_home_timer <= 0:
+                self.come_home()
+
+
+        return super(Robot, self).tick()
+
     def give_goods(self):
         try:
             g.map[self.deliver_tile[0]][self.deliver_tile[1]].recieve_goods(self.goods)
@@ -731,7 +778,7 @@ class PathingEntity(FollowingEntity):
             # If the factory tile was replaced, ignore it
             pass
         self.paths_end_func = self.come_home
-        if self.pathfind(self.home_tile) is False:
+        if super(Robot, self).pathfind(self.home_tile) is False:
             self.come_home(c.ROBOT_RECONSTRUCT_TIME)
 
     def come_home(self, time=c.ROBOT_COME_HOME_TIME):
@@ -745,20 +792,7 @@ class PathingEntity(FollowingEntity):
         else:
             self.come_home_timer = c.ROBOT_COME_HOME_TIME
 
-    def _set_deliver_timer(self, i=c.ROBOT_DELIVER_TIME):
-        self.stop_moving()
-        self.deliver_timer = i
 
-
-class Robot(PathingEntity):
-    """ Class for entities that carry goods from one tile to another.
-    """
-    def __init__(self, x, y, image, movement_speed, rotates=True,
-                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
-        super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
-                         collides=collides, wall_collides=wall_collides,
-                         target_coords=target_coords, custom_name=custom_name)
-        self.paths_end_func = self._set_deliver_timer
 
 
 def free_of_entities(tile):

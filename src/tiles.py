@@ -17,10 +17,12 @@ from random import choice, randint
 
 import pygame
 
+
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-import globals as g
-import constants as c
-import entities
+from src import globals as g
+from src import constants as c
+from src import entities
+
 
 class AreaNotFreeException(Exception):
     """ Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
@@ -160,6 +162,11 @@ class FactoryTile(Tile):
         # print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
         self.good_targets = {}
 
+        self.requests = {}
+        for item in c.IMAGES[self.type].factory_input:
+            self.requests[item[0]] = item[1]
+
+
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
         """
@@ -182,14 +189,18 @@ class FactoryTile(Tile):
                             can_start_timer = False
                             break
 
-            if can_start_timer and c.IMAGES[self.type].factory_input:
-                for good_name, good_amount in c.IMAGES[self.type].factory_input:
-                    self.inventory[good_name] -= good_amount
-                self.goods_timer = c.IMAGES[self.type].factory_timer
-                # Set the image to the working image
-                if c.IMAGES[self.type].factory_alt_image is not None and not c.IMAGES[self.type].random:
-                    self.image = c.IMAGES[self.type].factory_alt_image
-                    g.update_map = True
+                if can_start_timer:
+                    for good_name, good_amount in c.IMAGES[self.type].factory_input:
+                        self.inventory[good_name] -= good_amount
+                    self.goods_timer = c.IMAGES[self.type].factory_timer
+                    # Make sure it can accept more items if it's not about to evolve.
+                    if not c.IMAGES[self.type].evolve is not None:
+                        for item in c.IMAGES[self.type].factory_input:
+                            self.requests[item[0]] = item[1]
+                    # Set the image to the working image
+                    if c.IMAGES[self.type].factory_alt_image is not None and not c.IMAGES[self.type].random:
+                        self.image = c.IMAGES[self.type].factory_alt_image
+                        g.update_map = True
 
         if self.goods_timer == 0:
             if c.IMAGES[self.type].evolve is not None and self.timer is None:
@@ -248,7 +259,7 @@ class FactoryTile(Tile):
                         if reciever_good[0] == good_name:
                             can_recieve = True
                     if can_recieve:
-                        if robot.pathfind(self.good_targets[good_name]):
+                        if robot.pathfind(self.good_targets[good_name], good_name):
                             robot.home_tile = (self.x, self.y)
                         else:
                             can_recieve = False

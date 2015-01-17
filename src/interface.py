@@ -14,11 +14,11 @@ import time
 import pygame
 import pygame.locals as pgl
 
-import constants as c
-import globals as g
-import tiles
-import maps
-import entities
+import src.constants as c
+from src import globals as g
+from src import tiles
+from src import maps
+from src import entities
 
 
 def key_reconfig():
@@ -473,13 +473,24 @@ def _create_pather():
 
 
 def _set_pather_target():
+    x, y = g.special_entity_list["player"].get_aim_tile()
+    print("Checking tile type " + g.map[x][y].type)
+    try:
+        print("\tInventory: " + str(g.map[x][y].inventory))
+    except AttributeError:
+        print("\tFailed printing inv")
+    try:
+        print("\tRequests: " + str(g.map[x][y].requests))
+    except AttributeError:
+        print("\tFailed printing req")
+
+
     if "pather" in g.special_entity_list:
         x, y = g.special_entity_list["player"].get_aim_tile()
         g.special_entity_list["pather"].pathfind((x, y))
         return True
     else:
-        return False
-
+        return True
 
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
@@ -494,12 +505,11 @@ class BuildMenu(Menu):
             MenuButton("Build Furnace", "furnace_button", _put_tile, ["furnace"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
             MenuButton("Build Package Factory", "package_gen_button", _put_tile, ["package_gen"], recommended=True,
-                       tile_filter=["package", "dirt_package"]),
+                       tile_filter=["package", "dirt-package"]),
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
             MenuButton("Reload Map", "button", _regenerate_map),
-            # MenuButton("Create Pather", "button1", _create_pather, tile_filter=["grass"]),
-            # MenuButton("Set Pather Target", "button2", _set_pather_target,
-            #            tile_filter=["grass", "ore", "stump"]),
+            MenuButton("Create Pather", "button1", _create_pather, tile_filter=["grass"]),
+            MenuButton("Set Pather Target", "button2", _set_pather_target),
             MenuButton("Close", "button_close", _close)
         ])

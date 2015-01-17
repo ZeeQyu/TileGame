@@ -17,6 +17,7 @@ import globals as g
 import constants as c
 from graphics import Graphics
 
+
 class InvalidCallParameterException(Exception):
     ''' A fancy class name for if the programmer (me) somehow mistook what variables
         should be passed to the __init__ function in the Entity class in entities.py 

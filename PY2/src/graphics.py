@@ -13,7 +13,8 @@
 import pygame
 
 import constants as c
-   
+
+
 class Graphics(object):
     ''' Graphics object containing an image. Loads the image by itself.
     '''
