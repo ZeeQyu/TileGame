@@ -85,22 +85,6 @@ class Entity(object):
                 (Larger than 1 / movement_speed. if so, it subtracts 1 / movement_speed and uses that as the delta, 
                 because the entity shouldn't move more than one pixel per update because of collision detection)
         """
-        # Check if the entity has a limit on how far it should travel
-        x_lim = y_lim = None
-        if type(self.x_plus) is float or type(self.x_plus) is int:
-            x_lim = self.x_plus
-        if type(self.x_minus) is float or type(self.x_minus) is int:
-            if x_lim is None:
-                x_lim = self.x_minus
-            else:
-                x_lim -= self.x_minus
-        if type(self.y_plus) is float or type(self.y_plus) is int:
-            y_lim = self.y_plus
-        if type(self.y_minus) is float or type(self.y_minus) is int:
-            if y_lim is None:
-                y_lim = self.y_minus
-            else:
-                y_lim -= self.y_minus
 
         # If the delta value (the time passed) is too large, make sure the entity doesn't move more than one pixel.
         if self.movement_speed > 0:
@@ -350,33 +334,33 @@ class FollowingEntity(Entity):
             pull_max = g.width*c.TILE_SIZE + g.height*c.TILE_SIZE
         else:
             return
+
+        self.x_move_limit = x_dist
+        self.y_move_limit = y_dist
         # If the diagonal distance isn't too far
         if dist < pull_max * 1.5:
             # If it's positive, move left
             if pull_min < x_dist < pull_max:
-                self.x_minus = -x_dist
-                self.x_plus = False
+                self.dir[0] = -1
             # If it's negative, move right
             elif -pull_min > x_dist > -pull_max:
-                self.x_plus = -x_dist
-                self.x_minus = False
+                self.dir[0] = 1
             # If it is outside the range, stop moving
             else:
-                self.x_plus = self.x_minus = False
+                self.dir[0] = 0
 
             # If it's positive, move up
             if pull_min < y_dist < pull_max:
-                self.y_minus = -y_dist
-                self.y_plus = False
+                self.dir[1] = -1
             # If it's negative, move down
             elif -pull_min > y_dist > -pull_max:
-                self.y_plus = -y_dist
-                self.y_minus = False
+                self.dir[1] = 1
             # If it is outside the range, stop moving
             else:
-                self.y_plus = self.y_minus = False
+                self.dir[1] = 0
         else:
-            self.y_plus = self.y_minus = self.x_plus = self.x_minus = False
+            self.dir = [0, 0]
+
         super(FollowingEntity, self).update(time_diff)
         # Code for not getting stuck on terrain.
         if self.collided and not self.has_moved(update=False):
@@ -472,7 +456,7 @@ class PathingEntity(FollowingEntity):
 
             # If we're done here
             deliver_tile = None
-            if g.get_img(*end).collides:
+            if g.get_img(*end).collides and current != end:
                 # Find a tile next to the target tile to stand on if it collides
                 if (g.in_map(current[0] + 1, current[1]) and
                         (current[0] + 1, current[1]) == end):
