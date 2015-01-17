@@ -148,6 +148,13 @@ def main():
 
                 g.special_entity_list["tile_target"].x = g.tile_target_selection[0] * c.TILE_SIZE
                 g.special_entity_list["tile_target"].y = g.tile_target_selection[1] * c.TILE_SIZE
+            if g.non_entity_list:
+                for item in list(g.non_entity_list.values()):
+                    try:
+                        if item.update(time_diff):
+                            entity_has_moved = True
+                    except AttributeError:
+                        pass
 
             # Update map buffer if needed
             if g.update_map:

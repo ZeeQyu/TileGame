@@ -10,7 +10,7 @@
 """
 import os
 import sys
-from random import randint
+import random
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
 import entities
@@ -44,17 +44,12 @@ class Animal(entities.Entity):
             if self.movement_timer <= 0:
                 # Calculate what value the maximum amount of ticks between direction changes
                 # should be
-                tick_max = int(float(self.max_travel) /
-                   float(self.movement_speed) /
-                   float(c.TICK_FREQ))
+                tick_max = int(float(self.max_travel) / float(self.movement_speed) / float(c.TICK_FREQ))
                 # The amount of ticks until direction change, which is a random int
                 # between half of tick_max and tick_max
-                self.movement_timer = randint(int(tick_max / 2), tick_max)
+                self.movement_timer = random.randint(int(tick_max / 2), tick_max)
                 # Set a random direction
-                self.x_plus = bool(randint(0, 1))
-                self.x_minus = bool(randint(0, 1))
-                self.y_plus = bool(randint(0, 1))
-                self.y_minus = bool(randint(0, 1))
+                self.dir = [random.uniform(-1, 1), random.uniform(-1, 1)]
             
         super(Animal, self).update(delta_remainder)
         

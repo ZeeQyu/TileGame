@@ -159,6 +159,7 @@ class Menu(object):
             "target" should be a tuple with an x and y coordinate in pixels
                 for where the menu's top left corner should be painted
         """
+        self.selection_queue = []
         self.background = background
         self.buttons = []
         buttons.reverse()
@@ -174,13 +175,13 @@ class Menu(object):
                 if filter_tile not in button.tile_filter:
                     buttons[i].active = False
 
-        # The last known g.build_menu_selection variable
-        self.old_selected = g.build_menu_selection[:]
+        # The last known g.menu_selection variable
+        self.old_selected = g.menu_selection[:]
 
         self.button_places = []
         self.needs_scroll = False
-        self.background_width, self.background_height = g.images["menu_background"].get_size()
-        self.target = (g.build_menu_coords[0], g.build_menu_coords[1])
+        self.background_width, self.background_height = g.images[self.background].get_size()
+        self.target = (g.menu_coords[0], g.menu_coords[1])
         # If the build menu should be painted
 
         # Note that this is a function
@@ -245,7 +246,7 @@ class Menu(object):
             spot[0] += 1
 
         # Create the buffer and update it.
-        self.screen_buffer = pygame.Surface(g.images["menu_background"].get_size(), flags=pygame.SRCALPHA)
+        self.screen_buffer = pygame.Surface(g.images[self.background].get_size(), flags=pygame.SRCALPHA)
         self.update_buffer()
 
     def update_position(self):
@@ -257,22 +258,22 @@ class Menu(object):
         # Put the target variable in the end of the screen the player isn't in.
         # X Coordinate
         if player_x > g.width * c.TILE_SIZE / 3.0 * 2.0:
-            g.build_menu_coords[0] = c.BORDER_MARGINS
+            g.menu_coords[0] = c.BORDER_MARGINS
         elif player_x < g.width * c.TILE_SIZE / 3.0:
-            g.build_menu_coords[0] = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
-        elif g.build_menu_coords[0] is "Empty":
-            g.build_menu_coords[0] = c.BORDER_MARGINS
+            g.menu_coords[0] = g.width * c.TILE_SIZE - self.background_width - c.BORDER_MARGINS
+        elif g.menu_coords[0] is "Empty":
+            g.menu_coords[0] = c.BORDER_MARGINS
 
         # Y Coordinate
         if player_y > g.height * c.TILE_SIZE / 3.0 * 2.0:
-            g.build_menu_coords[1] = c.BORDER_MARGINS
+            g.menu_coords[1] = c.BORDER_MARGINS
         elif player_y < g.height * c.TILE_SIZE / 3.0:
-            g.build_menu_coords[1] = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
-        elif g.build_menu_coords[1] is "Empty":
-            g.build_menu_coords[1] = c.BORDER_MARGINS
+            g.menu_coords[1] = g.height * c.TILE_SIZE - self.background_height - c.BORDER_MARGINS
+        elif g.menu_coords[1] is "Empty":
+            g.menu_coords[1] = c.BORDER_MARGINS
 
         # Set the variable the outside refers to.
-        self.target = (g.build_menu_coords[0], g.build_menu_coords[1])
+        self.target = (g.menu_coords[0], g.menu_coords[1])
 
     def update_buffer(self):
         """ Updates the buffer that is painted to the screen with the paint function.
@@ -281,7 +282,7 @@ class Menu(object):
         """
         # Update the position and paint the background
         self.update_position()
-        self.screen_buffer = pygame.Surface(g.images["menu_background"].get_size(), flags=pygame.SRCALPHA)
+        self.screen_buffer = pygame.Surface(g.images[self.background].get_size(), flags=pygame.SRCALPHA)
         self.screen_buffer.blit(g.images[self.background].get(), (0, 0))
 
         for i in range(len(self.buttons)):
@@ -307,20 +308,20 @@ class Menu(object):
         button_border_margin_height = (border_img.get_size()[0] - c.BUTTON_SIZE) / 2
 
         # Make sure the selector is inside the bounds
-        self.loop_selector()
+        self.update_selection()
 
         # Paint the button border that is the selected button identifier.
         self.screen_buffer.blit(border_img.get(),
-                                (g.build_menu_selection[0] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                (g.menu_selection[0] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                  self.margin + c.BUTTON_PADDING - button_border_margin_width,
-                                 g.build_menu_selection[1] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
+                                 g.menu_selection[1] * (c.BUTTON_SIZE + c.BUTTON_SPACING) +
                                  c.BUTTON_TOP_PADDING - button_border_margin_height))
 
         # Tooltips
         # Render the tooltip only if the selected spot has a button.
-        if self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]] is not None:
+        if self.buttons[g.menu_selection[0]][g.menu_selection[1]] is not None:
             # Generate the tooltip
-            tooltip = pygame.font.Font("freesansbold.ttf", 20).render(self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]].text,
+            tooltip = pygame.font.Font("freesansbold.ttf", 20).render(self.buttons[g.menu_selection[0]][g.menu_selection[1]].text,
                                                                       True, c.MENU_FONT_COLOR)
             # Blit it onto the the buffer
             self.screen_buffer.blit(tooltip,
@@ -332,12 +333,21 @@ class Menu(object):
                                      (c.BUTTON_SIZE + c.BUTTON_SPACING) - c.BUTTON_SPACING +
                                      (c.BUTTON_BOTTOM_PADDING - tooltip.get_size()[1]) // 2))
 
+    def update(self, time_diff):
+        """ Updates the position of the selector.
+        """
+        self.update_selection()
+        if g.menu_selection != self.old_selected:
+            return True
+        else:
+            return False
+
     def paint(self):
         """ Paints the screen buffer to the screen.
         """
-        if g.build_menu_selection != self.old_selected:
+        if g.menu_selection != self.old_selected:
             self.update_buffer()
-            self.old_selected = g.build_menu_selection[:]
+            self.old_selected = g.menu_selection[:]
         g.screen.blit(self.screen_buffer, self.target)
 
     def select(self):
@@ -346,11 +356,11 @@ class Menu(object):
 
             Returns true if the menu closed
         """
-        self.loop_selector()
-        if (self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]] is not None and
-                self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]].function is not False):
+        self.update_selection()
+        if (self.buttons[g.menu_selection[0]][g.menu_selection[1]] is not None and
+                self.buttons[g.menu_selection[0]][g.menu_selection[1]].function is not False):
 
-            if self.buttons[g.build_menu_selection[0]][g.build_menu_selection[1]]():
+            if self.buttons[g.menu_selection[0]][g.menu_selection[1]]():
                 self.show = False
                 g.force_update = True
                 # Returns that it is true that it closed
@@ -359,23 +369,53 @@ class Menu(object):
                 pass  # TODO make sure there's an indicator of that the pressed button didn't work.
         return False
 
+    def update_selection(self):
+        """ Finds out where the selector should be by going through the selection queue and skipping empty squares
+        """
+        for i in range(len(self.selection_queue)):
+            x_move, y_move = self.selection_queue.pop()
+            g.menu_selection[0] += x_move
+            g.menu_selection[1] += y_move
+            while self.buttons[g.menu_selection[0]][g.menu_selection[1]] is None:
+                g.menu_selection[0] += x_move
+                g.menu_selection[1] += y_move
+                self.loop_selector()
+
     def loop_selector(self):
         """ Makes sure the selector stays inside the bounds by putting it on the other end of the menu if it's outside.
         """
         # Loop the selector
-        while g.build_menu_selection[0] >= len(self.buttons):
-            g.build_menu_selection[0] -= len(self.buttons)
-        while g.build_menu_selection[0] < 0:
-            g.build_menu_selection[0] += len(self.buttons)
+        while g.menu_selection[0] >= len(self.buttons):
+            g.menu_selection[0] -= len(self.buttons)
+        while g.menu_selection[0] < 0:
+            g.menu_selection[0] += len(self.buttons)
 
-        while g.build_menu_selection[1] >= len(self.buttons[0]):
-            g.build_menu_selection[1] -= len(self.buttons[0])
-        while g.build_menu_selection[1] < 0:
-            g.build_menu_selection[1] += len(self.buttons[0])
+        while g.menu_selection[1] >= len(self.buttons[0]):
+            g.menu_selection[1] -= len(self.buttons[0])
+        while g.menu_selection[1] < 0:
+            g.menu_selection[1] += len(self.buttons[0])
 
 
 def _set_target_tile(good):
-    return  # TODO
+    """ Sets a custom target for a factory tile where it will try to send its goods first.
+    """
+    x, y = g.special_entity_list["player"].get_aim_tile()
+    if g.get_img(x, y).factory_output:
+        # If it's aiming at itself, disable it.
+        if (x, y) == tuple(g.tile_target_selection):
+            if good in g.map[x][y].good_targets:
+                del g.map[x][y].good_targets[good]
+                print("Removed target")
+            else:
+                print("No change")
+        else:
+            g.map[x][y].good_targets[good] = tuple(g.tile_target_selection)
+        g.special_entity_list["player"].browsing_menu = False
+        g.tile_target_selection = None
+        del g.special_entity_list["tile_target"]
+        return True
+    else:
+        return False
 
 
 class TileTargetMenu(Menu):
@@ -458,8 +498,8 @@ class BuildMenu(Menu):
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
             MenuButton("Reload Map", "button", _regenerate_map),
-            MenuButton("Create Pather", "button1", _create_pather, tile_filter=["grass"]),
-            MenuButton("Set Pather Target", "button2", _set_pather_target,
-                       tile_filter=["grass", "ore", "stump"]),
+            # MenuButton("Create Pather", "button1", _create_pather, tile_filter=["grass"]),
+            # MenuButton("Set Pather Target", "button2", _set_pather_target,
+            #            tile_filter=["grass", "ore", "stump"]),
             MenuButton("Close", "button_close", _close)
         ])

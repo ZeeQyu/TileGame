@@ -255,7 +255,6 @@ key_list = [  # Custom keys. Format:
     ["select", pgl.K_SPACE, "selecting the current menu item."],
     ["select2", 13, "the second key for selecting current menu item."], # Enter Key
     ["change_target", pgl.K_w, "changing the target of a factory tile."],
-    # ["select", pgl., "selecting the current menu item."],
 
     ["spawn_beetle", pgl.K_z, "spawning a beetle at the player's feet."],
     ["duplicate_beetles", pgl.K_x, "activating the beetles' self-duplicating process."],

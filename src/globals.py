@@ -43,12 +43,10 @@ map_screen_buffer = None
 # If the map should be rerendered
 update_map = True
 
-# The position of build menus. Is carried over between different times that the menu created.
-build_menu_coords = ["Empty", "Empty"]
-
+# The position of menus. Is carried over between different times that the menu created.
+menu_coords = ["Empty", "Empty"]
 # The selection coordinate for the current on-screen menu
-build_menu_selection = [0, 0]
-
+menu_selection = [0, 0]
 # Temporary variable for where the target of the tile should be while selecting it
 tile_target_selection = None
 

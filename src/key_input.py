@@ -79,6 +79,7 @@ def event_check():
                 # This is handled in g.special_entity_list["player"].update()
                 if not g.special_entity_list["player"].browsing_menu:
                     g.special_entity_list["player"].toggle_grab = True
+
             elif (event.key == g.key_dict["build_menu"][0] and
                     event.type == pgl.KEYUP):
                 # Shows the build menu
@@ -116,6 +117,7 @@ def event_check():
                     event.type == pgl.KEYDOWN):
                 if not g.special_entity_list["player"].browsing_menu:
                     if g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                        g.menu_selection = [0, 0]
                         g.special_entity_list["player"].browsing_menu = True
                         g.special_entity_list["player"].y_minus = g.special_entity_list["player"].y_plus = \
                             g.special_entity_list["player"].x_minus = g.special_entity_list["player"].x_plus = False
@@ -128,6 +130,7 @@ def event_check():
                     g.special_entity_list["player"].browsing_menu = False
                     g.tile_target_selection = None
                     del g.special_entity_list["tile_target"]
+                    del g.non_entity_list["menu"]
                     g.force_update = True
 
 
@@ -145,21 +148,18 @@ def _move(event, direction):
             if player_dirs[key]:
                 dirs[0] += key[0]
                 dirs[1] += key[1]
-
         g.special_entity_list["player"].dir = dirs
 
     else:
         if _if_down(event.type):
             if g.tile_target_selection is not None:
                 if "menu" in g.non_entity_list:
-                    g.tile_target_menu_selection[0] += direction[0]
-                    g.tile_target_menu_selection[1] += direction[1]
+                    g.non_entity_list["menu"].selection_queue.insert(0, direction)
                 else:
                     g.tile_target_selection[0] += direction[0]
                     g.tile_target_selection[1] += direction[1]
             else:
-                g.build_menu_selection[0] += direction[0]
-                g.build_menu_selection[1] += direction[1]
+                g.non_entity_list["menu"].selection_queue.insert(0, direction)
             g.force_update = True
 
             # if not g.special_entity_list["player"].browsing_menu:

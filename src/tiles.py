@@ -158,6 +158,7 @@ class FactoryTile(Tile):
         if c.IMAGES[self.type].factory_output:
             g.tick_tiles.append([self.x, self.y])
         # print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
+        self.good_targets = {}
 
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
@@ -239,15 +240,31 @@ class FactoryTile(Tile):
                 robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
                                        c.GOODS[good_name][0],
                                        c.ROBOT_MOVEMENT_SPEED)
-                if not robot.goods_pathfind(good_name):
+
+                # Tries to find a straight path to a specific target if there is one
+                can_recieve = False
+                if good_name in self.good_targets:
+                    for reciever_good in g.get_img(*self.good_targets[good_name]).factory_input:
+                        if reciever_good[0] == good_name:
+                            can_recieve = True
+                    if can_recieve:
+                        if robot.pathfind(self.good_targets[good_name]):
+                            robot.home_tile = (self.x, self.y)
+                        else:
+                            can_recieve = False
+
+                # If the previous, straight path pathfind didn't work, try this
+                if not can_recieve and not robot.goods_pathfind(good_name):
                     robot.delete = True
                     self.robots[i] = c.ROBOT_RETRY_TIME
-                else:
-                    self.robots[i] = robot
-                    robot.number = i
-                    robot.goods = good_name
-                    if c.IMAGES[self.type].factory_input:
-                        self.inventory[good_name] -= 1
+                    continue
+
+                # If either of the pathfindings work
+                self.robots[i] = robot
+                robot.number = i
+                robot.goods = good_name
+                if c.IMAGES[self.type].factory_input:
+                    self.inventory[good_name] -= 1
 
     def recieve_goods(self, goods_name):
         """ Adds the recieved goods to the inventory of this tile.

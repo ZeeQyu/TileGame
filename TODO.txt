@@ -6,6 +6,8 @@ ZeeQyu TODO list:
 	Factories
 		Request system, making sure no more than the needed amount of resources is sent to a place.
 
+	Fix whatever is making packages go around corners really slow.
+
     Fix menu selecting empty spaces
 	Multitile structures
 
@@ -23,8 +25,6 @@ ZeeQyu TODO list:
 Pethax Graphics TODO list:
 
 High priority
-    1 Stone-crusher (a machine with pistons aiming each of the four directions,
-        so they like crush the rocks around them. 32x32px)
 
     These three tiles are like a progress bar of how long there is left until a building being built is done.
         1 16x16 just started building-construction site (A package that is opened)

@@ -46,6 +46,7 @@ class Player(entities.Entity):
         
     def paint(self):
         """ Paints the player and its aim indicator on the screen.
+            Also paints the targets for the aimed at tile if it has any.
         """
         super(Player, self).paint()
 
@@ -61,6 +62,17 @@ class Player(entities.Entity):
         y = ((self.last_aim_tile[1]*c.TILE_SIZE) +
              (c.TILE_SIZE - g.images[aim].get_size()[1]) / 2)
         g.screen.blit(g.images[aim].get(), (x, y))
+
+        # When you aim at a factory, display the set targets for that tile
+        if g.get_img(*self.last_aim_tile).factory_output:
+            x, y = self.last_aim_tile
+            if g.map[x][y].good_targets:
+                for good_target in list(g.map[x][y].good_targets.values()):
+                    g.screen.blit(g.images["tile_target_aim"].get(),
+                                  (good_target[0]*c.TILE_SIZE +
+                                   (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[0]) / 2,
+                                   good_target[1]*c.TILE_SIZE +
+                                   (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[1]) / 2))
 
     def update(self, time_diff):
         """ Calls the superclass update and updates the state of the aim marker.
