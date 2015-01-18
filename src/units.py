@@ -120,8 +120,8 @@ class Robot(entities.PathingEntity):
     def __init__(self, x, y, image, movement_speed, rotates=True,
                  collides=True, wall_collides=True, target_coords=None, custom_name=None):
         super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
-                         collides=collides, wall_collides=wall_collides,
-                         target_coords=target_coords, custom_name=custom_name)
+                                    collides=collides, wall_collides=wall_collides,
+                                    target_coords=target_coords, custom_name=custom_name)
         self.paths_end_func = self._set_deliver_timer
 
     def goods_pathfind(self, target_goods):
@@ -198,27 +198,14 @@ class LauncherRocket(entities.Entity):
         self.dir = list(direction)
         width, height = g.images[self.image].get_size()
         print(self.dir)
-        if self.dir[1] != 0:
-            self.x = tile_x*c.TILE_SIZE + (c.TILE_SIZE-width)/2
-            self.y = tile_y*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[1] == 1)) - 1*self.dir[1]
-        elif self.dir[0] != 0:
+        # If it's travelling horizontally
+        if self.dir[0] != 0:
             self.x = tile_x*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[0] == 1)) - 1*self.dir[0]
             self.y = tile_y*c.TILE_SIZE + (c.TILE_SIZE-width)/2
-        # self.x = (tile_x*c.TILE_SIZE + c.TILE_SIZE/2 -
-        #           (width if self.dir[0] != 0 else height)/2 +
-        #           # Add a halftile times the direction if it's going to the right or left
-        #           c.TILE_SIZE*40 * self.dir[0])
-        # self.y = (tile_y*c.TILE_SIZE + c.TILE_SIZE/2 -
-        #           (height if self.dir[1] != 0 else width)/2 +
-        #           # Add a halftile times the direction if it's going to the right or left
-        #           c.TILE_SIZE*40 * self.dir[1])
+        elif self.dir[1] != 0:
+            self.x = tile_x*c.TILE_SIZE + (c.TILE_SIZE-width)/2
+            self.y = tile_y*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[1] == 1)) - 1*self.dir[1]
 
-        # self.x = (tile_x * c.TILE_SIZE + self.dir[0] * c.TILE_SIZE +
-        #           # If it's travelling vertically, base the x offset off the width
-        #           (c.TILE_SIZE-(self.width if self.dir[1] != 0 else self.height)/2))
-        # self.y = (tile_y * c.TILE_SIZE + self.dir[1] * c.TILE_SIZE +
-        #           # If it's travelling vertically, base the x offset off the width
-        #           (c.TILE_SIZE-(self.height if self.dir[0] != 0 else self.width)/2))
         self.dir = direction
         self.tile = "dirt"
 
@@ -228,14 +215,38 @@ class LauncherRocket(entities.Entity):
             x, y = self.get_tile()
             # If the tile it will next be in is collidable, destroy it.
             if g.in_map(x+self.dir[0], y+self.dir[1]) and g.get_img(x+self.dir[0], y+self.dir[1]).collides:
-                g.tile_maker_queue.insert(0, ["dirt", self.get_tile()[0] + self.dir[0], self.get_tile()[1] + self.dir[1]])
+                g.tile_maker_queue.insert(0, [self.tile, self.get_tile()[0] + self.dir[0],
+                                              self.get_tile()[1] + self.dir[1]])
                 self.delete = True
 
     def collision_check(self):
         """ Destroy the rocket if it comes outside of the borders.
         """
-        entity_rect = Rect(self.x, self.y, self.width,self.height)
+        entity_rect = Rect(self.x, self.y, self.width, self.height)
         window_rect = Rect(0, 0, g.width * c.TILE_SIZE, g.height * c.TILE_SIZE)
         if not window_rect.contains(entity_rect):
             self.delete = True
-        super(LauncherRocket, self).collision_check()
+
+        # Make sure collision rectangles are up to date
+        self.update_collision_rects()
+        # Get the tile the entity is standing on
+        tile_pos = self.get_tile()
+        checked_tiles = []
+
+        # TOOD Change this to check only one side and destroy tiles when it hits a wall.
+        # Loop through a 3x3 tile square around the entity, to not check the entire map
+        # for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
+        #     for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
+        #         try:
+        #             if c.IMAGES[g.map[i][j].type].collides:
+        #                 checked_tiles.append(g.map[i][j].rect())
+        #         except IndexError:
+        #             # That index was apparently outside of the map
+        #             pass
+        # # Check if each of the zones collides with any of the tiles
+        # if self.col_left.collidelist(checked_tiles) != -1:
+        # if self.col_right.collidelist(checked_tiles) != -1:
+        # if self.col_bottom.collidelist(checked_tiles) != -1:
+        # if self.col_top.collidelist(checked_tiles) != -1:
+
+        return super(LauncherRocket, self).collision_check()

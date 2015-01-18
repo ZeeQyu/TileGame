@@ -24,13 +24,6 @@ from src import constants as c
 from src.graphics import Graphics
 
 
-class InvalidCallParameterException(Exception):
-    """ A fancy class name for if the programmer (me) somehow mistook what variables
-        should be passed to the __init__ function in the Entity class in entities.py 
-    """ 
-    pass
-
-
 class Entity(object):
     """ Entity base class for all the other entities to build upon.
     """
@@ -39,7 +32,6 @@ class Entity(object):
 
         """ "x" and "y" should be ints.
             "image" should be a string with the IMAGES identifier
-            "width_or_size" should either be an int denoting the width of the entity
             or a tuple containing both width and height in that order.
             In the latter case, height should be left empty
         """
@@ -401,9 +393,9 @@ class PathingEntity(FollowingEntity):
         """ Initalizes the PathingEntity.
         """
         super(PathingEntity, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed,
-                         attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
-                         rotates=rotates, collides=collides, wall_collides=wall_collides,
-                         target_coords=target_coords, custom_name=custom_name)
+                                            attached_entity=None, pull_min=0, pull_max=c.TILE_SIZE*3,
+                                            rotates=rotates, collides=collides, wall_collides=wall_collides,
+                                            target_coords=target_coords, custom_name=custom_name)
         self.x += (c.TILE_SIZE - self.width) / 2
         self.y += (c.TILE_SIZE - self.height) / 2
         self.target_coords = target_coords
