@@ -20,7 +20,7 @@ from src.graphics import Graphics
 
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-from src import globals as g
+from src import globals as g, units
 from src import constants as c
 from src import entities
 
@@ -90,7 +90,6 @@ class Tile(object):
         """ 
         return self.image
 
-    
     def time_up(self):
         """ The function that should be called when self.timer has reached 0
             Exchanges this tile for the appropriate tile specified in the c.IMAGES variable
@@ -249,7 +248,7 @@ class FactoryTile(Tile):
                         continue
                 else:
                     self.robots.append(c.ROBOT_RETRY_TIME)
-                robot = entities.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
+                robot = units.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
                                        c.GOODS[good_name][0],
                                        c.ROBOT_MOVEMENT_SPEED)
 
@@ -304,21 +303,20 @@ class LauncherTile(FactoryTile):
         self.shoot_timer = -1
         self.angle = 0
         self.last_angle = -1
+        self.inventory["rocket"] = 1
 
     def send_goods(self):
-        """ This is called every tick and overwrites sending functionality, which Launchers shouldn't have.
+        """ This is called every tick and overwrites sending object functionality, which Launchers shouldn't have.
         """
-        if "bullet" in self.inventory and self.inventory["bullet"] > 0 and self.shoot_timer == -1:
+        if "rocket" in self.inventory and self.inventory["rocket"] > 0 and self.shoot_timer == -1:
             self.shoot_timer = c.LAUNCHER_SHOOT_SPEED
 
         if self.shoot_timer == 0 and self.shoot_direction != (0, 0) and\
-                "bullet" in self.inventory and self.inventory["bullet"] > 0:
-            self.inventory["bullet"] -= 1
+                "rocket" in self.inventory and self.inventory["rocket"] > 0:
             self.shoot()
         if self.shoot_timer > -1:
             self.shoot_timer -= 1
 
-        print(self.shoot_direction)
         # Rotational logic
         if self.shoot_direction == (1, 0):
             self.angle = 90
@@ -332,7 +330,6 @@ class LauncherTile(FactoryTile):
             self.angle = 0
 
         if self.angle != self.last_angle:
-            print("changed")
             g.update_map = True
             self.last_angle = self.angle
 
@@ -348,6 +345,8 @@ class LauncherTile(FactoryTile):
 
     def shoot(self):
         print("Bang bang, shooting in direction " + str(self.shoot_direction))
+        self.inventory["rocket"] -= 1
+        g.entity_list.append(units.LauncherRocket(self.x, self.y, self.shoot_direction))
 
 
 def area_is_free(x, y, width, height):

@@ -74,6 +74,9 @@ class Entity(object):
         self.following_entity = None
         # If the entity has collided since last check.
         self.collided = False
+        self.update_sizes = False
+
+        self.delete = False
         # Update screen
         g.force_update = True
         
@@ -107,6 +110,10 @@ class Entity(object):
 
                 self.collision_check()
 
+        if self.update_sizes:
+            self.update_sizes = False
+            self.width, self.height = g.images[self.image].get_size()
+
         if self.rotates:
             # Rotation logic, which direction is the entity facing and how many degrees should it rotate
             # Uses last angle if the entity is not moving
@@ -132,19 +139,21 @@ class Entity(object):
                 else:
                     self.angle = self.last_angle
 
-            # Update the entity if he's aiming in a new direction
+            # Update the entity if it's aiming in a new direction
             if self.angle != self.last_angle:
                 g.force_update = True
+                self.update_sizes = True
             # Remember the angle until next time
             self.last_angle = self.angle
 
     def tick(self):
         """ Dummy method for what happens every tick
         """
-        pass
+        if self.delete:
+            return "delete"
 
     def paint(self):
-        """ Paints the player on the screen
+        """ Paints the entity on the screen
         """
         if self.rotates:
             # Create a key with the current entity string and the angle
@@ -174,7 +183,7 @@ class Entity(object):
             If the value has changed, the unit has moved to another pixel and should be redrawn.
             update should be 1 if you want to update the checking to a new pixel and 0 if you don't
             
-            returns True if the player has changed pixel and False if it hasn't
+            returns True if the entity has changed pixel and False if it hasn't
         """
 
         if self.old_x != int(self.x) or self.old_y != int(self.y):
@@ -195,13 +204,12 @@ class Entity(object):
             "tile" should be a tiles.Tile object
         """
         # Get the corners of the entity
-        corners = [(self.x, self.y),
-                   (self.x+self.width, self.y),
-                   (self.x, self.y+self.height),
-                   (self.x+self.width, self.y+self.height)]
         # And get rects for those corners
         corner_rects = []
-        for corner in corners:
+        for corner in [(self.x, self.y),
+                       (self.x + self.width, self.y),
+                       (self.x, self.y + self.height),
+                       (self.x + self.width, self.y + self.height)]:
             corner_rects.append(Rect(corner, (1, 1)))
         
         if tile.rect().collidelist(corner_rects) != -1:
@@ -261,8 +269,6 @@ class Entity(object):
                     except IndexError:
                         # That index was apparently outside of the map
                         pass
-                    except:
-                        raise
             # Check if each of the zones collides with any of the tiles
             if self.col_left.collidelist(checked_tiles) != -1:
                 self.x += 1
@@ -383,8 +389,8 @@ class FollowingEntity(Entity):
                 self.collision_check()
                 if last_coords == (self.x, self.y):
                     i, j = self.get_tile()
-                    self.target_coords = (i*c.TILE_SIZE + (c.TILE_SIZE - self.width) / 2,
-                                          j*c.TILE_SIZE + (c.TILE_SIZE - self.height) / 2)
+                    self.target_coords = [i*c.TILE_SIZE + (c.TILE_SIZE - self.width) / 2,
+                                          j*c.TILE_SIZE + (c.TILE_SIZE - self.height) / 2]
 
 
 class PathingEntity(FollowingEntity):
@@ -405,7 +411,6 @@ class PathingEntity(FollowingEntity):
         self.came_from = []
         self.path = []
         self.paths_end_func = self.stop_moving
-        self.delete = False
         self.home_tile = None
         self.deliver_tile = None
         self.number = None
@@ -689,10 +694,8 @@ class PathingEntity(FollowingEntity):
         super(PathingEntity, self).update(time_diff)
 
     def tick(self):
-        super(PathingEntity, self).tick()
+        return super(PathingEntity, self).tick()
 
-        if self.delete:
-            return "delete"
 
     def stop_moving(self):
         self.target_coords = None
@@ -725,92 +728,14 @@ class PathingEntity(FollowingEntity):
             g.map[self.deliver_tile[0]][self.deliver_tile[1]].requests[self.goods] += 1
 
 
-class Robot(PathingEntity):
-    """ Class for entities that carry goods from one tile to another.
-    """
-    def __init__(self, x, y, image, movement_speed, rotates=True,
-                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
-        super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
-                         collides=collides, wall_collides=wall_collides,
-                         target_coords=target_coords, custom_name=custom_name)
-        self.paths_end_func = self._set_deliver_timer
-
-    def goods_pathfind(self, target_goods):
-        if super(Robot, self).goods_pathfind(target_goods):
-            self.goods = target_goods
-            return True
-        else:
-            return False
-
-    def _set_deliver_timer(self, i=c.ROBOT_DELIVER_TIME):
-        self.stop_moving()
-        self.deliver_timer = i
-
-    def pathfind(self, end, target_goods=None):
-        if target_goods is not None:
-            if super(Robot, self).pathfind(end):
-                self.goods = target_goods
-                x, y = self.deliver_tile
-                g.map[x][y].requests[self.goods] -= 1
-                return True
-            else:
-                return False
-        else:
-            return super(Robot, self).pathfind(end)
-
-    def tick(self):
-        if self.deliver_timer == 5:
-            self.image = "robot_empty"
-            g.force_update = True
-        if self.deliver_timer == 0:
-            self.give_goods()
-            self.image = "robot_empty"
-            g.force_update = True
-        if self.deliver_timer > -1:
-            self.deliver_timer -= 1
-
-        if self.come_home_timer is not None:
-            self.come_home_timer -= 1
-            if self.come_home_timer <= 0:
-                self.come_home()
-
-
-        return super(Robot, self).tick()
-
-    def give_goods(self):
-        try:
-            g.map[self.deliver_tile[0]][self.deliver_tile[1]].recieve_goods(self.goods)
-        except AttributeError:
-            # If the factory tile was replaced, ignore it
-            pass
-        self.paths_end_func = self.come_home
-        if super(Robot, self).pathfind(self.home_tile) is False:
-            self.come_home(c.ROBOT_RECONSTRUCT_TIME)
-
-    def come_home(self, time=c.ROBOT_COME_HOME_TIME):
-        if self.come_home_timer is not None:
-            if self.come_home_timer <= 0:
-                self.delete = True
-                try:
-                    g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number, time)
-                except AttributeError:
-                    pass
-        else:
-            self.come_home_timer = c.ROBOT_COME_HOME_TIME
-
-
-
-
 def free_of_entities(tile):
     """ A function to check if any of the entities has any of its corners inside the specified tile.
     """
-    is_free_of_entities = True
     # Loop through all normal entities.
     for entity in g.entity_list:
         if entity.corner_in_tile(tile):
-            is_free_of_entities = False
+            return False
     # Loop through all special entites
     for entity in list(g.special_entity_list.values()):
         if entity.corner_in_tile(tile):
-            is_free_of_entities = False
-    return is_free_of_entities
+            return False

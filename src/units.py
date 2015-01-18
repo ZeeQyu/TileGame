@@ -11,9 +11,10 @@
 import os
 import sys
 import random
+from pygame.rect import Rect
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-from src import tiles, entities
+from src import entities
 import src.globals as g
 import src.constants as c
 
@@ -100,7 +101,7 @@ class Package(entities.FollowingEntity):
             
         if self.target_coords == [int(self.x), int(self.y)]:
             x, y = self.get_tile()
-            tiles.make_tile(self.tile, x, y)
+            g.tile_maker_queue.insert(0, [self.tile, x, y])
             if self.attached_entity is not None:
                 g.special_entity_list[self.attached_entity].following_entity = None
                 del g.special_entity_list[self.attached_entity + "-" + self.image]
@@ -112,3 +113,129 @@ class Package(entities.FollowingEntity):
             return "deleted"
         super(Package, self).update(time_diff)
 
+
+class Robot(entities.PathingEntity):
+    """ Class for entities that carry goods from one tile to another.
+    """
+    def __init__(self, x, y, image, movement_speed, rotates=True,
+                 collides=True, wall_collides=True, target_coords=None, custom_name=None):
+        super(Robot, self).__init__(x=x, y=y, image=image, movement_speed=movement_speed, rotates=rotates,
+                         collides=collides, wall_collides=wall_collides,
+                         target_coords=target_coords, custom_name=custom_name)
+        self.paths_end_func = self._set_deliver_timer
+
+    def goods_pathfind(self, target_goods):
+        if super(Robot, self).goods_pathfind(target_goods):
+            self.goods = target_goods
+            return True
+        else:
+            return False
+
+    def _set_deliver_timer(self, i=c.ROBOT_DELIVER_TIME):
+        self.stop_moving()
+        self.deliver_timer = i
+
+    def pathfind(self, end, target_goods=None):
+        if target_goods is not None:
+            if super(Robot, self).pathfind(end):
+                self.goods = target_goods
+                x, y = self.deliver_tile
+                g.map[x][y].requests[self.goods] -= 1
+                return True
+            else:
+                return False
+        else:
+            return super(Robot, self).pathfind(end)
+
+    def tick(self):
+        if self.deliver_timer == 5:
+            self.image = "robot_empty"
+            g.force_update = True
+        if self.deliver_timer == 0:
+            self.give_goods()
+            self.image = "robot_empty"
+            g.force_update = True
+        if self.deliver_timer > -1:
+            self.deliver_timer -= 1
+
+        if self.come_home_timer is not None:
+            self.come_home_timer -= 1
+            if self.come_home_timer <= 0:
+                self.come_home()
+
+        return super(Robot, self).tick()
+
+    def give_goods(self):
+        try:
+            g.map[self.deliver_tile[0]][self.deliver_tile[1]].recieve_goods(self.goods)
+        except AttributeError:
+            # If the factory tile was replaced, ignore it
+            pass
+        self.paths_end_func = self.come_home
+        if super(Robot, self).pathfind(self.home_tile) is False:
+            self.come_home(c.ROBOT_RECONSTRUCT_TIME)
+
+    def come_home(self, time=c.ROBOT_COME_HOME_TIME):
+        if self.come_home_timer is not None:
+            if self.come_home_timer <= 0:
+                self.delete = True
+                try:
+                    g.map[self.home_tile[0]][self.home_tile[1]].robot_returned(self.number, time)
+                except AttributeError:
+                    pass
+        else:
+            self.come_home_timer = c.ROBOT_COME_HOME_TIME
+
+
+class LauncherRocket(entities.Entity):
+    """ A projectile launched by tiles.LauncherTile which is supposed to destroy collidable blocks.
+    """
+    def __init__(self, tile_x, tile_y, direction):
+        super(LauncherRocket, self).__init__(0, 0, "rocket",
+                                             movement_speed=c.ROCKET_MOVEMENT_SPEED,
+                                             rotates=True, collides=False, wall_collides=False)
+        assert direction != (0, 0), "Rockets must have a direction when created"
+        self.dir = list(direction)
+        width, height = g.images[self.image].get_size()
+        print(self.dir)
+        if self.dir[1] != 0:
+            self.x = tile_x*c.TILE_SIZE + (c.TILE_SIZE-width)/2
+            self.y = tile_y*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[1] == 1)) - 1*self.dir[1]
+        elif self.dir[0] != 0:
+            self.x = tile_x*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[0] == 1)) - 1*self.dir[0]
+            self.y = tile_y*c.TILE_SIZE + (c.TILE_SIZE-width)/2
+        # self.x = (tile_x*c.TILE_SIZE + c.TILE_SIZE/2 -
+        #           (width if self.dir[0] != 0 else height)/2 +
+        #           # Add a halftile times the direction if it's going to the right or left
+        #           c.TILE_SIZE*40 * self.dir[0])
+        # self.y = (tile_y*c.TILE_SIZE + c.TILE_SIZE/2 -
+        #           (height if self.dir[1] != 0 else width)/2 +
+        #           # Add a halftile times the direction if it's going to the right or left
+        #           c.TILE_SIZE*40 * self.dir[1])
+
+        # self.x = (tile_x * c.TILE_SIZE + self.dir[0] * c.TILE_SIZE +
+        #           # If it's travelling vertically, base the x offset off the width
+        #           (c.TILE_SIZE-(self.width if self.dir[1] != 0 else self.height)/2))
+        # self.y = (tile_y * c.TILE_SIZE + self.dir[1] * c.TILE_SIZE +
+        #           # If it's travelling vertically, base the x offset off the width
+        #           (c.TILE_SIZE-(self.height if self.dir[0] != 0 else self.width)/2))
+        self.dir = direction
+        self.tile = "dirt"
+
+    def update(self, delta_remainder):
+        if not self.delete:
+            super(LauncherRocket, self).update(delta_remainder)
+            x, y = self.get_tile()
+            # If the tile it will next be in is collidable, destroy it.
+            if g.in_map(x+self.dir[0], y+self.dir[1]) and g.get_img(x+self.dir[0], y+self.dir[1]).collides:
+                g.tile_maker_queue.insert(0, ["dirt", self.get_tile()[0] + self.dir[0], self.get_tile()[1] + self.dir[1]])
+                self.delete = True
+
+    def collision_check(self):
+        """ Destroy the rocket if it comes outside of the borders.
+        """
+        entity_rect = Rect(self.x, self.y, self.width,self.height)
+        window_rect = Rect(0, 0, g.width * c.TILE_SIZE, g.height * c.TILE_SIZE)
+        if not window_rect.contains(entity_rect):
+            self.delete = True
+        super(LauncherRocket, self).collision_check()

@@ -2,13 +2,12 @@ ZeeQyu TODO list:
 
 	Pathfinding
 		Queue system
+		Optimize by letting it try to access a tile outside the map and then being catched by one of four try blocks.
 
-    Make the turning launcher shoot bullets
-
-	Fix whatever is making packages go around corners really slow.
+    Fix derpy rocket explosion timing
+    Add scrolling to the menu.
 
 	Multitile structures
-
 	Simple enemies that try to attack you
 	Health
 	Combat

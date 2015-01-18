@@ -131,7 +131,6 @@ def event_check():
                     event.type == pgl.KEYDOWN):
                 if not g.special_entity_list["player"].browsing_menu:
                     if g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
-                        g.menu_selection = [0, 0]
                         g.special_entity_list["player"].browsing_menu = True
                         g.special_entity_list["player"].y_minus = g.special_entity_list["player"].y_plus = \
                             g.special_entity_list["player"].x_minus = g.special_entity_list["player"].x_plus = False
@@ -140,7 +139,10 @@ def event_check():
                         g.special_entity_list["tile_target"] =\
                             entities.Entity(x*c.TILE_SIZE, y*c.TILE_SIZE, "tile_target_aim",
                                             0, rotates=False, collides=False)
-                        launcher_dir = (0, 0)
+                        if type(g.map[x][y]) == tiles.LauncherTile:
+                            launcher_dir = (0, 0)
+                        else:
+                            g.menu_selection = [0, 0]
                 elif g.tile_target_selection is not None:
                     g.special_entity_list["player"].browsing_menu = False
                     g.tile_target_selection = None

@@ -179,7 +179,7 @@ IMAGES = {
     "ore3": Img("ore3.png"),
     "ore4": Img("ore4.png"),
     "ore5": Img("ore5.png"),
-    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[150, 250, "ore-tree"]),
+    "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
 
@@ -203,18 +203,19 @@ IMAGES = {
     "furnace_on": Img("furnace.png"),
 
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"],
-                    factory_input=[["iron", 5], ["battery", 1]], factory_output=[["bullet", 1]]),
+                    factory_input=[["iron", 3], ["battery", 1]], factory_output=[["rocket", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
     "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
     "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
-    "battery_factory": Img("batteryFactoryOff.png", destroy=[15, "package"], factory_alt_image="battery_factory_on",
-                           factory_input=[["iron", 5]], factory_output=[["battery", 1]], factory_timer=65),
+    "battery_factory": Img("batteryFactoryOff.png", collides=True, destroy=[15, "package"],
+                           factory_alt_image="battery_factory_on",
+                           factory_input=[["iron", 3]], factory_output=[["battery", 1]], factory_timer=65),
     "battery_factory_on": Img("batteryFactoryOn.png"),
 
     # Packages
     "endless_package": Img("packageGenPackage.png", color_code=(0, 255, 0), placeable=True),
-    "package": Img("package.png", color_code=(255, 0, 0), destroy=[50, "wreckage"]),
+    "package": Img("package.png", color_code=(255, 0, 0), destroy=[40, "wreckage"]),
     "ore-package": Img("packageOre.png", destroy=[20, "ore-wreckage"]),
     "dirt-package": Img("packageDirt.png", evolve=[75, 100, "package"], destroy=[20, "dirt-wreckage"]),
     "wreckage": Img("packageWreckage.png", destroy=[10, "grass"]),
@@ -237,6 +238,7 @@ IMAGES = {
     "robot_iron": Img("robotIron.png"),
     "robot_waste": Img("robotWaste.png"),
     "robot_battery": Img("robotBattery.png"),
+    "rocket": Img("rocket.png"),
 
     # interface
     "empty": Img("emptyPixel.png"),
@@ -316,8 +318,8 @@ GOODS = {
     "ore": ["robot_ore", "ore"],
     "iron": ["robot_iron", "package_gen_iron"],
     "waste": ["robot_waste", "dirt"],
-    "battery": ["robot_battery", "battery_gen"],
-    "bullet": ["robot_iron", "launcher"]
+    "battery": ["robot_battery", "battery_factory_button"],
+    "rocket": ["robot_iron", "launcher"]
 }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -347,6 +349,7 @@ BEETLE_MOVEMENT_SPEED = 90
 PACKAGE_MOVEMENT_SPEED = 80
 PATHER_MOVEMENT_SPEED = 120
 ROBOT_MOVEMENT_SPEED = 70
+ROCKET_MOVEMENT_SPEED = 125
 # Max travel length of the beetle (the maximum distance in pixels before the beetle changes direction)
 BEETLE_MAX_TRAVEL_PX = 24
 # The range of distance the package can be from the player while still being pulled in pixels

@@ -25,7 +25,7 @@ import pygame
 
 # make sure the own modules in /src can be imported and import them.
 sys.path.append(os.path.join(os.getcwd(), "src"))
-from src import key_input
+from src import key_input, tiles
 from src import players
 from src import maps
 # globals and constants are renamed because they are used very very often.
@@ -155,6 +155,11 @@ def main():
                             entity_has_moved = True
                     except AttributeError:
                         pass
+
+            # Check if any tiles need to be updated.
+            if g.tile_maker_queue:
+                while g.tile_maker_queue:
+                    tiles.make_tile(*g.tile_maker_queue.pop())
 
             # Update map buffer if needed
             if g.update_map:

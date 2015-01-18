@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-""" Module /launch.py
+""" Module /TileGame.py
     TileGame for Python 3
     Code and lead design by ZeeQyu
     Graphics by Pokemania00

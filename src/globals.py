@@ -52,6 +52,10 @@ tile_target_selection = None
 # A variable for storing the map generator temporarily while showing off the map generation
 map_generator = None
 
+# A queue for classes under tiles that still need to modify the map. Follows the format
+# [["tile_type", x, y], ["tile_type", x, y]]
+tile_maker_queue = []
+
 
 def create_key_dict(key_list):
     """ Copies the key_list list of lists and converts it to a dictionary, key_dict.
