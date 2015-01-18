@@ -16,6 +16,7 @@ import sys
 from random import choice, randint
 
 import pygame
+from src.graphics import Graphics
 
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
@@ -292,6 +293,63 @@ class FactoryTile(Tile):
             self.robots.append(time)
 
 
+class LauncherTile(FactoryTile):
+    """ A class that is only intended to be used for one tile, the launcher tile.
+        The purpose of it is to recieve goods just like a factory tile and then
+    """
+    def __init__(self, type, x, y):
+        super(LauncherTile, self).__init__(type, x, y)
+        g.tick_tiles.append([x, y])
+        self.shoot_direction = (0, 0)
+        self.shoot_timer = -1
+        self.angle = 0
+        self.last_angle = -1
+
+    def send_goods(self):
+        """ This is called every tick and overwrites sending functionality, which Launchers shouldn't have.
+        """
+        if "bullet" in self.inventory and self.inventory["bullet"] > 0 and self.shoot_timer == -1:
+            self.shoot_timer = c.LAUNCHER_SHOOT_SPEED
+
+        if self.shoot_timer == 0 and self.shoot_direction != (0, 0) and\
+                "bullet" in self.inventory and self.inventory["bullet"] > 0:
+            self.inventory["bullet"] -= 1
+            self.shoot()
+        if self.shoot_timer > -1:
+            self.shoot_timer -= 1
+
+        print(self.shoot_direction)
+        # Rotational logic
+        if self.shoot_direction == (1, 0):
+            self.angle = 90
+        elif self.shoot_direction == (-1, 0):
+            self.angle = 270
+        elif self.shoot_direction == (0, 1):
+            self.angle = 0
+        elif self.shoot_direction == (0, -1):
+            self.angle = 180
+        else:
+            self.angle = 0
+
+        if self.angle != self.last_angle:
+            print("changed")
+            g.update_map = True
+            self.last_angle = self.angle
+
+            # Creating the rotated images
+            key = self.type
+            if self.angle != 0:
+                key += str(self.angle)
+            if key in g.images:
+                self.image = key
+            else:
+                g.images[key] = Graphics(pygame.transform.rotate(g.images[self.type].get(), self.angle))
+                self.image = key
+
+    def shoot(self):
+        print("Bang bang, shooting in direction " + str(self.shoot_direction))
+
+
 def area_is_free(x, y, width, height):
     """ Checks an area for if a multitile can be placed there
         "x" and "y" is the top left corner tile in the area.
@@ -356,15 +414,17 @@ def make_tile(tile_type, x, y, target=None):
         tile = MultiTileHead(tile_type, x, y, width, height)
     else:
         # Remove all robots if it's a robot sending factory tile.
-
-        if g.map[x][y] is not None and g.get_img(x, y).factory_output:
+        if g.map[x][y] is not None and g.get_img(x, y).factory_output and type(g.map[x][y]) is not LauncherTile:
             for robot in g.map[x][y].robots:
                 if type(robot) is not int:
                     robot.delete = True
+                    robot.return_request()
 
         # Check if target was specified. If so, this tile is a pointer.
         if target is not None:
             tile = MultiTilePointer(tile_type, x, y, *target)
+        elif tile_type == "launcher":
+            tile = LauncherTile(tile_type, x, y)
         elif c.IMAGES[tile_type].factory_input or c.IMAGES[tile_type].factory_output:
             tile = FactoryTile(tile_type, x, y)
         else:

@@ -71,6 +71,13 @@ class Player(entities.Entity):
                                    (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[0]) / 2,
                                    good_target[1]*c.TILE_SIZE +
                                    (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[1]) / 2))
+            # Show the direction the selected launcher tile is shooting
+            if type(g.map[x][y]) == tiles.LauncherTile and g.map[x][y].shoot_direction != (0, 0):
+                g.screen.blit(g.images["tile_target_aim"].get(),
+                              ((g.map[x][y].shoot_direction[0]+x)*c.TILE_SIZE +
+                               (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[0]) / 2,
+                              ((g.map[x][y].shoot_direction[1]+y)*c.TILE_SIZE +
+                               (c.TILE_SIZE - g.images["tile_target_aim"].get_size()[1]) / 2)))
 
     def update(self, time_diff):
         """ Calls the superclass update and updates the state of the aim marker.

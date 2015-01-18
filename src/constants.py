@@ -203,14 +203,14 @@ IMAGES = {
     "furnace_on": Img("furnace.png"),
 
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"],
-                    factory_input=[["iron", 5], ["battery", 1]]),
+                    factory_input=[["iron", 5], ["battery", 1]], factory_output=[["bullet", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
     "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
     "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
     "battery_factory": Img("batteryFactoryOff.png", destroy=[15, "package"], factory_alt_image="battery_factory_on",
                            factory_input=[["iron", 5]], factory_output=[["battery", 1]], factory_timer=65),
-    "battery_factry_on": Img("batteryFactoryOn.png"),
+    "battery_factory_on": Img("batteryFactoryOn.png"),
 
     # Packages
     "endless_package": Img("packageGenPackage.png", color_code=(0, 255, 0), placeable=True),
@@ -316,7 +316,8 @@ GOODS = {
     "ore": ["robot_ore", "ore"],
     "iron": ["robot_iron", "package_gen_iron"],
     "waste": ["robot_waste", "dirt"],
-    "battery": ["robot_battery", "battery_gen"]
+    "battery": ["robot_battery", "battery_gen"],
+    "bullet": ["robot_iron", "launcher"]
 }
 
 BACKGROUND_COLOR = (0, 0, 0)
@@ -360,6 +361,10 @@ ROBOT_COME_HOME_TIME = 5
 # The time in ticks it takes for a robot that's been loaded back into its factory to set out again with new goods.
 ROBOT_LOAD_TIME = 10
 ROBOT_RECONSTRUCT_TIME = 600
+
+# Launcher variables
+# The time in ticks between shots at max speed.
+LAUNCHER_SHOOT_SPEED = 20
 
 # Key for key configuration
 CONFIG_KEYS_KEY = pgl.K_INSERT

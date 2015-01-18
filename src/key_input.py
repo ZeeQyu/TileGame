@@ -16,7 +16,7 @@ import pygame.locals as pgl
 
 
 sys.path.append(os.path.join(os.getcwd(), "sys"))
-from src import globals as g
+from src import globals as g, tiles
 from src import units
 from src import interface
 from src import constants as c
@@ -29,7 +29,11 @@ player_dirs = {
     (0, -1): False
 }
 
+launcher_dir = (0, 0)
+
+
 def event_check():
+    global launcher_dir
     for event in pygame.event.get():
         # Quit code
         if event.type == pgl.QUIT:
@@ -103,16 +107,25 @@ def event_check():
                         del g.non_entity_list["menu"]
                         g.special_entity_list["player"].browsing_menu = False
                 elif "tile_target" in g.special_entity_list:
-                    if g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                    x, y = g.special_entity_list["player"].get_aim_tile()
+
+                    if type(g.map[x][y]) == tiles.LauncherTile:
+                        g.map[x][y].shoot_direction = launcher_dir
+                        g.tile_target_selection = None
+                        del g.special_entity_list["tile_target"]
+                        g.special_entity_list["player"].browsing_menu = False
+
+                    elif g.get_img(x, y).factory_output:
                         good_names = []
-                        for good in g.get_img(*g.special_entity_list["player"].get_aim_tile()).factory_output:
+                        for good in g.get_img(x, y).factory_output:
                             good_names.append(good[0])
                         g.non_entity_list["menu"] = interface.TileTargetMenu(good_names)
-                        g.force_update = True
+
                     else:
                         g.tile_target_selection = None
                         del g.special_entity_list["tile_target"]
                         g.special_entity_list["player"].browsing_menu = False
+                    g.force_update = True
 
             elif (event.key == g.key_dict["change_target"][0] and
                     event.type == pgl.KEYDOWN):
@@ -127,11 +140,13 @@ def event_check():
                         g.special_entity_list["tile_target"] =\
                             entities.Entity(x*c.TILE_SIZE, y*c.TILE_SIZE, "tile_target_aim",
                                             0, rotates=False, collides=False)
+                        launcher_dir = (0, 0)
                 elif g.tile_target_selection is not None:
                     g.special_entity_list["player"].browsing_menu = False
                     g.tile_target_selection = None
                     del g.special_entity_list["tile_target"]
-                    del g.non_entity_list["menu"]
+                    if "menu" in g.non_entity_list:
+                        del g.non_entity_list["menu"]
                     g.force_update = True
 
 
@@ -157,8 +172,24 @@ def _move(event, direction):
                 if "menu" in g.non_entity_list:
                     g.non_entity_list["menu"].selection_queue.insert(0, direction)
                 else:
-                    g.tile_target_selection[0] += direction[0]
-                    g.tile_target_selection[1] += direction[1]
+                    x, y = g.special_entity_list["player"].get_aim_tile()
+                    # If we're dealing with a launcher, set a direction,
+                    # then adjust the tile target to be on either side of the launcher
+                    if type(g.map[x][y]) is tiles.LauncherTile:
+                        global launcher_dir
+                        launcher_dir = direction
+                        g.tile_target_selection[0] = x + launcher_dir[0]
+                        g.tile_target_selection[1] = y + launcher_dir[1]
+                    elif type(g.map[x][y]) is tiles.FactoryTile:
+                        g.tile_target_selection[0] += direction[0]
+                        g.tile_target_selection[1] += direction[1]
+                    else:
+                        g.tile_target_selection = None
+                        del g.special_entity_list["tile_target"]
+                        g.special_entity_list["player"].browsing_menu = False
+                        g.force_update = True
+
+
             else:
                 g.non_entity_list["menu"].selection_queue.insert(0, direction)
             g.force_update = True

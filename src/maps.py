@@ -95,21 +95,6 @@ def pixel_type(pixel, x, y):
     return c.DEFAULT_TILE
     
 
-def paint_map(screen):
-    """ Iterates through the map and paints all the tiles in that map on the screen.
-        
-        Uses variables from g.py and c.py
-         
-        DEPRECATED! use update_map and screen.blit instead! (Much quicker as it doesn't
-            have to update the entire screen every frame then)
-    """
-    g.screen.fill(c.BLACK)
-    for i in range(len(g.map)):
-        for j in range(len(g.map[i])):
-            image = c.images[g.map[i][j].type()].get()
-            screen.blit(image, (i*c.TILE_SIZE, j*c.TILE_SIZE))
-            
-
 def update_map():
     """ Iterates through the map and paints all the tiles in that map in a surface object
         returns that pygame.Surface object
@@ -125,6 +110,7 @@ def update_map():
             except:
                 import pdb, sys
                 e, m, tb = sys.exc_info()
+                print(e, m, tb)
                 pdb.post_mortem(tb)
             map_screen_buffer.blit(image, (i*c.TILE_SIZE, j*c.TILE_SIZE))
             

@@ -680,8 +680,7 @@ class PathingEntity(FollowingEntity):
                             # If all else fails, destroy the robot
                             if self.home_tile:
                                 self.come_home()
-                                if self.deliver_tile != self.home_tile:
-                                    g.map[self.deliver_tile[0]][self.deliver_tile[1]].requests[self.goods] += 1
+                                self.return_request()
                     else:
                         self.pathfind(self.path[-1])
                 else:
@@ -717,6 +716,13 @@ class PathingEntity(FollowingEntity):
             self.set_target_tile(x, y)
         else:
             self.paths_end_func()
+
+    def return_request(self):
+        """ When the robot is destroyed under specific circumstances,
+            make sure the tile it was travelling to requests new resources
+        """
+        if self.home_tile and self.deliver_tile != self.home_tile:
+            g.map[self.deliver_tile[0]][self.deliver_tile[1]].requests[self.goods] += 1
 
 
 class Robot(PathingEntity):

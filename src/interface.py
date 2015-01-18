@@ -462,7 +462,7 @@ def _regenerate_map():
         g.special_entity_list["player"].x = g.player_start_x
         g.special_entity_list["player"].y = g.player_start_y
         g.special_entity_list["player"].following_entity = None
-
+    g.menu_selection = [0, 0]
     return return_value
 
 
