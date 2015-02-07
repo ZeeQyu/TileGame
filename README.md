@@ -27,8 +27,10 @@ Starting tips: Try building an ore mine, a furnace and a package factory with yo
 - Press **Q** to open a building menu that is context-sensitive, and will let you build different
     things depending on what you aim at.
 
-        (Aiming at a package will let you build a furnace, package factory or launcher and aiming at a package on a
-        piece of ore will let you build an ore miner.)
+        (Aiming at a package will let you build a furnace, package factory, battery factory or launcher and
+        aiming at a package on a piece of ore will let you build an ore miner.
+        Building one of each shows the functionality of all the tiles.
+        Start with the first three to get more packages.)
        
 - Press **W** to set a custom delivery target for a building you built using packages and the Q-menu.
     The tile will prioritize that tile over the others.

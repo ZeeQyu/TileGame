@@ -32,11 +32,14 @@ X Random Grass and Tree textures
 X Reconfigurable keys (insert key)
 X Friendly units
 X A character that can alter the terrain
-/ Adding window icon (Picture won't display in taskbar, this might not be fixable until packaging into installer.
+/ Adding window icon (Picture won't display in taskbar in windows, this might not be fixable until packaging into installer.
 X Dragging packages
 X Multi-tiles
 X Build Structure-Window
-/ Random map generator
+X Random map generator
+X Pathfinding
+X Factories
+X Launcher tiles that remove tiles automatically
   Multitile structures
   Enemies and combat
   Win condition

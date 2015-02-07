@@ -2,7 +2,8 @@ ZeeQyu TODO list:
 
 	Pathfinding
 		Queue system
-		Optimize by letting it try to access a tile outside the map and then being catched by one of four try blocks.
+		Rewrite the entire pathing system with caching paths and updates when the map is updated
+		    rather than all the time.
 
     Add scrolling to the menu.
     Change menu to use a state machine

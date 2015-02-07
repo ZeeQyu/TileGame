@@ -331,7 +331,7 @@ class LauncherTile(FactoryTile):
         self.shoot_timer = -1
         self.angle = 0
         self.last_angle = -1
-        self.inventory["rocket"] = 1
+        # self.inventory["rocket"] = 1
 
     def send_goods(self):
         """ This is called every tick and overwrites sending object functionality, which Launchers shouldn't have.
