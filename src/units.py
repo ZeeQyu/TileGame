@@ -193,13 +193,14 @@ class LauncherRocket(entities.Entity):
     def __init__(self, tile_x, tile_y, direction):
         super(LauncherRocket, self).__init__(0, 0, "rocket",
                                              movement_speed=c.ROCKET_MOVEMENT_SPEED,
+                                             # movement_speed=0,
                                              rotates=True, collides=False, wall_collides=False)
-        assert direction != (0, 0), "Rockets must have a direction when created"
+        assert abs(int(direction[0]) + int(direction[1])) == 1,\
+            "Rockets must have a direction that is 1 in eiher direction"
         self.dir = list(direction)
         width, height = g.images[self.image].get_size()
-        print(self.dir)
         # If it's travelling horizontally
-        if self.dir[0] != 0:
+        if self.dir[0] != 0:  # self.dir is the direction he's travelling in, can be (1,0), (-1,0), (0,1), (0,-1)
             self.x = tile_x*c.TILE_SIZE - height/2 + c.TILE_SIZE*int(bool(self.dir[0] == 1)) - 1*self.dir[0]
             self.y = tile_y*c.TILE_SIZE + (c.TILE_SIZE-width)/2
         elif self.dir[1] != 0:
@@ -210,17 +211,14 @@ class LauncherRocket(entities.Entity):
         self.tile = "dirt"
 
     def update(self, delta_remainder):
-        if not self.delete:
+        if not self.delete:  # Don't destroy too many tiles.
             super(LauncherRocket, self).update(delta_remainder)
             x, y = self.get_tile()
-            # If the tile it will next be in is collidable, destroy it.
-            if g.in_map(x+self.dir[0], y+self.dir[1]) and g.get_img(x+self.dir[0], y+self.dir[1]).collides:
-                g.tile_maker_queue.insert(0, [self.tile, self.get_tile()[0] + self.dir[0],
-                                              self.get_tile()[1] + self.dir[1]])
-                self.delete = True
+
 
     def collision_check(self):
-        """ Destroy the rocket if it comes outside of the borders.
+        """ Destroy the rocket if it comes outside of the borders. Also make sure a rocket that collides with a tile
+            destroys the tile.
         """
         entity_rect = Rect(self.x, self.y, self.width, self.height)
         window_rect = Rect(0, 0, g.width * c.TILE_SIZE, g.height * c.TILE_SIZE)
@@ -231,22 +229,27 @@ class LauncherRocket(entities.Entity):
         self.update_collision_rects()
         # Get the tile the entity is standing on
         tile_pos = self.get_tile()
+        checked_tile_rects = []
         checked_tiles = []
 
-        # TOOD Change this to check only one side and destroy tiles when it hits a wall.
         # Loop through a 3x3 tile square around the entity, to not check the entire map
-        # for i in range(tile_pos[0] - 1, tile_pos[0] + 2):
-        #     for j in range(tile_pos[1] - 1, tile_pos[1] + 2):
-        #         try:
-        #             if c.IMAGES[g.map[i][j].type].collides:
-        #                 checked_tiles.append(g.map[i][j].rect())
-        #         except IndexError:
-        #             # That index was apparently outside of the map
-        #             pass
-        # # Check if each of the zones collides with any of the tiles
-        # if self.col_left.collidelist(checked_tiles) != -1:
-        # if self.col_right.collidelist(checked_tiles) != -1:
-        # if self.col_bottom.collidelist(checked_tiles) != -1:
-        # if self.col_top.collidelist(checked_tiles) != -1:
+        for i in (range(tile_pos[0]-1, tile_pos[0]+2) if self.dir[0] == 0 else [tile_pos[0] + self.dir[0]]):
+            for j in (range(tile_pos[1]-1, tile_pos[1]+2) if self.dir[1] == 0 else [tile_pos[1] + self.dir[1]]):
+                try:
+                    if c.IMAGES[g.map[i][j].type].collides:
+                        checked_tiles.append((i, j))
+                        checked_tile_rects.append(g.map[i][j].rect())
 
-        return super(LauncherRocket, self).collision_check()
+                except IndexError:  # That index was apparently outside of the map
+                    pass
+
+        # Find the tile that collides
+        index = self.rects[(-self.dir[0], -self.dir[1])].collidelist(checked_tile_rects)
+        if index != -1:
+            # Replace that tile.
+            g.tile_maker_queue.insert(0, [self.tile,
+                                          checked_tiles[index][0],
+                                          checked_tiles[index][1]])
+            self.delete = True
+
+        return super(LauncherRocket, self).collision_check

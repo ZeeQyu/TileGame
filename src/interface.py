@@ -484,7 +484,7 @@ def _set_pather_target():
         print("\tRequests: " + str(g.map[x][y].requests))
     except AttributeError:
         print("\tFailed printing req")
-
+    print("\tEvolve timer: " + str(g.map[x][y].timer))
 
     if "pather" in g.special_entity_list:
         x, y = g.special_entity_list["player"].get_aim_tile()
@@ -492,6 +492,7 @@ def _set_pather_target():
         return True
     else:
         return True
+
 
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.

@@ -52,6 +52,8 @@ class Entity(object):
         # seconds for each pixel
         self.movement_speed = float(movement_speed)
         # Creates four rectangles for collision checking
+        # Format for rects is
+        self.rects = {}
         self.update_collision_rects()
         # Whether or not the entity collides with terrain
         self.collides = collides
@@ -212,26 +214,26 @@ class Entity(object):
     def update_collision_rects(self):
         """ Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
         """
-        self.col_right = Rect(self.x + self.width - 1, 
+        self.rects[(-1, 0)] = Rect(self.x + self.width - 1,  # Right
                               self.y + 1,
                               1,
                               self.height - 2)
         
-        self.col_left = Rect(self.x,
+        self.rects[(1, 0)] = Rect(self.x,  # Left
                              self.y + 1,
                              1,
                              self.height - 2)
         
-        self.col_top = Rect(self.x + 1,
+        self.rects[(0, 1)] = Rect(self.x + 1,  # Top
                             self.y,
                             self.width - 2,
                             1)
-        
-        self.col_bottom = Rect(self.x + 1,
-                               self.y + self.height - 1,
+
+        self.rects[(0, -1)] = Rect(self.x + 1,
+                               self.y + self.height - 1,  # Bottom
                                self.width - 2,
                                1)
-        
+
     def collision_check(self):
         """ Method for checking if the entity has run into a tree or something
             and move it back a pixel if it has
@@ -261,19 +263,15 @@ class Entity(object):
                     except IndexError:
                         # That index was apparently outside of the map
                         pass
+
             # Check if each of the zones collides with any of the tiles
-            if self.col_left.collidelist(checked_tiles) != -1:
-                self.x += 1
-                collided = True
-            if self.col_right.collidelist(checked_tiles) != -1:
-                self.x -= 1
-                collided = True
-            if self.col_bottom.collidelist(checked_tiles) != -1:
-                self.y -= 1
-                collided = True
-            if self.col_top.collidelist(checked_tiles) != -1:
-                self.y += 1
-                collided = True
+            # If so, move it in the appropriate direction, specified in update_collision_rects() as the keys
+            for rect in self.rects:
+                if self.rects[rect].collidelist(checked_tiles) != -1:
+                    self.x += rect[0]
+                    self.y += rect[1]
+                    collided = True
+
         self.collided = collided
 
 
@@ -482,6 +480,7 @@ class PathingEntity(FollowingEntity):
                 self.next_target_tile()
                 return True
 
+                # # Old version
                 # if done is True:
                 #     full_path = []
                 #     self.deliver_tile = deliver_tile
@@ -731,3 +730,4 @@ def free_of_entities(tile):
     for entity in list(g.special_entity_list.values()):
         if entity.corner_in_tile(tile):
             return False
+    return True

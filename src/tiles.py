@@ -31,6 +31,7 @@ class AreaNotFreeException(Exception):
     """
     pass
 
+
 class Tile(object):
     """ Tile object containing the type and location of the tile.
     """
@@ -152,20 +153,25 @@ class MultiTilePointer(Tile):
 class FactoryTile(Tile):
     """ A FactoryTile is a tile that gives out or takes in resources and might do something else.
     """
-    def __init__(self, type, x, y):
-        super(FactoryTile, self).__init__(type, x, y)
+    def __init__(self, tile_type, x, y):
+        super(FactoryTile, self).__init__(tile_type, x, y)
+        # print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
+
         self.goods_timer = -1
-        self.inventory = {}
         self.robots = []
         if c.IMAGES[self.type].factory_output:
             g.tick_tiles.append([self.x, self.y])
-        # print("Factory_tile of type " + self.type + " was created at " + str(self.x) + ", "+ str(self.y))
-        self.good_targets = {}
 
+        self.good_targets = {}
+        # Contains the last paths for all robots by number. (example: {1: [(1,5), (1,4), (1,3)], 2: [(65, 33), (66, 33)]}
+        self.last_paths = {}
+        # Contains last delivery tiles for all robots by number. (example: {1: (2,3), 2: (5,7)}  )
+        self.last_delivery_tiles = {}
+
+        self.inventory = {}
         self.requests = {}
         for item in c.IMAGES[self.type].factory_input:
             self.requests[item[0]] = item[1]
-
 
     def tick(self):
         """ Decreases the timer until this tile sends new goods. Sets the timer to -1 after it sends goods.
@@ -239,7 +245,7 @@ class FactoryTile(Tile):
                     if not (good_name in self.inventory and self.inventory[good_name] > 0):
                         continue
 
-                # Checks if the robot is at home. True if it is
+                # Is the robot home?
                 if len(self.robots) > i:
                     if type(self.robots[i]) is int and self.robots[i] >= 0:
                         self.robots[i] -= 1
@@ -249,10 +255,28 @@ class FactoryTile(Tile):
                 else:
                     self.robots.append(c.ROBOT_RETRY_TIME)
                 robot = units.Robot(self.x * c.TILE_SIZE, self.y * c.TILE_SIZE,
-                                       c.GOODS[good_name][0],
-                                       c.ROBOT_MOVEMENT_SPEED)
+                                    c.GOODS[good_name][0],
+                                    c.ROBOT_MOVEMENT_SPEED)
 
-                # Tries to find a straight path to a specific target if there is one
+                # used_last_path = False
+                # # Use last path
+                # if i in self.last_delivery_tiles and g.get_img(*self.last_delivery_tiles[i]).factory_input:
+                #     if (good_name in self.good_targets and
+                #             self.good_targets[good_name] == self.last_delivery_tiles[i]):
+                #         # Check last path
+                #         for tile in self.last_paths[i]:
+                #             if g.get_img(*tile).collides:
+                #                 used_last_path = True
+                #                 break
+                #         # Valid path
+                #         else:
+                #             robot.path = self.last_paths[i]
+                #             robot.deliver_tile = self.last_delivery_tiles[i]
+                #             robot.next_target_tile()
+                #             print("Used last path")
+
+                # if used_last_path is False:
+                # Straight pathfind
                 can_recieve = False
                 if good_name in self.good_targets:
                     for reciever_good in g.get_img(*self.good_targets[good_name]).factory_input:
@@ -264,13 +288,17 @@ class FactoryTile(Tile):
                         else:
                             can_recieve = False
 
-                # If the previous, straight path pathfind didn't work, try this
+                # Circular pathfind
                 if not can_recieve and not robot.goods_pathfind(good_name):
                     robot.delete = True
                     self.robots[i] = c.ROBOT_RETRY_TIME
                     continue
 
-                # If either of the pathfindings work
+                # Save the path
+                self.last_paths[i] = robot.path
+                self.last_delivery_tiles[i] = robot.deliver_tile
+
+                # If any of the pathfindings work
                 self.robots[i] = robot
                 robot.number = i
                 robot.goods = good_name
@@ -296,8 +324,8 @@ class LauncherTile(FactoryTile):
     """ A class that is only intended to be used for one tile, the launcher tile.
         The purpose of it is to recieve goods just like a factory tile and then
     """
-    def __init__(self, type, x, y):
-        super(LauncherTile, self).__init__(type, x, y)
+    def __init__(self, tile_type, x, y):
+        super(LauncherTile, self).__init__(tile_type, x, y)
         g.tick_tiles.append([x, y])
         self.shoot_direction = (0, 0)
         self.shoot_timer = -1
@@ -344,7 +372,8 @@ class LauncherTile(FactoryTile):
                 self.image = key
 
     def shoot(self):
-        print("Bang bang, shooting in direction " + str(self.shoot_direction))
+        if c.NORMAL_DEBUG:
+            print("Bang bang, shooting in direction " + str(self.shoot_direction))
         self.inventory["rocket"] -= 1
         g.entity_list.append(units.LauncherRocket(self.x, self.y, self.shoot_direction))
 

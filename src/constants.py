@@ -12,8 +12,8 @@ import pygame.locals as pgl
 
 
 # Activates various debug callouts that normally should be on, like fps meter.
-NORMAL_DEBUG = True
-SPECIAL_DEBUG = True
+NORMAL_DEBUG = False
+SPECIAL_DEBUG = False
 
 # Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
 GAME_SPEED = 1
@@ -21,7 +21,7 @@ GAME_SPEED = 1
 if NORMAL_DEBUG:
     # Change this to True if you want the screen to
     # update every cycle (all the time) and get max FPS (change sleep time)
-    FORCE_UPDATE = False
+    FORCE_UPDATE = True
 else:
     FORCE_UPDATE = False
 
@@ -93,7 +93,6 @@ class Img(object):
         for item in factory_input:
             if type(item) is not list:
                 self.factory_input = [factory_input]
-                print(self.factory_input)
                 break
         else:
             self.factory_input = factory_input
@@ -101,7 +100,6 @@ class Img(object):
         for item in factory_output:
             if type(item) is not list:
                 self.factory_output = [factory_output]
-                print(self.factory_output)
                 break
         else:
             self.factory_output = factory_output
@@ -199,18 +197,18 @@ IMAGES = {
     "hq": Img("hq.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package"], multi_tile=(2, 2)),
     "start_tile": Img("emptyPixel.png", color_code=(178, 0, 255)),
     "furnace": Img("furnaceOff.png", collides=True, destroy=[15, "package"], factory_input=[["ore", 3]],
-                   factory_output=[["iron", 1], ["waste", 2]], factory_timer = 30, factory_alt_image = "furnace_on"),
+                   factory_output=[["iron", 1]], factory_timer = 30, factory_alt_image = "furnace_on"),
     "furnace_on": Img("furnace.png"),
 
     "launcher": Img("launcher.png", collides=True, destroy=[15, "package"],
-                    factory_input=[["iron", 3], ["battery", 1]], factory_output=[["rocket", 1]]),
+                    factory_input=[["iron", 1], ["battery", 1]], factory_output=[["rocket", 1]]),
     "package_gen": Img("packageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
     "package_gen_iron": Img("packageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
     "package_gen_package": Img("packageGenPackage.png", destroy=[15, "package_gen"]),
     "battery_factory": Img("batteryFactoryOff.png", collides=True, destroy=[15, "package"],
                            factory_alt_image="battery_factory_on",
-                           factory_input=[["iron", 3]], factory_output=[["battery", 1]], factory_timer=65),
+                           factory_input=[["iron", 2]], factory_output=[["battery", 1]], factory_timer=65),
     "battery_factory_on": Img("batteryFactoryOn.png"),
 
     # Packages

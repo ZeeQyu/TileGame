@@ -4,8 +4,8 @@ ZeeQyu TODO list:
 		Queue system
 		Optimize by letting it try to access a tile outside the map and then being catched by one of four try blocks.
 
-    Fix derpy rocket explosion timing
     Add scrolling to the menu.
+    Change menu to use a state machine
 
 	Multitile structures
 	Simple enemies that try to attack you
@@ -18,6 +18,8 @@ ZeeQyu TODO list:
 	Projectiles (Entities moving f.ex 30 degrees) using matrices and vectors
 	Turrets shooting said projectiles at enemies
 	Projectile collision
+
+	Check out Simplex noise (Perlin noise)
 
 Pethax Graphics TODO list:
 

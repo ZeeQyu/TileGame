@@ -49,7 +49,7 @@ class Player(entities.Entity):
         super(Player, self).paint()
 
         if self.removing_tile:
-            if g.get_img(*self.get_aim_tile()).destroy is not None:
+            if g.in_map(*self.get_aim_tile()) and g.get_img(*self.get_aim_tile()).destroy is not None:
                 aim = "remove_aim"
             else:
                 aim = "remove_aim_fail"
@@ -62,7 +62,7 @@ class Player(entities.Entity):
         g.screen.blit(g.images[aim].get(), (x, y))
 
         # When you aim at a factory, display the set targets for that tile
-        if g.get_img(*self.last_aim_tile).factory_output:
+        if g.in_map(*self.last_aim_tile) and g.get_img(*self.last_aim_tile).factory_output:
             x, y = self.last_aim_tile
             if g.map[x][y].good_targets:
                 for good_target in list(g.map[x][y].good_targets.values()):
