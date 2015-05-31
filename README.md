@@ -30,7 +30,7 @@ Starting tips: Try building an ore mine, a furnace and a package factory with yo
         (Aiming at a package will let you build a furnace, package factory, battery factory or launcher and
         aiming at a package on a piece of ore will let you build an ore miner.
         Building one of each shows the functionality of all the tiles.
-        Start with the first three to get more packages.)
+        Start with an ore miner, a furnace and a package factory to generate more packages.)
        
 - Press **W** to set a custom delivery target for a building you built using packages and the Q-menu.
     The tile will prioritize that tile over the others.
