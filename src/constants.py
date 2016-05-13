@@ -180,7 +180,7 @@ IMAGES = {
     "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
-    "water": Img("waterPlaceholder.png", collides=True),
+    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255)),
 
     # Large Nature
     "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
@@ -339,6 +339,9 @@ DEACTIVATE_RANDOM_TEXTURES = False
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16
 
+# A list of relative, orthagonal directions to iterate through instead of rewriting this list every time
+RELATIVE_DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
 # Entities
 # Names of special entities
 PLAYER_NAME = "player"
@@ -401,8 +404,13 @@ GEN_MAP_SIZE = (60, 50)
 GEN_TREE_PER_MILLE = 500
 GEN_ORE_PER_MILLE = 5
 GEN_ROCK_PER_MILLE = 5
-# Number of times the terrain should be smoothed (3)
-GEN_ITERATIONS = 3
+GEN_WATER_PER_MILLE = 1
+# Number of times water should expand from sources
+GEN_WATER_ITERATIONS = 5
+# Chance in percent of water expanding in a given direction
+GEN_WATER_EXPAND_CHANCE = 80
+# Number of times the trees  should be smoothed and ores evolved (3)
+GEN_TREE_ITERATIONS = 3
 # The chance of ore clusters evolving from ores every iteration
 GEN_ORE_CHANCE = 20
 # The number of times the rock formations should be evolved (16)

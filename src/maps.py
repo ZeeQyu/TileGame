@@ -131,10 +131,18 @@ def generate_map():
                 return_image.set_at((i, j), c.IMAGES["ore"].color_code)
             elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE:
                 return_image.set_at((i, j), c.IMAGES["rock"].color_code)
+            elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE - c.GEN_WATER_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["water"].color_code)
             else:
                 return_image.set_at((i, j), c.IMAGES["grass"].color_code)
-    for i in range(c.GEN_ITERATIONS):
-        return_image = _iterate_generation(return_image)
+
+    for i in range(c.GEN_WATER_ITERATIONS):
+        return_image = _iterate_water(return_image)  # Expanding water
+
+    return_image = _smooth_water(return_image)  # Smooth water (remove islands of one block)
+
+    for i in range(c.GEN_TREE_ITERATIONS):
+        return_image = _iterate_trees(return_image)  # Smoothing trees
 
     for i in range(c.GEN_ROCK_ITERATIONS):
         return_image = _iterate_rocks(return_image)
@@ -174,16 +182,25 @@ def generate_map_generator():
                 return_image.set_at((i, j), c.IMAGES["ore"].color_code)
             elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE:
                 return_image.set_at((i, j), c.IMAGES["rock"].color_code)
+            elif random_number >= 1000 - c.GEN_ORE_PER_MILLE - c.GEN_ROCK_PER_MILLE - c.GEN_WATER_PER_MILLE:
+                return_image.set_at((i, j), c.IMAGES["water"].color_code)
             else:
                 return_image.set_at((i, j), c.IMAGES["grass"].color_code)
 
     yield _yield_image_conversion(return_image)
 
-    for i in range(c.GEN_ITERATIONS):
-        return_image = _iterate_generation(return_image)
+    for i in range(c.GEN_WATER_ITERATIONS):  # Expand water
+        return_image = _iterate_water(return_image)
         yield _yield_image_conversion(return_image)
 
-    for i in range(c.GEN_ROCK_ITERATIONS):
+    return_image = _smooth_water(return_image)  # Smooth water
+    yield _yield_image_conversion(return_image)
+
+    for i in range(c.GEN_TREE_ITERATIONS):  # Smooth trees and expand ores
+        return_image = _iterate_trees(return_image)
+        yield _yield_image_conversion(return_image)
+
+    for i in range(c.GEN_ROCK_ITERATIONS):  # Expand trees
         return_image = _iterate_rocks(return_image)
         yield _yield_image_conversion(return_image)
 
@@ -191,7 +208,50 @@ def generate_map_generator():
 map_image = None
 
 
-def _iterate_generation(passed_image):
+def _iterate_water(passed_image):
+    """ Evolves water pools formations every iteration
+    """
+    global map_image
+    map_image = passed_image
+    iterated_image = passed_image
+    for x in range(map_image.get_width()):
+        for y in range(map_image.get_height()):
+            if _compare("water", x, y):
+                if random.randint(1, 100) <= c.GEN_WATER_EXPAND_CHANCE:
+                    directions = []
+                    for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+                        if (0 <= x + relative_x < map_image.get_width() and
+                                0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
+
+                            if not _compare("water", x + relative_x, y + relative_y):
+                                directions.append((relative_x, relative_y))
+                    if len(directions) > 0:  # If there's a non-water in any direction
+                        relative_x, relative_y = random.choice(directions)
+                        iterated_image.set_at((x + relative_x, y + relative_y), c.IMAGES["water"].color_code)
+
+    return iterated_image
+
+
+def _smooth_water(passed_image):
+    global map_image
+    map_image = passed_image
+    iterated_image = passed_image
+    for x in range(map_image.get_width()):
+        for y in range(map_image.get_height()):
+            directions = []
+            for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+                if (0 <= x + relative_x < map_image.get_width() and
+                        0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
+
+                    if not _compare("water", x + relative_x, y + relative_y):
+                        directions.append((relative_x, relative_y))
+            if len(directions) == 0:  # If this is a single non-water surrounded by water, make it water
+                iterated_image.set_at((x, y), c.IMAGES["water"].color_code)
+
+    return iterated_image
+
+
+def _iterate_trees(passed_image):
     """ Function for iteratively making the generated area more smooth and evolving ore formations
     """
     global map_image
@@ -200,6 +260,10 @@ def _iterate_generation(passed_image):
     iterated_image.fill(c.IMAGES["grass"].color_code)
     for x in range(map_image.get_width()):
         for y in range(map_image.get_height()):
+            # Skip this tile if it's water
+            if _compare("water", x, y):
+                iterated_image.set_at((x, y), c.IMAGES["water"].color_code)
+                continue
             # Check the surroundings of the tile
             amount = 0
             ores = 0
@@ -236,27 +300,32 @@ def _iterate_rocks(passed_image):
                 rocks = 0
                 for i in range(x - 1, x + 2, 1):
                     for j in range(y - 1, y + 2, 1):
-                        rock = _is_blocked(x, y, i, j)[2:][0]
+                        rock = _is_blocked(x, y, i, j)[2]
                         if rock:
                             rocks += 1
                 if rocks <= 2:
-                    relative_x = relative_y = 0
-                    while relative_x is 0 and relative_y is 0:
-                        relative_x = random.randint(-1, 1)
-                        relative_y = random.randint(-1, 1)
-                    iterated_image.set_at((x + relative_x, y + relative_y), c.IMAGES["rock"].color_code)
+                    directions = []
+                    for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+                        if (0 <= x + relative_x < map_image.get_width() and
+                                0 <= y + relative_y < map_image.get_height()):
+                            if not _compare("water", x + relative_x, y + relative_y):
+                                directions.append((relative_x, relative_y))
+                    if len(directions) > 0:
+                        relative_x, relative_y = random.choice(directions)
+                        iterated_image.set_at((x + relative_x, y + relative_y), c.IMAGES["rock"].color_code)
 
     return iterated_image
 
 
 def _is_blocked(x, y, i, j):
     """ Finds out if the selected coordinate has a collidable tile
+        Returns whether the tile is blocked, if it's an ore, if it's a rock and if it's water
     """
     ore = False
     rock = False
     if (i < 0 or i >= map_image.get_width() or
             j < 0 or j >= map_image.get_height()):
-        return True, False, False
+        return True, False, False, False
     else:
         if _compare("ore", i, j) and not (x == i and y == j):
             ore = True
