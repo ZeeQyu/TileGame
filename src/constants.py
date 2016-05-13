@@ -180,6 +180,7 @@ IMAGES = {
     "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
+    "water": Img("waterPlaceholder.png", collides=True),
 
     # Large Nature
     "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),

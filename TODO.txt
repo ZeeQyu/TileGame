@@ -8,6 +8,7 @@ ZeeQyu TODO list:
     Add scrolling to the menu.
     Change menu to use a state machine
 
+    Water
 	Multitile structures
 	Simple enemies that try to attack you
 	Health
