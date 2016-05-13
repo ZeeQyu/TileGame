@@ -41,6 +41,9 @@ tick_tiles = []
 map_screen_buffer = None
 # If the map should be rerendered
 update_map = True
+# Has a microtile (tile constructed from several smaller pieces, dependent on surrounding tiles)
+# been changed, so the microtiles need to be updated?
+update_microtiles = True
 
 # The position of menus. Is carried over between different times that the menu created.
 menu_coords = ["Empty", "Empty"]

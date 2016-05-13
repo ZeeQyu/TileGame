@@ -12,8 +12,8 @@ import pygame.locals as pgl
 
 
 # Activates various debug callouts that normally should be on, like fps meter.
-NORMAL_DEBUG = False
-SPECIAL_DEBUG = False
+NORMAL_DEBUG = True
+SPECIAL_DEBUG = True
 
 # Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
 GAME_SPEED = 1
@@ -32,7 +32,7 @@ class Img(object):
     """
     def __init__(self, png, color_code=None, random=False, collides=False,
                  placeable=False, destroy=None, evolve=None, multi_tile=None,
-                 factory_input=[], factory_output=[], factory_timer=0, factory_alt_image=None):
+                 factory_input=[], factory_output=[], factory_timer=0, factory_alt_image=None, micro_tiles=None):
         """ Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -68,6 +68,10 @@ class Img(object):
                 goods from when it recieves the input goods. Defaults to 0.
             "factory_alt_img" should be a string with an identifier of an image in the
                 IMAGES list that is used when the factory is working.
+            "micro_tiles" should be a list of four strings or None. The four strings should be the image names of
+                the top left corners used to construct this micro tile, in following order: similar tiles to all sides,
+                similar tiles to both sides but not the corner, similar tile on tbe top and similar tile nowhere. For
+                more information, please read doc/microtiles.txt
 
             If factory_input and evolve is present in the same tile,
                 said tile will evolve the evolve-time in ticks after the required goods are delivered.
@@ -88,6 +92,7 @@ class Img(object):
         self.multi_tile = multi_tile
         self.factory_timer = factory_timer
         self.factory_alt_image = factory_alt_image
+        self.micro_tiles = micro_tiles
 
         # The following code makes sure the factory input and output are lists in lists and not just lists.
         for item in factory_input:
@@ -180,7 +185,11 @@ IMAGES = {
     "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
-    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255)),
+    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255), micro_tiles=["water1", "water2", "water3", "water4"]),
+    "water1": Img("water1.png"),
+    "water2": Img("water2.png"),
+    "water3": Img("water3.png"),
+    "water4": Img("water4.png"),
 
     # Large Nature
     "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),

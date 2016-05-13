@@ -113,6 +113,7 @@ def update_map():
                 print(e, m, tb)
                 pdb.post_mortem(tb)
             map_screen_buffer.blit(image, (i*c.TILE_SIZE, j*c.TILE_SIZE))
+    #g.update_microtiles = False
             
     return map_screen_buffer
 
@@ -216,14 +217,14 @@ def _iterate_water(passed_image):
     iterated_image = passed_image
     for x in range(map_image.get_width()):
         for y in range(map_image.get_height()):
-            if _compare("water", x, y):
+            if _compare_pixel("water", x, y):
                 if random.randint(1, 100) <= c.GEN_WATER_EXPAND_CHANCE:
                     directions = []
                     for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
                         if (0 <= x + relative_x < map_image.get_width() and
                                 0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
 
-                            if not _compare("water", x + relative_x, y + relative_y):
+                            if not _compare_pixel("water", x + relative_x, y + relative_y):
                                 directions.append((relative_x, relative_y))
                     if len(directions) > 0:  # If there's a non-water in any direction
                         relative_x, relative_y = random.choice(directions)
@@ -243,7 +244,7 @@ def _smooth_water(passed_image):
                 if (0 <= x + relative_x < map_image.get_width() and
                         0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
 
-                    if not _compare("water", x + relative_x, y + relative_y):
+                    if not _compare_pixel("water", x + relative_x, y + relative_y):
                         directions.append((relative_x, relative_y))
             if len(directions) == 0:  # If this is a single non-water surrounded by water, make it water
                 iterated_image.set_at((x, y), c.IMAGES["water"].color_code)
@@ -261,7 +262,7 @@ def _iterate_trees(passed_image):
     for x in range(map_image.get_width()):
         for y in range(map_image.get_height()):
             # Skip this tile if it's water
-            if _compare("water", x, y):
+            if _compare_pixel("water", x, y):
                 iterated_image.set_at((x, y), c.IMAGES["water"].color_code)
                 continue
             # Check the surroundings of the tile
@@ -277,9 +278,9 @@ def _iterate_trees(passed_image):
             if ores is 1 and random.randint(1, 100) < c.GEN_ORE_CHANCE:
                 iterated_image.set_at((x, y), c.IMAGES["ore"].color_code)
             elif amount >= 5:
-                if _compare("ore", x, y):
+                if _compare_pixel("ore", x, y):
                     iterated_image.set_at((x, y), c.IMAGES["ore"].color_code)
-                elif _compare("rock", x, y):
+                elif _compare_pixel("rock", x, y):
                     iterated_image.set_at((x, y), c.IMAGES["rock"].color_code)
                 else:
                     iterated_image.set_at((x, y), c.IMAGES["tree"].color_code)
@@ -296,7 +297,7 @@ def _iterate_rocks(passed_image):
     iterated_image = passed_image
     for x in range(map_image.get_width()):
         for y in range(map_image.get_height()):
-            if _compare("rock", x, y):
+            if _compare_pixel("rock", x, y):
                 rocks = 0
                 for i in range(x - 1, x + 2, 1):
                     for j in range(y - 1, y + 2, 1):
@@ -308,7 +309,7 @@ def _iterate_rocks(passed_image):
                     for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
                         if (0 <= x + relative_x < map_image.get_width() and
                                 0 <= y + relative_y < map_image.get_height()):
-                            if not _compare("water", x + relative_x, y + relative_y):
+                            if not _compare_pixel("water", x + relative_x, y + relative_y):
                                 directions.append((relative_x, relative_y))
                     if len(directions) > 0:
                         relative_x, relative_y = random.choice(directions)
@@ -327,9 +328,9 @@ def _is_blocked(x, y, i, j):
             j < 0 or j >= map_image.get_height()):
         return True, False, False, False
     else:
-        if _compare("ore", i, j) and not (x == i and y == j):
+        if _compare_pixel("ore", i, j) and not (x == i and y == j):
             ore = True
-        if _compare("rock", i, j) and not (x == i and y == j):
+        if _compare_pixel("rock", i, j) and not (x == i and y == j):
             rock = True
         if (map_image.get_at((i, j)) == c.IMAGES["tree"].color_code or
                 map_image.get_at((i, j)) == c.IMAGES["rock"].color_code):
@@ -338,7 +339,7 @@ def _is_blocked(x, y, i, j):
             return False, ore, rock
 
 
-def _compare(tile_type, x, y):
+def _compare_pixel(tile_type, x, y):
     """ Compares the color code of the tile at (x, y) with the one provided in by tile_type.
         returns true or false
     """

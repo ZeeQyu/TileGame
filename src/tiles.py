@@ -150,6 +150,40 @@ class MultiTilePointer(Tile):
                                type=type(self), target=self.target)
 
 
+class MicroTile(Tile):
+    """ A kind of tile that uses four corner pieces to construct many different variations based on surrounding tiles.
+    """
+    def __init__(self, type, x, y):
+        super(MicroTile, self).__init__(type, x, y)
+
+    def get_image(self):
+        """ Returns the image unless microtiles need to be updated. If so, this checks surrounding tiles for
+            the constellation of neighbours and either creates it from quarters or gets a cached one from
+            the image list.
+
+            Microtile combinations are named after the constellation of surrounding squares it represents,
+            using a 8 character binary combination corresponding to neighbours in a left-to-right manner, (like you
+            would read a book) appended to the tile name.
+        """
+        if g.update_microtiles or c.SPECIAL_DEBUG:
+            image = self.type  # Start with the tile name and append ones and zeros
+            for relative_y in range(-1, 2):
+                for relative_x in range(-1, 2):
+                    if not (relative_x == 0 and relative_y == 0):
+                        image.append(int(_compare_tile(self.type, self.x + relative_y, self.y + relative_y)))
+            if c.SPECIAL_DEBUG:
+                print(image)
+        return self.image
+
+def _compare_tile(type, x, y):
+    """ Compares the type of the tile at the specified coordinate with the specified type.
+        Assumes yes if out of bounds.
+    """
+    if 0 <= x < g.width and 0 <= y < g.height:
+        return g.map[x][y].type == type
+    else:
+        return True
+
 class FactoryTile(Tile):
     """ A FactoryTile is a tile that gives out or takes in resources and might do something else.
     """
