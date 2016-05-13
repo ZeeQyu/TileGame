@@ -1,13 +1,8 @@
 Installation instructions to see the current progress:
 
-Advanced users: Make sure you've got python 3.2.* (32-bit) and pygame installed, clone the repo and run main.py.
+Windows: Simply run "Launch_TileGame.bat". You will be promted to install python 3.2 if not already installed,
+after which the game will be run.
 
-Detailed instructions (Windows):
-Install python 3.2.5 from https://www.python.org/ftp/python/3.2.5/python-3.2.5.msi
-Install pygame 1.9.2a0 for PY3.2 from http://pygame.org/ftp/pygame-1.9.2a0.win32-py3.2.msi
-
-Go to the project homepage: https://github.com/ZeeQyu/TileGame
-and press "Download Zip" Save the file to somewhere and extract the entire folder.
-Run main.py.
+Other OS'es: Make sure you've got python 3.2.* (32-bit) installed and run TileGame.py.
 
 That should do it. Mind the stairs.
