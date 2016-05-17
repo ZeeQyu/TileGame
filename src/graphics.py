@@ -24,8 +24,8 @@ class Graphics(object):
     """
  
     def __init__(self, name):
-        """ "name" should be one of the keys in the constants.py IMAGES dictionary
-            Will load the corresponding image from the /res folder.
+        """ "name" should be one of the keys in the constants.py IMAGES dictionary or a surface
+             Will load the corresponding image from the /res folder or assign the surface
         """
         if type(name) == str:
             # if c.NORMAL_DEBUG:
@@ -42,8 +42,9 @@ class Graphics(object):
     def get_size(self):
         """ returns a tuple containing the width and height of the image 
         """
-        return (self.get().get_width(), self.get().get_height())
-    
+        return self.get().get_width(), self.get().get_height()
+
+
 def load_graphics():
     """ Creates a dictionary with the keys from the constants.py IMAGES dictionary keys
         and a Graphics object created using that key.

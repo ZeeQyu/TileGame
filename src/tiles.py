@@ -152,9 +152,11 @@ class MultiTilePointer(Tile):
 
 class MicroTile(Tile):
     """ A kind of tile that uses four corner pieces to construct many different variations based on surrounding tiles.
+        For detailed information, please see doc/microtiles.txt
     """
     def __init__(self, type, x, y):
         super(MicroTile, self).__init__(type, x, y)
+        self.update_microtile = True
 
     def get_image(self):
         """ Returns the image unless microtiles need to be updated. If so, this checks surrounding tiles for
@@ -162,18 +164,50 @@ class MicroTile(Tile):
             the image list.
 
             Microtile combinations are named after the constellation of surrounding squares it represents,
-            using a 8 character binary combination corresponding to neighbours in a left-to-right manner, (like you
-            would read a book) appended to the tile name.
+            using a 8 character binary combination corresponding to neighbours in a clockwise rotational order
         """
-        if g.update_microtiles or c.SPECIAL_DEBUG:
-            image = self.type  # Start with the tile name and append ones and zeros
-            for relative_y in range(-1, 2):
-                for relative_x in range(-1, 2):
-                    if not (relative_x == 0 and relative_y == 0):
-                        image.append(int(_compare_tile(self.type, self.x + relative_y, self.y + relative_y)))
-            if c.SPECIAL_DEBUG:
-                print(image)
+        if not c.DEACTIVATE_MICROTILES:
+            if g.update_microtiles or self.update_microtile:
+                self.update_microtile = False
+                # This is a list of 8 ones or zeros denoting which neighbour tiles are of the same type
+                # It's a list because strings can't be easily modified
+                shape_list = []
+
+                # Add all neighbours in clockwise order, starting with top left corner
+                for relative_x, relative_y in [(-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)]:
+                    shape_list.append(str(int(_compare_tile(self.type, self.x + relative_x, self.y + relative_y))))
+                # Removes lonely corners (see doc/microtiles.txt)
+                for i in range(0, 7, 2):
+                    if shape_list[i - 1] == "0" or shape_list[i + 1] == "0":
+                        shape_list[i] = "0"
+                # Convert to a string
+                shape = "".join(shape_list)
+                if self.type + shape in g.images:
+                    self.image = self.type + shape
+                else:
+                    # If the tile doesn't exist, create it
+                    new_image = pygame.Surface((c.TILE_SIZE, c.TILE_SIZE))
+                    # Defines which quartet is being manipulated, clockwise, starting with top left
+                    pos = -1
+
+                    for j in range(0, 7, 2):
+                        pos += 1
+                        corner = shape[j-1] + shape[j] + shape[j+1]
+                        quartet_number, rotation, mirror = c.MICROTILE_LEGEND[corner]
+                        # Find the corresponding quartet
+                        quartet = g.images[c.IMAGES[self.type].microtiles[quartet_number]].get()
+                        if mirror:
+                            # Mirror the quartet horizontally
+                            quartet = pygame.transform.flip(quartet, True, False)
+                        if (rotation - pos*90) != 0:
+                            quartet = pygame.transform.rotate(quartet, rotation - pos*90)
+                        new_image.blit(quartet, (0, 0))
+
+                    g.images[self.type + shape] = Graphics(new_image)
+                    self.image = self.type + shape
+
         return self.image
+
 
 def _compare_tile(type, x, y):
     """ Compares the type of the tile at the specified coordinate with the specified type.
@@ -183,6 +217,7 @@ def _compare_tile(type, x, y):
         return g.map[x][y].type == type
     else:
         return True
+
 
 class FactoryTile(Tile):
     """ A FactoryTile is a tile that gives out or takes in resources and might do something else.
@@ -197,7 +232,7 @@ class FactoryTile(Tile):
             g.tick_tiles.append([self.x, self.y])
 
         self.good_targets = {}
-        # Contains the last paths for all robots by number. (example: {1: [(1,5), (1,4), (1,3)], 2: [(65, 33), (66, 33)]}
+        # Contains the last paths for all robots by number. (ex: {1: [(1,5), (1,4), (1,3)], 2: [(65, 33), (66, 33)]}
         self.last_paths = {}
         # Contains last delivery tiles for all robots by number. (example: {1: (2,3), 2: (5,7)}  )
         self.last_delivery_tiles = {}
@@ -436,7 +471,7 @@ def area_is_free(x, y, width, height):
 
     
 def make_tile(tile_type, x, y, target=None):
-    """ Function to create a tile of the appropriate type (Standard, Random and multi-tile)
+    """ Function to create a tile of the appropriate type (Standard, Random, multi-tile and microtiles)
         Should be used instead of directly creating a specific tile unless it is certain which type
         is needed.
         
@@ -447,7 +482,6 @@ def make_tile(tile_type, x, y, target=None):
         "target" should be a tuple of coordinates in the tile array if the tile being created is
             a pointer. It should be left empty if the tile isn't a multi-tile pointer.
     """
-  
     # Check if where you're placing the tile is subject to a special tile.
     if g.map[x][y]:
         if c.SPECIAL_PLACE_TILES.__contains__(tile_type + "+" + str(g.map[x][y].type)):
@@ -489,15 +523,25 @@ def make_tile(tile_type, x, y, target=None):
             tile = LauncherTile(tile_type, x, y)
         elif c.IMAGES[tile_type].factory_input or c.IMAGES[tile_type].factory_output:
             tile = FactoryTile(tile_type, x, y)
+        elif c.IMAGES[tile_type].microtiles:
+            tile = MicroTile(tile_type, x, y)
         else:
             tile = Tile(tile_type, x, y)
     # Change and update the map
     g.map[x][y] = tile
     g.update_map = True
-    # Make sure the player doesn't have to move to remove a newly placed package
+    # Make sure the player doesn't have to move to update to remove a newly placed package
     if "player" in g.special_entity_list:
         if g.special_entity_list["player"].get_aim_tile() == (x, y):
             g.special_entity_list["player"].update_aim_tile = True
+        # If it's during generation, the player doesn't exist. The following block is code that happens only
+        # when tiles are changed after generation.
+
+        # Make sure microtiles update
+        for relative_x in range(-1, 2):
+            for relative_y in range(-1, 2):
+                if type(g.map[x + relative_x][y + relative_y]) == MicroTile:
+                    g.map[x + relative_x][y + relative_y].update_microtile = True
     return tile
 
 

@@ -215,24 +215,24 @@ class Entity(object):
         """ Method for creating four pygame Rect object along the sides of the entity for use in collision detection 
         """
         self.rects[(-1, 0)] = Rect(self.x + self.width - 1,  # Right
-                              self.y + 1,
-                              1,
-                              self.height - 2)
+                                   self.y + 1,
+                                   1,
+                                   self.height - 2)
         
         self.rects[(1, 0)] = Rect(self.x,  # Left
-                             self.y + 1,
-                             1,
-                             self.height - 2)
-        
+                                  self.y + 1,
+                                  1,
+                                  self.height - 2)
+
         self.rects[(0, 1)] = Rect(self.x + 1,  # Top
-                            self.y,
-                            self.width - 2,
-                            1)
+                                  self.y,
+                                  self.width - 2,
+                                  1)
 
         self.rects[(0, -1)] = Rect(self.x + 1,
-                               self.y + self.height - 1,  # Bottom
-                               self.width - 2,
-                               1)
+                                   self.y + self.height - 1,  # Bottom
+                                   self.width - 2,
+                                   1)
 
     def collision_check(self):
         """ Method for checking if the entity has run into a tree or something

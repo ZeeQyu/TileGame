@@ -166,6 +166,7 @@ def main():
                 g.update_map = False
                 g.force_update = True
                 g.map_screen_buffer = maps.update_map()
+                g.update_microtiles = False
 
         # If any entity moved, redraw the screen
         if entity_has_moved or g.force_update:

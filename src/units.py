@@ -94,11 +94,13 @@ class Package(entities.FollowingEntity):
     def update(self, time_diff):
         """ Calls the super update function as well as check for if the package should be turned into a tile.
         """
+        # When the package is put down, make sure it merges with the tile while in the center of the tile.
         if self.target_coords and not self.had_target_coords:
             self.had_target_coords = True
             self.target_coords[0] += (c.TILE_SIZE - self.width) / 2
             self.target_coords[1] += (c.TILE_SIZE - self.height) / 2
-            
+
+        # If it has reached its destination on a tile, that is to say, it has been put down and slid into place.
         if self.target_coords == [int(self.x), int(self.y)]:
             x, y = self.get_tile()
             g.tile_maker_queue.insert(0, [self.tile, x, y])

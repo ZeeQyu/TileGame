@@ -32,7 +32,7 @@ class Img(object):
     """
     def __init__(self, png, color_code=None, random=False, collides=False,
                  placeable=False, destroy=None, evolve=None, multi_tile=None,
-                 factory_input=[], factory_output=[], factory_timer=0, factory_alt_image=None, micro_tiles=None):
+                 factory_input=[], factory_output=[], factory_timer=0, factory_alt_image=None, microtiles=None):
         """ Initializes a tile image or other image. Should be stored in a dictionary where the
                 key is the string identifier for the image (example: "sapling")
             "png" should be the filename in the res folder (example: "sapling.png", "sapling4.png")
@@ -92,7 +92,7 @@ class Img(object):
         self.multi_tile = multi_tile
         self.factory_timer = factory_timer
         self.factory_alt_image = factory_alt_image
-        self.micro_tiles = micro_tiles
+        self.microtiles = microtiles
 
         # The following code makes sure the factory input and output are lists in lists and not just lists.
         for item in factory_input:
@@ -185,11 +185,13 @@ IMAGES = {
     "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
-    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255), micro_tiles=["water1", "water2", "water3", "water4"]),
-    "water1": Img("water1.png"),
-    "water2": Img("water2.png"),
-    "water3": Img("water3.png"),
-    "water4": Img("water4.png"),
+    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255),
+                 microtiles=["full_water_quartet", "small_corner_water_quartet",
+                             "side_water_quartet", "full_corner_water_quartet"]),
+    "full_water_quartet": Img("water1.png"),
+    "small_corner_water_quartet": Img("water2.png"),
+    "side_water_quartet": Img("water3.png"),
+    "full_corner_water_quartet": Img("water4.png"),
 
     # Large Nature
     "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
@@ -343,10 +345,23 @@ else:
 # The tile that is placed with the players place key
 DEFAULT_PLACE_TILE = "sapling"
 
-# Set to true if all textures should be non-random.
-DEACTIVATE_RANDOM_TEXTURES = False
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16
+# Set to true if all textures should be non-random.
+DEACTIVATE_RANDOM_TEXTURES = False
+# Set to true to disable all microtiles and default to one texture
+DEACTIVATE_MICROTILES = False
+
+# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
+# See doc/microtiles.txt for more information
+# "binary_neighbour_combination": [quartet_index, rotation, if it should be horizontally mirrored]
+MICROTILE_LEGEND = {
+    "111": (0, 0, 0),
+    "101": (1, 0, 0),
+    "001": (2, 0, 0),
+    "100": (2, 90, 1),
+    "000": (3, 0, 0)
+}
 
 # A list of relative, orthagonal directions to iterate through instead of rewriting this list every time
 RELATIVE_DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
