@@ -13,7 +13,7 @@ import pygame.locals as pgl
 
 # Activates various debug callouts that normally should be on, like fps meter.
 NORMAL_DEBUG = True
-SPECIAL_DEBUG = True
+SPECIAL_DEBUG = False
 
 # Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
 GAME_SPEED = 1
@@ -21,7 +21,7 @@ GAME_SPEED = 1
 if NORMAL_DEBUG:
     # Change this to True if you want the screen to
     # update every cycle (all the time) and get max FPS (change sleep time)
-    FORCE_UPDATE = True
+    FORCE_UPDATE = False
 else:
     FORCE_UPDATE = False
 
@@ -140,8 +140,7 @@ IMAGES = {
     "dirt3": Img("dirt3.png"),
     "dirt4": Img("dirt4.png"),
     "dirt5": Img("dirt5.png"),
-    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"],
-                factory_input=[["waste", 1]]),
+    "tree": Img("tree1.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
     "tree2": Img("tree2.png"),
     "tree3": Img("tree3.png"),
     "tree4": Img("tree4.png"),

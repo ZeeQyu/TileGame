@@ -1,6 +1,37 @@
-Under construction
+This is a file describing the behaviour and idea behind microtiles.
 
-This will be a file describing the behaviour and idea behind microtiles.
+Introduction
+--------------------
+In my current rendering system, before microtiles, the way to render tiles is to specify a 16x16 or larger (multitiles)
+image which is assigned to a tile which renders it to the screen. This poses a problem when attempting to implement
+something like water pools, where the object spans over several different tiles, because either the water mass
+is made out of water squares, which becomes ugly in the corners, or the water mass is made out of individual pools,
+which looks fragmented and odd.
+
+To fix this, a lot of different tiles would be needed, one for each combination of present neighbours, which would
+result in 2^8 = 256 differnet tiles. This would put unneccesary strain on graphics artists. Instead, all those
+combinations can be made with just four different quarters of a tile. To use the example of water: when
+water is both sides and the corner of the quarter (a full quarter of water), when water is on both sides, but not
+the corner (which has a small bit of land), when water is on one side (a strip of land) or when there's land all around
+(which is a square padded with land on both edges of the quarter.
+
+Thesse are then reused by rotating and mirroring where appropriate, and blitted onto one image, which is the 16x16
+tile later used in rendering. This tile is then cached, so the generation doesn't have to happen again.
+
+Details
+--------------------
+To specify the details, let's start with the neighbour detection.
+* Neighbours are saved as a 8 character string with ones or zeros, in clockwise order starting with top left. A one means
+there's a tile of the same type (f.ex. water) there and a zero means it's any other tile.
+* Then what I call "lonely corners" are trimmed. A lonely corner is a corner (neighbouring tile diagonally positioned
+to the handled tile) without edges on both sides and isn't interesting for the purposes of deciding what graphic
+should be used.
+* Then the digits corresponding to each corner is referenced in a table of tiles and rotations, to find out what tile
+should be used and how much it should be rotated.
+* Mirroring is horizontal and happens before rotations.
+* When microtiles are generated, they are generated in order of
+
+
 
 - Problem it solves
 - Which neighbour is where

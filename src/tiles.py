@@ -11,15 +11,10 @@
     They have a texture associated, the type attribute 
     corresponds to the c.py IMAGES dictionary paths.
 """
-import os
-import sys
 from random import choice, randint
 
 import pygame
 from src.graphics import Graphics
-
-
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import globals as g, units
 from src import constants as c
 from src import entities
@@ -482,10 +477,14 @@ def make_tile(tile_type, x, y, target=None):
         "target" should be a tuple of coordinates in the tile array if the tile being created is
             a pointer. It should be left empty if the tile isn't a multi-tile pointer.
     """
+    during_generation = False
     # Check if where you're placing the tile is subject to a special tile.
     if g.map[x][y]:
         if c.SPECIAL_PLACE_TILES.__contains__(tile_type + "+" + str(g.map[x][y].type)):
             return make_tile(c.SPECIAL_PLACE_TILES[tile_type + "+" + str(g.map[x][y].type)], x, y)
+    else:
+        # If the tile didn't exist before, the entire map is currently being generated
+        during_generation = True
 
     # If it is a multi-tile
     if c.IMAGES[tile_type].multi_tile is not None:
@@ -534,14 +533,14 @@ def make_tile(tile_type, x, y, target=None):
     if "player" in g.special_entity_list:
         if g.special_entity_list["player"].get_aim_tile() == (x, y):
             g.special_entity_list["player"].update_aim_tile = True
-        # If it's during generation, the player doesn't exist. The following block is code that happens only
-        # when tiles are changed after generation.
 
+    if not during_generation:
         # Make sure microtiles update
         for relative_x in range(-1, 2):
             for relative_y in range(-1, 2):
                 if type(g.map[x + relative_x][y + relative_y]) == MicroTile:
                     g.map[x + relative_x][y + relative_y].update_microtile = True
+
     return tile
 
 

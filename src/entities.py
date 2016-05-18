@@ -10,15 +10,11 @@
     Also handles key press events for movement of the player.
 """
 
-import sys
-import os
 import math
 
 import pygame
 from pygame import Rect
 
-
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import globals as g
 from src import constants as c
 from src.graphics import Graphics

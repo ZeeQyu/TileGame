@@ -9,10 +9,7 @@
     Module containing the player class.
     Also handles key press events for movement of the player.
 """
-import os
-import sys
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import tiles, units, entities
 import src.globals as g
 import src.constants as c

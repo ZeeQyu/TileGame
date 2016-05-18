@@ -8,10 +8,6 @@
 
     Module for initating global variables that should be available in all modules
 """
-import os
-import sys
-
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import constants as c, graphics
 
 # Making some variables that should be available for use in all modules

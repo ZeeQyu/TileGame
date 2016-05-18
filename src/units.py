@@ -8,12 +8,9 @@
     
     Units module, containing classes for all friendly and passive units.
 """
-import os
-import sys
 import random
 from pygame.rect import Rect
 
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import entities
 import src.globals as g
 import src.constants as c

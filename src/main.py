@@ -15,16 +15,11 @@
     Ideas and goals can be found in the concept.txt file
 """
 
-# import normal modules
-import sys
-import os
 import time
 
 # Third party modules
 import pygame
 
-# make sure the own modules in /src can be imported and import them.
-sys.path.append(os.path.join(os.getcwd(), "src"))
 from src import key_input, tiles
 from src import players
 from src import maps
