@@ -465,15 +465,6 @@ def _regenerate_map():
     return return_value
 
 
-def _print_images_keys():
-    print("## Start of print keys ##")
-    keys = list(g.images.keys())
-    keys.sort()
-    for key in keys:
-        print(key)
-    print("## End of print keys ##")
-
-
 class BuildMenu(Menu):
     """ Subclass of Menu, used for choosing which building you want to build at a location.
     """
@@ -482,8 +473,6 @@ class BuildMenu(Menu):
         """
 
         super(BuildMenu, self).__init__("menu_background", [
-            MenuButton("DEBUG: Place Water", "button3", _put_tile, ["water"], recommended=True),
-            MenuButton("DEBUG: Print g.images keys", "button3", _print_images_keys, recommended=True),
             MenuButton("Build Ore Mine", "ore_mine_button", _put_tile, ["ore_mine"], recommended=True,
                        tile_filter=["ore-package"]),
             MenuButton("Build Furnace", "furnace_button", _put_tile, ["furnace"], recommended=True,
@@ -494,6 +483,7 @@ class BuildMenu(Menu):
                        recommended=True, tile_filter=["package", "dirt-package"]),
             MenuButton("Build Launcher", "launcher_button", _put_tile, ["launcher"], recommended=True,
                        tile_filter=["package", "dirt-package"]),
-            MenuButton("Reload Map", "button", _regenerate_map),
+            MenuButton("Reload Map", "button1", _regenerate_map),
+            MenuButton("DEBUG: Place Water", "button2", _put_tile, ["water"]),
             MenuButton("Close", "button_close", _close)
         ])
