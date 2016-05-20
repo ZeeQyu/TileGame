@@ -185,12 +185,12 @@ IMAGES = {
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
     "water": Img("waterPlaceholder.png", color_code=(0, 0, 255),
-                 microtiles=["full_water_quartet", "small_corner_water_quartet",
-                             "side_water_quartet", "full_corner_water_quartet"]),
-    "full_water_quartet": Img("water1.png"),
-    "small_corner_water_quartet": Img("water2.png"),
-    "side_water_quartet": Img("water3.png"),
-    "full_corner_water_quartet": Img("water4.png"),
+                 microtiles=["water_full", "water_corner",
+                             "water_side", "water_end"]),
+    "water_full": Img("water_full.png"),
+    "water_corner": Img("water_corner.png"),
+    "water_side": Img("water_side.png"),
+    "water_end": Img("water_end.png"),
 
     # Large Nature
     "large_ore": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
