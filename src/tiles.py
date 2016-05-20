@@ -31,35 +31,37 @@ class Tile(object):
     """ Tile object containing the type and location of the tile.
     """
     
-    def __init__(self, type, x, y):
+    def __init__(self, tile_type, x, y):
         """ Simple initalizer.
             "type" should be a string from the list of keys in the c.py IMAGES dictionary.
             "x" and "y" should be ints and can be used for finding out where a tile belongs if
                 you copy the tile away from the map array in main.py. They are not normally used.
             "timer" should be the time until time_up() is called. If this is the base class
         """
+
         # Type of tile, for identification purposes.
         # Can be accessed directly, but not for image getting purposes
         # get_image() should be used instead
-        self.type = type
+        self.type = tile_type
         self.x = x
         self.y = y
         # If the tile evolves, get a random timer for that
-        if c.IMAGES[type].evolve is not None:
+        if c.IMAGES[tile_type].evolve is not None:
             # Make sure it doesn't get added to tick_tiles twice
-            if not c.IMAGES[type].factory_output:
+            if not c.IMAGES[tile_type].factory_output:
                 g.tick_tiles.append([x, y])
-            if not c.IMAGES[type].factory_input:
-                self.timer = randint(*c.IMAGES[type].evolve[:2])
+            if not c.IMAGES[tile_type].factory_input:
+                self.timer = randint(*c.IMAGES[tile_type].evolve[:2])
             else:
                 self.timer = None
         else:
             self.timer = None
 
-        if c.IMAGES[type].random and not c.DEACTIVATE_RANDOM_TEXTURES:
+        # Random tiles should be defined here if this is a random tile and shouldn't be handled as a microtile.
+        if c.IMAGES[tile_type].random and not c.DEACTIVATE_RANDOM_TEXTURES and type(self) != MicroTile:
             image_keys = []
             for image in list(c.IMAGES.keys()):
-                if image.startswith(type) and (image[len(type):].isdigit() or len(image) == len(type)):
+                if image.startswith(tile_type) and (image[len(tile_type):].isdigit() or len(image) == len(tile_type)):
                     image_keys.append(image)
             self.image = choice(image_keys)
         else:
@@ -124,8 +126,8 @@ class Tile(object):
 class MultiTileHead(Tile):
     """ The top-left tile of any multi-tile. Paints the actual image
     """
-    def __init__(self, type, x, y, width, height):
-        super(MultiTileHead, self).__init__(type, x, y)
+    def __init__(self, tile_type, x, y, width, height):
+        super(MultiTileHead, self).__init__(tile_type, x, y)
         self.width = width
         self.height = height
 
@@ -133,8 +135,8 @@ class MultiTileHead(Tile):
 class MultiTilePointer(Tile):
     """ The other tiles that aren't the head in a multi-tile. Paints a single, empty pixel.
     """
-    def __init__(self, type, x, y, head_x, head_y):
-        super(MultiTilePointer, self).__init__(type, x, y)
+    def __init__(self, tile_type, x, y, head_x, head_y):
+        super(MultiTilePointer, self).__init__(tile_type, x, y)
         self.target = head_x, head_y
         
     def __str__(self):
@@ -149,9 +151,10 @@ class MicroTile(Tile):
     """ A kind of tile that uses four corner pieces to construct many different variations based on surrounding tiles.
         For detailed information, please see doc/microtiles.txt
     """
-    def __init__(self, type, x, y):
-        super(MicroTile, self).__init__(type, x, y)
+    def __init__(self, tile_type, x, y):
+        super(MicroTile, self).__init__(tile_type, x, y)
         self.update_microtile = True
+        self.random_tile_name = None
 
     def get_image(self):
         """ Returns the image unless microtiles need to be updated. If so, this checks surrounding tiles for
@@ -161,45 +164,57 @@ class MicroTile(Tile):
             Microtile combinations are named after the constellation of surrounding squares it represents,
             using a 8 character binary combination corresponding to neighbours in a clockwise rotational order
         """
-        if not c.DEACTIVATE_MICROTILES:
-            if g.update_microtiles or self.update_microtile:
-                self.update_microtile = False
-                # This is a list of 8 ones or zeros denoting which neighbour tiles are of the same type
-                # It's a list because strings can't be easily modified
-                shape_list = []
+        if g.update_microtiles or self.update_microtile:
+            self.update_microtile = False
+            # This is a list of 8 ones or zeros denoting which neighbour tiles are of the same type
+            # It's a list because strings can't be easily modified
+            shape_list = []
 
-                # Add all neighbours in clockwise order, starting with top left corner
-                for relative_x, relative_y in [(-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)]:
-                    shape_list.append(str(int(_compare_tile(self.type, self.x + relative_x, self.y + relative_y))))
-                # Removes lonely corners (see doc/microtiles.txt)
-                for i in range(0, 7, 2):
-                    if shape_list[i - 1] == "0" or shape_list[i + 1] == "0":
-                        shape_list[i] = "0"
-                # Convert to a string
-                shape = "".join(shape_list)
-                if self.type + shape in g.images:
-                    self.image = self.type + shape
-                else:
-                    # If the tile doesn't exist, create it
-                    new_image = pygame.Surface((c.TILE_SIZE, c.TILE_SIZE))
-                    # Defines which quartet is being manipulated, clockwise, starting with top left
-                    pos = -1
+            # Add all neighbours in clockwise order, starting with top left corner
+            for relative_x, relative_y in [(-1, -1), (0, -1), (1, -1), (1, 0), (1, 1), (0, 1), (-1, 1), (-1, 0)]:
+                shape_list.append(str(int(_compare_tile(self.type, self.x + relative_x, self.y + relative_y))))
+            # Removes lonely corners (see doc/microtiles.txt)
+            for i in range(0, 7, 2):
+                if shape_list[i - 1] == "0" or shape_list[i + 1] == "0":
+                    shape_list[i] = "0"
+            # Convert to a string
+            shape = "".join(shape_list)
+            image_name = self.type + shape
 
-                    for j in range(0, 7, 2):
-                        pos += 1
-                        corner = shape[j-1] + shape[j] + shape[j+1]
-                        quartet_number, rotation, mirror = c.MICROTILE_LEGEND[corner]
-                        # Find the corresponding quartet
-                        quartet = g.images[c.IMAGES[self.type].microtiles[quartet_number]].get()
-                        if mirror:
-                            # Mirror the quartet horizontally
-                            quartet = pygame.transform.flip(quartet, True, False)
-                        if (rotation - pos*90) != 0:
-                            quartet = pygame.transform.rotate(quartet, rotation - pos*90)
-                        new_image.blit(quartet, (0, 0))
+            # If it's a middle square, and this kind of tile should use random textures, use a random texture.
+            if shape == "11111111" and not c.DEACTIVATE_RANDOM_TEXTURES and c.IMAGES[self.type].random:
+                if not self.random_tile_name:
+                    random_image_keys = []
+                    for random_image in list(c.IMAGES.keys()):
+                        if random_image.startswith(self.type) and (
+                                    random_image[len(self.type):].isdigit() or len(random_image) == len(self.type)):
+                            random_image_keys.append(random_image)
+                    self.random_tile_name = choice(random_image_keys)
+                self.image = self.random_tile_name
+            elif image_name in g.images:
+                # If the tile already exists, use it
+                self.image = image_name
+            else:
+                # If the tile doesn't exist, create it
+                new_image = pygame.Surface((c.TILE_SIZE, c.TILE_SIZE))
+                # Defines which quartet is being manipulated, clockwise, starting with top left
+                pos = -1
 
-                    g.images[self.type + shape] = Graphics(new_image)
-                    self.image = self.type + shape
+                for j in range(0, 7, 2):
+                    pos += 1
+                    corner = shape[j-1] + shape[j] + shape[j+1]
+                    quartet_number, rotation, mirror = c.MICROTILE_LEGEND[corner]
+                    # Find the corresponding quartet
+                    quartet = g.images[c.IMAGES[self.type].microtiles[quartet_number]].get()
+                    if mirror:
+                        # Mirror the quartet horizontally
+                        quartet = pygame.transform.flip(quartet, True, False)
+                    if (rotation - pos*90) != 0:
+                        quartet = pygame.transform.rotate(quartet, rotation - pos*90)
+                    new_image.blit(quartet, (0, 0))
+
+                g.images[image_name] = Graphics(new_image)
+                self.image = image_name
 
         return self.image
 
@@ -522,7 +537,7 @@ def make_tile(tile_type, x, y, target=None):
             tile = LauncherTile(tile_type, x, y)
         elif c.IMAGES[tile_type].factory_input or c.IMAGES[tile_type].factory_output:
             tile = FactoryTile(tile_type, x, y)
-        elif c.IMAGES[tile_type].microtiles:
+        elif c.IMAGES[tile_type].microtiles and not c.DEACTIVATE_MICROTILES:
             tile = MicroTile(tile_type, x, y)
         else:
             tile = Tile(tile_type, x, y)
