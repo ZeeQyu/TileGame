@@ -184,7 +184,7 @@ IMAGES = {
     "ore-sapling": Img("oreSapling.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("oreTree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("oreStump.png", destroy=[15, "ore"]),
-    "water": Img("waterPlaceholder.png", color_code=(0, 0, 255),
+    "water": Img("water1.png", color_code=(0, 0, 255),
                  microtiles=["water_full", "water_corner",
                              "water_side", "water_end"]),
     "water_full": Img("water_full.png"),
