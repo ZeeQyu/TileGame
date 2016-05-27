@@ -193,10 +193,10 @@ IMAGES = {
                              "water_side", "water_end"]),
     "water2": Img("water2.png"),
     "water3": Img("water3.png"),
-    "water_full": Img("water_full.png"),
-    "water_corner": Img("water_corner.png"),
-    "water_side": Img("water_side.png"),
-    "water_end": Img("water_end.png"),
+    "water_full": Img("waterFull.png"),
+    "water_corner": Img("waterCorner.png"),
+    "water_side": Img("waterSide.png"),
+    "water_end": Img("waterEnd.png"),
 
     # Large Nature
     "ore_large": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
@@ -281,7 +281,7 @@ IMAGES = {
 key_list = [  # Custom keys. Format:
               # "dict_key": [pgl.default_ley, "key config message"],
               # key config message (index 2) is displayed after
-              # the constants.CHANGE_KEYS_TEXT_PREFIX when reconfiguring keys
+              # the constants.CONFIG_KEYS_TEXT_PREFIX when reconfiguring keys
     ["move_up", pgl.K_UP, "moving the player up."],
     ["move_down", pgl.K_DOWN, "moving the player down."],
     ["move_right", pgl.K_RIGHT, "moving the player right."],
