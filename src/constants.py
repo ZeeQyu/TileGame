@@ -68,13 +68,13 @@ class Img(object):
                 goods from when it recieves the input goods. Defaults to 0.
             "factory_alt_img" should be a string with an identifier of an image in the
                 IMAGES list that is used when the factory is working.
-            "micro_tiles" should be a list of four strings or None. The four strings should be the image names of
-                the top left corners used to construct this micro tile, in following order: similar tiles to all sides,
-                similar tiles to both sides but not the corner, similar tile on tbe top and similar tile nowhere. For
-                more information, please read doc/microtiles.txt
+            "microtiles" should be True or False. If True, it will use tiles named like the tile
 
             If factory_input and evolve is present in the same tile,
                 said tile will evolve the evolve-time in ticks after the required goods are delivered.
+
+            If random and microtiles is present in the same tile,
+                said tile will use microtiles in the edges of the f.ex. lake and random tiles in the middle.
 
 
         """
@@ -112,6 +112,8 @@ class Img(object):
 
 # This is the folder for the resources (pictures) of the project
 RES_FOLDER = "res"
+# This is folder for the generated resources (processed pictures) of the project
+GEN_RES_FOLDER = "gen_res"
 
 # Dictionary containing image data. Read class Img docstring above for more details.
 IMAGES = {
@@ -120,97 +122,25 @@ IMAGES = {
 
     # Nature
     "grass": Img("grass.png", color_code=(255, 255, 255), random=True, placeable=True),
-    "grass2": Img("grass2.png"),
-    "grass3": Img("grass3.png"),
-    "grass4": Img("grass4.png"),
-    "grass5": Img("grass5.png"),
-    "grass6": Img("grass6.png"),
-    "grass7": Img("grass7.png"),
-    "grass8": Img("grass8.png"),
-    "grass9": Img("grass9.png"),
-    "grass10": Img("grass10.png"),
-    "grass11": Img("grass11.png"),
-    "grass12": Img("grass12.png"),
-    "grass13": Img("grass13.png"),
-    "grass14": Img("grass14.png"),
-    "grass15": Img("grass15.png"),
-    "grass16": Img("grass16.png"),
     "dirt": Img("dirt.png", random=True, placeable=True, evolve=[75, 100, "grass"]),
-    "dirt2": Img("dirt2.png"),
-    "dirt3": Img("dirt3.png"),
-    "dirt4": Img("dirt4.png"),
-    "dirt5": Img("dirt5.png"),
     "tree": Img("tree.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
-    "tree2": Img("tree2.png"),
-    "tree3": Img("tree3.png"),
-    "tree4": Img("tree4.png"),
-    "tree5": Img("tree5.png"),
-    "tree6": Img("tree6.png"),
-    "tree7": Img("tree7.png"),
-    "tree8": Img("tree8.png"),
-    "tree9": Img("tree9.png"),
-    "tree10": Img("tree10.png"),
-    "tree11": Img("tree11.png"),
-    "tree12": Img("tree12.png"),
-    "tree13": Img("tree13.png"),
-    "tree14": Img("tree14.png"),
-    "tree15": Img("tree15.png"),
-    "tree16": Img("tree16.png"),
-    "tree17": Img("tree17.png"),
-    "tree18": Img("tree18.png"),
-    "tree19": Img("tree19.png"),
-    "tree20": Img("tree20.png"),
     "stump": Img("treeStump.png", random=True, destroy=[5, "dirt"]),
-    "stump2": Img("treeStump2.png"),
-    "stump3": Img("treeStump3.png"),
-    "stump4": Img("treeStump4.png"),
     "sapling": Img("treeSapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
-    "sapling2": Img("treeSapling2.png"),
-    "sapling3": Img("treeSapling3.png"),
-    "sapling4": Img("treeSapling4.png"),
-    "sapling5": Img("treeSapling5.png"),
     "dirt-sapling": Img("treeSaplingDirt.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
-    "dirt-sapling2": Img("treeSaplingDirt2.png"),
-    "dirt-sapling3": Img("treeSaplingDirt3.png"),
-    "dirt-sapling4": Img("treeSaplingDirt4.png"),
-    "dirt-sapling5": Img("treeSaplingDirt5.png"),
     "rock": Img("rock.png", color_code=(0, 0, 0), random=True, collides=True),
-    "rock2": Img("rock2.png"),
-    "rock3": Img("rock3.png"),
-    "rock4": Img("rock4.png"),
-    "rock5": Img("rock5.png"),
-    "rock6": Img("rock6.png"),
     "ore": Img("ore.png", color_code=(255, 216, 0), random=True, placeable=True),
-    "ore2": Img("ore2.png"),
-    "ore3": Img("ore3.png"),
-    "ore4": Img("ore4.png"),
-    "ore5": Img("ore5.png"),
     "ore-sapling": Img("treeSaplingOre.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("tree.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("treeStumpOre.png", destroy=[15, "ore"]),
-    "water": Img("water1.png", color_code=(0, 0, 255), random=True,
-                 microtiles=["water_full", "water_corner",
-                             "water_side", "water_end"]),
-    "water2": Img("water2.png"),
-    "water3": Img("water3.png"),
-    "water_full": Img("waterFull.png"),
-    "water_corner": Img("waterCorner.png"),
-    "water_side": Img("waterSide.png"),
-    "water_end": Img("waterEnd.png"),
+    "water": Img("water.png", color_code=(0, 0, 255), random=True, microtiles=True),
 
     # Large Nature
     "ore_large": Img("oreLarge.png", color_code=(255, 255, 0), random=True, multi_tile=(2, 2)),
-    "ore_large2": Img("oreLarge2.png"),
-    "ore_large3": Img("oreLarge3.png"),
     "tree_large": Img("treeLarge.png", collides=True, destroy=[15, "stump", "tree"], multi_tile=(3, 2)),
 
     # Structures
     "ore_mine": Img("structureMineOre.png", destroy=[10, "ore-package"], random=True,
                     factory_output=[["ore", 1]]),
-    "ore_mine2": Img("structureMineOre2.png"),
-    "ore_mine3": Img("structureMineOre3.png"),
-    "ore_mine4": Img("structureMineOre4.png"),
-    "ore_mine5": Img("structureMineOre5.png"),
     "hq": Img("structureHQ.png", color_code=(255, 106, 0), collides=True, destroy=[40, "package"], multi_tile=(2, 2)),
     "start_tile": Img("otherEmptyPixel.png", color_code=(178, 0, 255)),
     "furnace": Img("structureFurnace.png", collides=True, destroy=[15, "package"], factory_input=[["ore", 3]],
@@ -355,20 +285,8 @@ TILE_SIZE = 16
 DEACTIVATE_RANDOM_TEXTURES = False
 # Set to true to disable all microtiles and default to one texture
 DEACTIVATE_MICROTILES = False
-
-# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
-# See doc/microtiles.txt for more information
-# "binary_neighbour_combination": [quartet_index, rotation, if it should be horizontally mirrored]
-MICROTILE_LEGEND = {
-    "111": (0, 0, 0),
-    "101": (1, 0, 0),
-    "001": (2, 0, 0),
-    "100": (2, 90, 1),
-    "000": (3, 0, 0)
-}
-
-# A list of relative, orthagonal directions to iterate through instead of rewriting this list every time
-RELATIVE_DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+# Set to true to disable image preparation with atlas splitting, see src/graphics.py: prepare_images()
+DEACTIVATE_IMAGE_PREPARATION = False
 
 # Entities
 # Names of special entities

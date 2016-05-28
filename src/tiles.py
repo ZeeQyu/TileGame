@@ -19,6 +19,17 @@ from src import globals as g, units
 from src import constants as c
 from src import entities
 
+# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
+# See doc/microtiles.txt for more information
+# "binary_neighbour_combination": [quartet_index, rotation, if it should be horizontally mirrored]
+MICROTILE_LEGEND = {
+    "111": "full",
+    "101": "corner",
+    "001": "side",
+    "100": "top",
+    "000": "end"
+}
+
 
 class AreaNotFreeException(Exception):
     """ Is thrown if a multitile is placed in a non-free spot. The spot should always be checked before
@@ -60,7 +71,7 @@ class Tile(object):
         # Random tiles should be defined here if this is a random tile and shouldn't be handled as a microtile.
         if c.IMAGES[tile_type].random and not c.DEACTIVATE_RANDOM_TEXTURES and type(self) != MicroTile:
             image_keys = []
-            for image in list(c.IMAGES.keys()):
+            for image in list(g.images.keys()):
                 if image.startswith(tile_type) and (image[len(tile_type):].isdigit() or len(image) == len(tile_type)):
                     image_keys.append(image)
             self.image = choice(image_keys)
@@ -203,14 +214,15 @@ class MicroTile(Tile):
                 for j in range(0, 7, 2):
                     pos += 1
                     corner = shape[j-1] + shape[j] + shape[j+1]
-                    quartet_number, rotation, mirror = c.MICROTILE_LEGEND[corner]
+                    quartet_name = MICROTILE_LEGEND[corner]
                     # Find the corresponding quartet
-                    quartet = g.images[c.IMAGES[self.type].microtiles[quartet_number]].get()
-                    if mirror:
-                        # Mirror the quartet horizontally
-                        quartet = pygame.transform.flip(quartet, True, False)
-                    if (rotation - pos*90) != 0:
-                        quartet = pygame.transform.rotate(quartet, rotation - pos*90)
+                    if self.type + "_" + quartet_name + str(pos) in g.images:
+                        quartet = g.images[self.type + "_" + quartet_name + str(pos)].get()
+                    elif self.type + "_" + quartet_name in g.images:
+                        if pos*90 != 0:
+                            quartet = pygame.transform.rotate(
+                                g.images[self.type + "_" + quartet_name + str(pos)].get(), pos * -90)
+
                     new_image.blit(quartet, (0, 0))
 
                 g.images[image_name] = Graphics(new_image)
@@ -219,12 +231,12 @@ class MicroTile(Tile):
         return self.image
 
 
-def _compare_tile(type, x, y):
+def _compare_tile(tile_type, x, y):
     """ Compares the type of the tile at the specified coordinate with the specified type.
         Assumes yes if out of bounds.
     """
     if 0 <= x < g.width and 0 <= y < g.height:
-        return g.map[x][y].type == type
+        return g.map[x][y].type == tile_type
     else:
         return True
 

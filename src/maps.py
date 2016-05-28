@@ -22,6 +22,10 @@ import src.constants as c
 import src.globals as g
 
 
+# A list of relative, orthagonal directions to iterate through instead of rewriting this list every time
+RELATIVE_DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+
+
 def load_map(map_image=None):
     """ Function that loads a PIL image and reads it, pixel by pixel, to decode it into a tile map. 
         
@@ -105,13 +109,7 @@ def update_map():
     map_screen_buffer.fill(c.BACKGROUND_COLOR)
     for i in range(len(g.map)):
         for j in range(len(g.map[i])):
-            try:
-                image = g.images[g.map[i][j].get_image()].get()
-            except:
-                import pdb, sys
-                e, m, tb = sys.exc_info()
-                print(e, m, tb)
-                pdb.post_mortem(tb)
+            image = g.images[g.map[i][j].get_image()].get()
             map_screen_buffer.blit(image, (i*c.TILE_SIZE, j*c.TILE_SIZE))
     #g.update_microtiles = False
             
@@ -220,7 +218,7 @@ def _iterate_water(passed_image):
             if _compare_pixel("water", x, y):
                 if random.randint(1, 100) <= c.GEN_WATER_EXPAND_CHANCE:
                     directions = []
-                    for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+                    for relative_x, relative_y in RELATIVE_DIRECTIONS:
                         if (0 <= x + relative_x < map_image.get_width() and
                                 0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
 
@@ -240,7 +238,7 @@ def _smooth_water(passed_image):
     for x in range(map_image.get_width()):
         for y in range(map_image.get_height()):
             directions = []
-            for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+            for relative_x, relative_y in RELATIVE_DIRECTIONS:
                 if (0 <= x + relative_x < map_image.get_width() and
                         0 <= y + relative_y < map_image.get_height()):  # If it's inside the map
 
@@ -306,7 +304,7 @@ def _iterate_rocks(passed_image):
                             rocks += 1
                 if rocks <= 2:
                     directions = []
-                    for relative_x, relative_y in c.RELATIVE_DIRECTIONS:
+                    for relative_x, relative_y in RELATIVE_DIRECTIONS:
                         if (0 <= x + relative_x < map_image.get_width() and
                                 0 <= y + relative_y < map_image.get_height()):
                             if not _compare_pixel("water", x + relative_x, y + relative_y):
