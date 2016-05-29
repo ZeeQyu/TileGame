@@ -190,13 +190,13 @@ class MicroTile(Tile):
                     shape_list[i] = "0"
             # Convert to a string
             shape = "".join(shape_list)
-            image_name = self.type + shape
+            image_name = self.type + "_" + shape  # Underscore added to differentiate from random tiles
 
             # If it's a middle square, and this kind of tile should use random textures, use a random texture.
             if shape == "11111111" and not c.DEACTIVATE_RANDOM_TEXTURES and c.IMAGES[self.type].random:
                 if not self.random_tile_name:
                     random_image_keys = []
-                    for random_image in list(c.IMAGES.keys()):
+                    for random_image in g.images:
                         if random_image.startswith(self.type) and (
                                     random_image[len(self.type):].isdigit() or len(random_image) == len(self.type)):
                             random_image_keys.append(random_image)
@@ -221,9 +221,15 @@ class MicroTile(Tile):
                     elif self.type + "_" + quartet_name in g.images:
                         if pos*90 != 0:
                             quartet = pygame.transform.rotate(
-                                g.images[self.type + "_" + quartet_name + str(pos)].get(), pos * -90)
+                                g.images[self.type + "_" + quartet_name].get(), pos * -90)
+                        else:
+                            quartet = g.images[self.type + "_" + quartet_name].get()
+                    try:
+                        new_image.blit(quartet, (0, 0))
+                    except:
+                        if c.SPECIAL_DEBUG: import pprint, time; print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
+                        raise
 
-                    new_image.blit(quartet, (0, 0))
 
                 g.images[image_name] = Graphics(new_image)
                 self.image = image_name

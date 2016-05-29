@@ -25,7 +25,7 @@ special_entity_list = {}
 # A special list for things like menus that aren't entities.
 non_entity_list = {}
 
-images = graphics.load_graphics()
+images = {}
 
 # List of tiles that should be ticked (tick function called).
 # This is because all tiles shouldn't be ticked, for performance.

@@ -10,6 +10,10 @@
     Uses pygame image objects.
 """
 import os
+import heapq
+
+import pprint
+import time
 
 import pygame
 
@@ -19,6 +23,8 @@ from src import constants as c
 class MissingMicrotileQuartetError(Exception):
     pass
 
+class RequiredImageNotFoundError(Exception):
+    pass
 
 class Graphics(object):
     """ Graphics object containing an image. Loads the image by itself.
@@ -85,10 +91,10 @@ def load_graphics():
             primary_image_file = c.IMAGES[key].png
             for random_image_file in gen_res_images:
                 # Single out the part of the file name that should be a digit
-                digit = "".join(random_image_file.split(".")[:-1])[len("".join(primary_image_file.split(".")[:-1])):]
+                digit = random_image_file.rsplit(".", 1)[0][len(primary_image_file.rsplit(".", 1)[0]):]
                 # If the image follows the format
                 if digit.isdigit() and random_image_file == \
-                        "".join(primary_image_file.split(".")[:-1]) + digit + "." + primary_image_file.split(".")[-1]:
+                        primary_image_file.rsplit(".", 1)[0] + digit + "." + primary_image_file.rsplit(".", 1)[1]:
                     # Add it to the images dict
                     added_random_images = True
                     images[key+digit] = Graphics(os.path.join(os.getcwd(), c.GEN_RES_FOLDER, random_image_file))
@@ -96,18 +102,18 @@ def load_graphics():
             if not added_random_images:
                 # Do it again with the
                 for random_image_file in res_images:
-                    digit = "".join(random_image_file.split(".")[:-1])[
-                            len("".join(primary_image_file.split(".")[:-1])):]
+                    digit = random_image_file.rsplit(".", 1)[0][
+                            len(primary_image_file.rsplit(".", 1)[0]):]
 
                     # If the image follows the format
-                    if digit.isdigit() and random_image_file == "".join(primary_image_file.split(".")[:-1]) + digit + \
-                            "." + primary_image_file.split(".")[-1]:
+                    if digit.isdigit() and random_image_file == primary_image_file.rsplit(".", 1)[0] + digit + \
+                            "." + primary_image_file.rsplit(".", 1)[1]:
                         # Add it to the images dict
                         images[key + digit] = Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, random_image_file))
 
         # Load microtiles, that is, images that start with the same name as the
         if c.DEACTIVATE_MICROTILES is False and c.IMAGES[key].microtiles is not None:
-            primary, ext = c.IMAGES[key].png.rsplit(".")
+            primary, ext = c.IMAGES[key].png.rsplit(".", 1)
             ext = "." + ext
             for microtile in ["Full", "Corner", "Side", "Top", "End"]:
                 found_microtiles = 0
@@ -135,11 +141,12 @@ def load_graphics():
                             Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, primary + microtile + ext))
                     else:
                         if microtile == "Top":
-                            if primary + microtile + ext in images:
-                                image = images[primary + microtile + ext].get()
-                            elif primary + microtile + "0" + ext in images:
-                                image = images[primary + microtile + "0" + ext].get()
+                            if primary + "_" + "side" in images:
+                                image = images[primary + "_" + "side"].get()
+                            elif primary + "_" + "side" + "0" in images:
+                                image = images[primary + "_" + "side" + "0"].get()
                             else:
+                                if c.SPECIAL_DEBUG: print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
                                 raise MissingMicrotileQuartetError(
                                     "Microtile corner " + primary + "_" + microtile.lower() +
                                     " not found. Please make sure the file " + primary + microtile + ext +
@@ -148,6 +155,10 @@ def load_graphics():
                             image = pygame.transform.rotate(image, 90)
                             images[key + "_" + microtile.lower()] = Graphics(image)
                         else:
+                            #images[key + "_" + microtile.lower()] = Graphics(image)
+
+                            if c.SPECIAL_DEBUG: print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
+
                             raise MissingMicrotileQuartetError(
                                 "Microtile corner " + primary + "_" + microtile.lower() +
                                 " not found. Please make sure the file " + primary + microtile + ext +
@@ -160,9 +171,6 @@ def load_graphics():
                         if primary + microtile + str(i) + ext in res_images:
                             images[key + "_" + microtile.lower()] = \
                                 Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, primary + microtile + str(i) + ext))
-
-                        #"water_full", "water_corner",
-                             #"water_side", "water_end"
     return images
 
 
@@ -176,22 +184,119 @@ def prepare_images():
             For example, %package+grass+dirt+ore.png will use one of the tiles of grass.png or grass(number).png and
             overlay the image (which should be a package) over one of the grass tiles and save it as packageGrass.png
             in gen_res and then repeat the process for dirt and ore.
+
+            If at least one requirement (+ and a name) is specified, the image will not be but in gen_res as it
+            is, unless a trailing + is added.
+            For example, %package+grass+dirt.png will not be put in gen_res without a grass or dirt background,
+            but %package+grass+dirt+.png will be.
         All files starting with atlas- will be split in even 16x16 tiles and be named with numbers in gen_res.
             For example, %atlas-grass, which might be a 48x48 image, will be split in 16 pieces, and named grass.png,
             grass2.png and so on up to grass16.png.
+            Tiles from atlasses will be put in gen_res without trailing +.
         All files starting with microtile- will be split into 8x8 microtile quartets and be named appropriately to
             which tile it represents, provided that the atlas is constructed as a 48x48 with an image filled in as
             a f.ex. lake with the shape depicted in the file res/example_microtile_atlas.jpg
-            For example, %microtile-water
-        All files with no special formatting will simple be copied over to gen_res
-            For example, %entityPlayer
+            For example, %microtile-water.png
+            Microtiles will be put in gen_res without trailing +.
+        All files with no special formatting will not be copied to gen_res. It will only be prioritized as a
+            background, unless a trailing + is specified, as specified above
+            For example, %grass.png (will not be copied)
+
+            If a image is formatted with leading % and trailing +, it will replace all tiles with the same name
+            without % and +.
 
         Formattings can be combined, but additions (+) must be specified last in the file. atlas- and microtile- can
             not be combined
-            For example: %atlas-sapling+grass+dirt
+            For example: %atlas-sapling+grass+dirt.png
 
-        If a tile requires another tile (%sapling+grass requires grass) it will be processed after the required tile.
-        If a required tile exists in res as both a tile prepended with % and without, the one prepended with % will be
-            used. Tiles prepended with % will also take priority over tiles without when graphics are loaded.
+        If a tile requires another tile (%sapling+grass.png requires grass) it will be processed after the required tile.
     """
-    pass
+    try:
+        # Empty the folder of png's
+        [os.remove(os.path.join(os.getcwd(), c.GEN_RES_FOLDER, f))
+         for f in os.listdir(os.path.join(os.getcwd(), c.GEN_RES_FOLDER)) if f.rsplit(".", 1)[1] == "png"]
+
+        # List of image keys that need to exist to fulfill all requirements
+        required_images = []
+
+        # Images loaded solely to fulfill requirements. {"image_key": "filename"}
+        providied_images = {}
+
+        # {"image_key": ["atlas/microtile/empty_string", ["requirement1", "requirement2"], "filename"]}
+        source_files = {}
+
+        # Load the names of the textures to be processed, and how they should be processed.
+        for f in os.listdir(os.path.join(os.getcwd(), c.RES_FOLDER)):
+            if f[0] == "%":
+                if "-" in f:
+                    # If there is a prefix
+                    image_key = f[1:].rsplit(".", 1)[0].split("-")[1].split("+")[0]
+                    prefix = f[1:].rsplit(".", 1)[0].split("-")[0]
+                    requirements = f[1:].rsplit(".", 1)[0].split("-")[1].split("+")[1:]
+                else:
+                    image_key = f[1:].rsplit(".", 1)[0].split("+")[0]
+                    prefix = ""
+                    requirements = f[1:].rsplit(".", 1)[0].split("+")[1:]
+
+                source_files[image_key] = [
+                    prefix,
+                    requirements,
+                    f  # The entire filename
+                ]
+                required_images.extend(requirements)
+        # Make sure each requirement is included
+        for required_image in required_images:
+            # If it can't be found in the loaded images already
+            if required_image not in source_files and required_image is not "" and \
+                    required_image not in providied_images:
+                # Try to load it
+                if required_image + ".png" in os.listdir(os.path.join(os.getcwd(), c.RES_FOLDER)):
+                    providied_images[required_image] = os.path.join(os.getcwd(), c.RES_FOLDER, required_image + ".png")
+                else:
+                    # If it isn't found anywhere, remove it from the requirements of the files to be processed
+                    for key in source_files:
+                        for i in range(len(source_files[key][1]) - 1, -1, -1):
+                            if source_files[key][1][i] == required_image:
+                                del source_files[key][1][i]
+        del required_image
+
+        # Order the images to be processed
+        # [(priority, count, sources_key)]
+        heap = []
+
+        # For easier searching of added tiles
+        images_in_heap = []
+
+        remaining_images = list(source_files.keys())
+
+        # Add tiles to the heap, making sure requirements are added first, with earlier priorities
+        count = 0
+        while remaining_images:
+            for i in range(len(remaining_images)-1, -1, -1):
+                requirements = source_files[remaining_images[i]][1]
+                is_ready = True
+                priority = 0
+                for requirement in requirements:
+                    if requirement != "":
+                        if requirement in providied_images:
+                            pass
+                        else:
+                            found_requirement = True
+                            for heap_enty in heap:
+                                if heap_enty[2] == requirement:
+                                    if priority < heap_enty[0]:
+                                        priority = heap_enty[0]
+                                else:
+                                    found_requirement = False
+                            if not found_requirement:
+                                is_ready = False
+                if is_ready:
+                    # Each element in the heap is (priority, count, sources_key)
+                    # count is used as a tie-breaker for priority.
+                    heapq.heappush(heap, (priority, count, remaining_images[i]))
+                    count += 1
+                    del remaining_images[i]
+        if c.SPECIAL_DEBUG: print("EndLocals: "); pprint.pprint(locals()); time.sleep(0.01)
+    except:
+        if c.SPECIAL_DEBUG: print("DebugLocals: "); pprint.pprint(locals()); time.sleep(0.01)
+        raise

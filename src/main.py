@@ -23,6 +23,7 @@ import pygame
 from src import key_input, tiles
 from src import players
 from src import maps
+from src import graphics
 # globals and constants are renamed because they are used very very often.
 # This name change is constant through all modules that use them
 from src import globals as g
@@ -36,6 +37,11 @@ def main():
     """
     # initialize pygame
     pygame.init()
+
+    # Load graphics
+    graphics.prepare_images()
+
+    g.images = graphics.load_graphics()
 
     # Make map
     maps.load_map(maps.generate_map())
