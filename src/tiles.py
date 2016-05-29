@@ -15,20 +15,10 @@ from random import choice, randint
 
 import pygame
 from src.graphics import Graphics
+from src import graphics
 from src import globals as g, units
 from src import constants as c
 from src import entities
-
-# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
-# See doc/microtiles.txt for more information
-# "binary_neighbour_combination": [quartet_index, rotation, if it should be horizontally mirrored]
-MICROTILE_LEGEND = {
-    "111": "full",
-    "101": "corner",
-    "001": "side",
-    "100": "top",
-    "000": "end"
-}
 
 
 class AreaNotFreeException(Exception):
@@ -206,33 +196,7 @@ class MicroTile(Tile):
                 # If the tile already exists, use it
                 self.image = image_name
             else:
-                # If the tile doesn't exist, create it
-                new_image = pygame.Surface((c.TILE_SIZE, c.TILE_SIZE))
-                # Defines which quartet is being manipulated, clockwise, starting with top left
-                pos = -1
-
-                for j in range(0, 7, 2):
-                    pos += 1
-                    corner = shape[j-1] + shape[j] + shape[j+1]
-                    quartet_name = MICROTILE_LEGEND[corner]
-                    # Find the corresponding quartet
-                    if self.type + "_" + quartet_name + str(pos) in g.images:
-                        quartet = g.images[self.type + "_" + quartet_name + str(pos)].get()
-                    elif self.type + "_" + quartet_name in g.images:
-                        if pos*90 != 0:
-                            quartet = pygame.transform.rotate(
-                                g.images[self.type + "_" + quartet_name].get(), pos * -90)
-                        else:
-                            quartet = g.images[self.type + "_" + quartet_name].get()
-                    try:
-                        new_image.blit(quartet, (0, 0))
-                    except:
-                        if c.SPECIAL_DEBUG: import pprint, time; print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
-                        raise
-
-
-                g.images[image_name] = Graphics(new_image)
-                self.image = image_name
+                self.image = graphics.construct_microtile(self.type, image_name, shape)
 
         return self.image
 
