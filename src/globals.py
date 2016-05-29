@@ -8,7 +8,7 @@
 
     Module for initating global variables that should be available in all modules
 """
-from src import constants as c, graphics
+from src import constants as c
 
 # Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None
@@ -85,3 +85,6 @@ def get_img(x, y):
         returns an Img object
     """
     return c.IMAGES[map[x][y].type]
+
+
+

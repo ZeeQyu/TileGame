@@ -8,14 +8,11 @@
 
     Module for controlling input from the user. Note that the key rebinding happens separately in interface.py
 """
-import os
 import sys
 
 import pygame
 import pygame.locals as pgl
 
-
-sys.path.append(os.path.join(os.getcwd(), "sys"))
 from src import globals as g, tiles
 from src import units
 from src import interface
@@ -151,6 +148,10 @@ def event_check():
                         del g.non_entity_list["menu"]
                     g.force_update = True
 
+            elif (event.key == g.key_dict["close_window"][0] and
+                  event.type == pgl.KEYDOWN) and c.NORMAL_DEBUG:
+                print("Closed with the escape key.")
+                sys.exit()
 
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.

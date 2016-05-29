@@ -12,7 +12,6 @@
     It can be edited easily by replacing an index with a new tile instance.
 """
 import os
-import sys
 import random
 
 import pygame

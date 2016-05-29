@@ -9,11 +9,11 @@
     Module containing various constants and the important IMAGES dictionary that is used to load maps and images.
 """
 import pygame.locals as pgl
-
+import pprint, time
 
 # Activates various debug callouts that normally should be on, like fps meter.
 NORMAL_DEBUG = True
-SPECIAL_DEBUG = False
+SPECIAL_DEBUG = True
 
 # Times speed the game should run in. Raise up from 1 if the game is running too slow f.ex. on linux.
 GAME_SPEED = 1
@@ -24,6 +24,13 @@ if NORMAL_DEBUG:
     FORCE_UPDATE = False
 else:
     FORCE_UPDATE = False
+
+
+def debug_print(my_locals, special_message=""):
+    if SPECIAL_DEBUG:
+        print("="*8 + " " + special_message + "Locals " + "="*8)
+        pprint.pprint(my_locals)
+        time.sleep(0.01)
 
 
 class Img(object):
@@ -127,7 +134,7 @@ IMAGES = {
     "stump": Img("treeStump.png", random=True, destroy=[5, "dirt"]),
     "sapling": Img("treeSapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
     "dirt-sapling": Img("treeSaplingDirt.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
-    "rock": Img("rock.png", color_code=(0, 0, 0), random=True, collides=True),
+    "rock": Img("rockGrass.png", color_code=(0, 0, 0), random=True, collides=True),
     "ore": Img("ore.png", color_code=(255, 216, 0), random=True, placeable=True),
     "ore-sapling": Img("treeSaplingOre.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("tree.png", collides=True, destroy=[10, "ore-stump"]),
@@ -151,7 +158,8 @@ IMAGES = {
                     factory_input=[["iron", 1], ["battery", 1]], factory_output=[["rocket", 1]]),
     "package_gen": Img("structurePackageGen.png", placeable=True, destroy=[15, "blink_package"],
                        evolve=[0, 0, "package_gen_iron"], factory_input=[["iron", 1]]),
-    "package_gen_iron": Img("structurePackageGenIron.png", evolve=[20, 20, "package_gen_package"], destroy=[15, "package_gen"]),
+    "package_gen_iron": Img("structurePackageGenIron.png", evolve=[20, 20, "package_gen_package"],
+                            destroy=[15, "package_gen"]),
     "package_gen_package": Img("structurePackageGenPackage.png", destroy=[15, "package_gen"]),
     "battery_factory": Img("structureBattery.png", collides=True, destroy=[15, "package"],
                            factory_alt_image="battery_factory_on",
@@ -223,12 +231,13 @@ key_list = [  # Custom keys. Format:
     ["pick_up_tile", pgl.K_e, "picking up or placing down a package."],
     ["build_menu", pgl.K_q, "opening a menu of what can be built."],
     ["select", pgl.K_SPACE, "selecting the current menu item."],
-    ["select2", 13, "the second key for selecting current menu item."], # Enter Key
+    ["select2", 13, "the second key for selecting current menu item."],  # Enter Key
     ["change_target", pgl.K_w, "changing the target of a factory tile."],
 
     ["spawn_beetle", pgl.K_z, "spawning a beetle at the player's feet."],
     ["duplicate_beetles", pgl.K_x, "activating the beetles' self-duplicating process."],
-    ["remove_beetles", pgl.K_c, "removing all beetles."]
+    ["remove_beetles", pgl.K_c, "removing all beetles."],
+    ["close_window", pgl.K_ESCAPE, "closing the window."]
 ]
 
 # The identifier of the tile that should be used
@@ -281,6 +290,8 @@ DEFAULT_PLACE_TILE = "sapling"
 
 # The size of tiles. Probably will never be anything else than 16.
 TILE_SIZE = 16
+# The size atlases should be split into. Most often same as TILE_SIZE.
+ATLAS_TILE_SIZE = 16
 # Set to true if all textures should be non-random.
 DEACTIVATE_RANDOM_TEXTURES = False
 # Set to true to disable all microtiles and default to one texture

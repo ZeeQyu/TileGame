@@ -16,6 +16,7 @@
 """
 
 import time
+import os
 
 # Third party modules
 import pygame
@@ -38,9 +39,10 @@ def main():
     # initialize pygame
     pygame.init()
 
+    if not os.path.isdir(os.path.join(os.getcwd(), c.GEN_RES_FOLDER)):
+        os.mkdir(os.path.join(os.getcwd(), c.GEN_RES_FOLDER))
     # Load graphics
     graphics.prepare_images()
-
     g.images = graphics.load_graphics()
 
     # Make map

@@ -15,7 +15,7 @@ import pygame
 import pygame.locals as pgl
 
 import src.constants as c
-from src import globals as g
+import src.globals as g
 from src import tiles
 from src import maps
 

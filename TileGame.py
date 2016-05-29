@@ -9,10 +9,6 @@
     Launches the game. For more information, check the file /src/main.py
 """
 
-import sys
-import os
-
-sys.path.append(os.path.join(os.getcwd(), "src"))
 from src import main
 
 main.main()
