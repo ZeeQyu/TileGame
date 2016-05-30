@@ -200,6 +200,7 @@ def construct_microtile(tile_type, image_name, shape):
         corner = shape[j - 1] + shape[j] + shape[j + 1]
         quartet_name = MICROTILE_LEGEND[corner]
         # Find the corresponding quartet
+        quartet = None
         if tile_type + "_" + quartet_name + str(pos) in g.images:
             quartet = g.images[tile_type + "_" + quartet_name + str(pos)].get()
         elif tile_type + "_" + quartet_name in g.images:
@@ -208,11 +209,7 @@ def construct_microtile(tile_type, image_name, shape):
                     g.images[tile_type + "_" + quartet_name].get(), pos * -90)
             else:
                 quartet = g.images[tile_type + "_" + quartet_name].get()
-        try:
-            new_image.blit(quartet, (0, 0))
-        except:
-            if c.SPECIAL_DEBUG: import pprint, time; print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
-            raise
+        new_image.blit(quartet, (0, 0))
     g.images[image_name] = Graphics(new_image)
     return image_name
 
@@ -264,18 +261,47 @@ def prepare_images():
             For example: %atlas-sapling+grass+dirt.png
 
         If a tile requires another tile (%sapling+grass.png requires grass) it will be processed after the required tile
+
+        Silently skips not found backgrounds.
     """
     # Empty the folder of png's
     [os.remove(os.path.join(os.getcwd(), c.GEN_RES_FOLDER, f))
      for f in os.listdir(os.path.join(os.getcwd(), c.GEN_RES_FOLDER)) if f.rsplit(".", 1)[1] == "png"]
 
+    # Load the names of the files and parse them.
+    implicit_backgrounds, required_images, source_files = _parse_files()
+
+    # Make sure each requirement is included
+    provided_images = _check_requirements(implicit_backgrounds, required_images, source_files)
+
+    # Order the images to be processed
+    heap = _create_heap(provided_images, source_files)
+    # source_files = {"image_key": ["atlas/microtile/empty_string", ["requirement1", "requirement2"], "filename"]}
+    # heap = [(priority, count, sources_key)]
+    # {"image_key": [loaded_Surface_1, loaded_Surface_2}
+
+    #  Load images that aren't prefixed by % but is required for another tile.
+    loaded_images = {}
+    for provided_image in provided_images:
+        loaded_images[provided_image] = \
+            [pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, provided_images[provided_image]))]
+
+    # Go through the heap in priority order and create the files
+    _process_heap(heap, loaded_images, source_files)
+
+
+def _parse_files():
+    """ Subfunction of prepare_images()
+        Search through the c.RES_FOLDER for all files beginning with %, find the format of each file and
+        construct a list of strings for what images are needed (required_images), what images there are (source_files)
+        and what images will be created (implicit_backgrounds)
+    """
     # List of image keys that need to exist to fulfill all requirements
     required_images = []
-    # Images loaded solely to fulfill requirements. {"image_key": "filename"}
-    providied_images = {}
     # {"image_key": ["atlas/microtile/empty_string", ["requirement1", "requirement2"], "filename"]}
     source_files = {}
-
+    # Requirements that are generated, f.ex. dirtGrass, from %dirt+grass.png
+    implicit_backgrounds = []
     # ========================================
     # Load the names of the textures to be processed, and how they should be processed.
     for f in os.listdir(os.path.join(os.getcwd(), c.RES_FOLDER)):
@@ -289,11 +315,11 @@ def prepare_images():
                 image_key = f[1:].rsplit(".", 1)[0].split("+")[0]
                 prefix = ""
                 requirements = f[1:].rsplit(".", 1)[0].split("+")[1:]
-            # Make sure an atlas and a microtile atlas can be loaded for the same tile
-            #if prefix == "microtile":
-             #   image_key = "microtile" + image_key
+                # Make sure an atlas and a microtile atlas can be loaded for the same tile
+                # if prefix == "microtile":
+                #   image_key = "microtile" + image_key
 
-#            if image_key in source_files:
+            #            if image_key in source_files:
 
             source_files[image_key] = [
                 prefix,
@@ -301,42 +327,67 @@ def prepare_images():
                 f  # The entire filename
             ]
             required_images.extend(requirements)
+            # Add the requirements to the array of derived images
+            for requirement in requirements:
+                if requirement is not "":
+                    implicit_backgrounds.append(image_key + requirement[0].capitalize() + requirement[1:])
 
-    # ========================================
-    # Make sure each requirement is included
+    return implicit_backgrounds, required_images, source_files
+
+
+def _check_requirements(implicit_backgrounds, required_images, source_files):
+    """ Use the lists created in _parse_files() and check them against each other so that each
+        image name in required_images turns up in either source_files or amongst the implicit_backgrounds.
+        If a requirement is not found, first attempt to load it from the res folder, even if it's without a %, and
+        put it in the dictionary provided_images as {"file_name": pygame.Surface}
+
+        If it's still not found, remove it from all images that requests it, without throwing an error. Notify
+        the user through the console if c.NORMAL_DEBUG is on. If it's an important image, it will crash when
+        graphics are loaded in load_graphics().
+    """
+    # Images loaded solely to fulfill requirements. {"image_key": "filename"}
+    provided_images = {}
     for required_image in required_images:
         # If it can't be found in the loaded images already
         if required_image not in source_files and required_image is not "" and \
-                required_image not in providied_images:
+                        required_image not in provided_images and required_image not in implicit_backgrounds:
+
             # Try to load it
             if required_image + ".png" in os.listdir(os.path.join(os.getcwd(), c.RES_FOLDER)):
-                providied_images[required_image] = os.path.join(os.getcwd(), c.RES_FOLDER, required_image + ".png")
+                provided_images[required_image] = os.path.join(os.getcwd(), c.RES_FOLDER, required_image + ".png")
             else:
                 # If it isn't found anywhere, remove it from the requirements of the files to be processed
                 for key in source_files:
                     for i in range(len(source_files[key][1]) - 1, -1, -1):
                         if source_files[key][1][i] == required_image:
                             del source_files[key][1][i]
+                            if c.NORMAL_DEBUG:
+                                print("Removed background requirement " + required_image +
+                                      " because it wasn't found. Please add such an image to the res folder.")
 
-    # ========================================
-    # Order the images to be processed
+    return provided_images
 
+
+def _create_heap(provided_images, source_files):
+    """ Order the elements of source_files to make sure each requirement is processed before the tile itself.
+        If a loop, where several tiles reference themselves in a circle is found, notify the user (if c.NORMAL_DEBUG)
+        and continue without crashing. If it's an important image, it will crash when load_graphics() is run.
+    """
     # [(priority, count, sources_key)]
     heap = []
-    # For easier searching of added tiles
-    images_in_heap = []
+
     remaining_images = list(source_files.keys())
     # Add tiles to the heap, making sure requirements are added first, with earlier priorities
     count = 0
     last_remaining_images = []
     while remaining_images:
-        for i in range(len(remaining_images)-1, -1, -1):
+        for i in range(len(remaining_images) - 1, -1, -1):
             requirements = source_files[remaining_images[i]][1]
             is_ready = True
             priority = -1
             for requirement in requirements:
                 if requirement != "":
-                    if requirement in providied_images:
+                    if requirement in provided_images:
                         pass
                     else:
                         found_requirement = False
@@ -345,6 +396,13 @@ def prepare_images():
                                 if priority < heap_entry[0]:
                                     priority = heap_entry[0]
                                 found_requirement = True
+                            else:
+                                for second_level_requirement in source_files[heap_entry[2]][1]:
+                                    if second_level_requirement is not "" and requirement == heap_entry[2] + \
+                                            second_level_requirement[0].capitalize() + second_level_requirement[1:]:
+                                        if priority < heap_entry[0]:
+                                            priority = heap_entry[0]
+                                        found_requirement = True
                         if not found_requirement:
                             is_ready = False
             if is_ready:
@@ -354,24 +412,17 @@ def prepare_images():
                 count += 1
                 del remaining_images[i]
         if last_remaining_images == remaining_images and remaining_images != []:
-            print("A loop of tiles who reference each other has been found. "
-                  "Please check the res folder for the format of the following images,"
-                  "and make sure they don't refernce each other: " + str(remaining_images))
+            if c.NORMAL_DEBUG:
+                print("A loop of tiles who reference each other has been found. "
+                      "Please check the res folder for the format of the following images,"
+                      "and make sure they don't refernce each other in a circle: " + str(remaining_images))
             break
         last_remaining_images = remaining_images
-    # source_files = {"image_key": ["atlas/microtile/empty_string", ["requirement1", "requirement2"], "filename"]}
-    # heap = [(priority, count, sources_key)]
-    # {"image_key": [loaded_Surface_1, loaded_Surface_2}
 
-    # ========================================
-    #  Load images that aren't prefixed by % but is required for another tile.
-    loaded_images = {}
-    for provided_image in providied_images:
-        loaded_images[provided_image] = \
-            [pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, providied_images[provided_image]))]
+    return heap
 
-    # ========================================
-    # Go through the heap in priority order
+
+def _process_heap(heap, loaded_images, source_files):
     while heap:
         image_key = heapq.heappop(heap)[2]
         src_image = pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, source_files[image_key][2]))
@@ -380,7 +431,7 @@ def prepare_images():
             for j in range(int(src_image.get_height() / c.ATLAS_TILE_SIZE)):
                 for i in range(int(src_image.get_width() / c.ATLAS_TILE_SIZE)):
                     loaded_images[image_key].append(src_image.subsurface(pygame.Rect(
-                        i*c.ATLAS_TILE_SIZE, j*c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE)))
+                        i * c.ATLAS_TILE_SIZE, j * c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE)))
 
             if loaded_images[image_key] is []:
                 # If the image is too small to divide, no image will have been added now.
@@ -389,12 +440,13 @@ def prepare_images():
             if len(source_files[image_key][1]) == 0:
                 source_files[image_key][1].append("")
 
-        elif source_files[image_key][0] == "microtile":
+        else:
+            loaded_images[image_key] = [src_image]
+
+        if source_files[image_key][0] == "microtile":
             # Microtiles are not compatible with overlaying
             # TODO
             continue
-        else:
-            loaded_images[image_key] = [src_image]
 
         for background_name in source_files[image_key][1]:
             if background_name == "":
@@ -402,12 +454,19 @@ def prepare_images():
                 for i, loaded_image in enumerate(loaded_images[image_key], 1):
                     _save_image(image_key, loaded_image, i)
             else:
-                # For all other values, the value is a background. Overlay each random variation of the image on
-                # the background and save it to gen_res
+                # For all other values, the value is a background.
+
+                # Overlay each random variation of the image on the background and save it to gen_res
                 for i, loaded_image in enumerate(loaded_images[image_key], 1):
-                    image = random.choice(loaded_images[background_name])
+                    image = pygame.Surface((c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE))
+                    image.blit(random.choice(loaded_images[background_name]), (0, 0))
                     image.blit(loaded_image, (0, 0))
-                    _save_image(image_key + background_name.capitalize(), image, i)
+                    _save_image(image_key + background_name[0].capitalize() + background_name[1:], image, i)
+                    # Take the random variations of the backgrounded image and make it available for other tiles
+                    if i == 1:
+                        loaded_images[image_key + background_name[0].capitalize() + background_name[1:]] = [image]
+                    else:
+                        loaded_images[image_key + background_name[0].capitalize() + background_name[1:]].append(image)
 
 
 def _save_image(image_name, image, i=0):

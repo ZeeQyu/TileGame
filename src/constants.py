@@ -26,9 +26,9 @@ else:
     FORCE_UPDATE = False
 
 
-def debug_print(my_locals, special_message=""):
+def debug_print(my_locals, title="Locals"):
     if SPECIAL_DEBUG:
-        print("="*8 + " " + special_message + "Locals " + "="*8)
+        print("="*8 + " " + title + " " + "="*8)
         pprint.pprint(my_locals)
         time.sleep(0.01)
 
