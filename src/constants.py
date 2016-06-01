@@ -75,7 +75,13 @@ class Img(object):
                 goods from when it recieves the input goods. Defaults to 0.
             "factory_alt_img" should be a string with an identifier of an image in the
                 IMAGES list that is used when the factory is working.
-            "microtiles" should be True or False. If True, it will use tiles named like the tile
+            "microtiles" should be True, False or a string. If True or a string, this tile will use microtiles,
+                which are special images taking shape after the pattern of surrounding tiles of the same type
+                (for more info,see doc/microtiles.txt)
+                - If True, quarters named like the png field but with strings like Corner3 and Top0 appended are
+                    loaded.
+                If False, no microtiles are used.
+                If it's a string, (f.ex. "outlineWater.png") microtiles named like the string will be used.
 
             If factory_input and evolve is present in the same tile,
                 said tile will evolve the evolve-time in ticks after the required goods are delivered.
@@ -130,14 +136,14 @@ IMAGES = {
     # Nature
     "grass": Img("grass.png", color_code=(255, 255, 255), random=True, placeable=True),
     "dirt": Img("dirt.png", random=True, placeable=True, evolve=[75, 100, "grass"]),
-    "tree": Img("tree.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
+    "tree": Img("treeGrass.png", color_code=(124, 124, 124), random=True, collides=True, destroy=[7, "stump"]),
     "stump": Img("treeStump.png", random=True, destroy=[5, "dirt"]),
     "sapling": Img("treeSapling.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
     "dirt-sapling": Img("treeSaplingDirt.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
     "rock": Img("rockGrass.png", color_code=(0, 0, 0), random=True, collides=True),
     "ore": Img("ore.png", color_code=(255, 216, 0), random=True, placeable=True),
     "ore-sapling": Img("treeSaplingOre.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
-    "ore-tree": Img("tree.png", collides=True, destroy=[10, "ore-stump"]),
+    "ore-tree": Img("treeGrass.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("treeStumpOre.png", destroy=[15, "ore"]),
     "water": Img("water.png", color_code=(0, 0, 255), random=True, microtiles=True),
 
@@ -201,6 +207,7 @@ IMAGES = {
     "icon": Img("otherLogo.png"),
     "menu_background": Img("interfaceBackground.png"),
     "button_shader": Img("buttonShader"),
+    "outline": Img("outline.png", microtiles=True),
 
     # buttons
     "button": Img("button.png"),
@@ -288,10 +295,10 @@ else:
 # The tile that is placed with the players place key
 DEFAULT_PLACE_TILE = "sapling"
 
-# The size of tiles. Probably will never be anything else than 16.
+# The size of tiles. Probably will never be anything else than 16. Must be even, if microtiles are to be used.
 TILE_SIZE = 16
-# The size atlases should be split into. Most often same as TILE_SIZE.
-ATLAS_TILE_SIZE = 16
+# The size atlases should be split into. Most often same as TILE_SIZE. Must be even, if microtiles are to be used.
+ATLAS_TILE_SIZE = TILE_SIZE
 # Set to true if all textures should be non-random.
 DEACTIVATE_RANDOM_TEXTURES = False
 # Set to true to disable all microtiles and default to one texture

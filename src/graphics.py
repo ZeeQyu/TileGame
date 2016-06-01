@@ -5,7 +5,7 @@
     Code and lead design by ZeeQyu
     Graphics by Pokemania00
     https://github.com/ZeeQyu/TileGame
-    
+
     Module containing the Graphics class.
     Uses pygame image objects.
 """
@@ -22,6 +22,32 @@ from src import constants as c
 from src import globals as g
 
 
+# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
+# See doc/microtiles.txt for more information
+# "binary_neighbour_combination": ["quartet_name"]
+MICROTILE_LEGEND = {
+    "111": "full",
+    "101": "corner",
+    "001": "side",
+    "100": "top",
+    "000": "end"
+}
+# Prefix to let microtiles and atlases exist with the same name
+MICROTILE_ATLAS_PREFIX = "+-+"
+# Table for determining what position results in which kind of microtile in a microtile atlas.
+# Uses MICROTILE_LEGEND keys for identifying which kind of quarter it is, plus a number 0-3 for what quarter
+# position it's in (clockwise, starting with top left). None means "do not use this square".
+MICROTILE_ATLAS_TABLE = [
+    [ None,  None, "0000",  None,   None,   None,  None,  None],
+    [ None,  None,  None,   None,   None,   None,  None,  None],
+    [ None,  None, "0010", "1011", "1000", "0011", None, "0001"],
+    [ None,  None, "1003", "1112", "1113", "1012", None,  None],
+    [ None,  None, "1010", "1111", "1110", "1001", None,  None],
+    ["0003", None, "0013", "1002", "1013", "0012", None,  None],
+    [ None,  None,  None,   None,   None,   None,  None,  None],
+    [ None,  None,  None,   None,   None,  "0002", None,  None]
+]
+
 class MissingMicrotileQuartetError(Exception):
     pass
 
@@ -33,28 +59,36 @@ class RequiredImageNotFoundError(Exception):
 class Graphics(object):
     """ Graphics object containing an image. Loads the image by itself.
     """
- 
-    def __init__(self, name):
+
+    def __init__(self, name, rotation=0):
         """ "name" should be one of these two things, which determines what the image should be:
             - A pygame.Surface
                 If so, the image will be that surface
             - A path, and in that case name_is_path should be True
                 If so, the image will be that exact image
+
+            "rotation" should be the rotation in degrees the image should be rotated conterclockwise before being saved
         """
         if type(name) == str:
-            self.image = pygame.image.load(name)
-            # if c.NORMAL_DEBUG:
-            #     print(os.path.join(os.getcwd(), c.RES_FOLDER, c.IMAGES[name].png))
+
+            self.image = self._rotate(pygame.image.load(name), rotation)
         elif type(name) == pygame.Surface:
-            self.image = name 
-    
+            self.image = self._rotate(name, rotation)
+
+    @staticmethod
+    def _rotate(image, rotation):
+        if rotation != 0:
+            return pygame.transform.rotate(image, rotation)
+        else:
+            return image
+
     def get(self):
         """ returns the contained image
         """
         return self.image
-    
+
     def get_size(self):
-        """ returns a tuple containing the width and height of the image 
+        """ returns a tuple containing the width and height of the image
         """
         return self.get().get_width(), self.get().get_height()
 
@@ -64,7 +98,7 @@ def load_graphics():
         and a Graphics object created using that key, as well as associated resource files.
 
         The bulk of the code checks the c.GEN_RES_FOLDER for each image before the c.RES_FOLDER.
-        
+
         returns that dictionary
     """
     images = {}
@@ -115,11 +149,22 @@ def load_graphics():
                         # Add it to the images dict
                         images[key + digit] = Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, random_image_file))
 
-        # Load microtiles, that is, images that start with the same name as the
+        # Load microtiles, that is, images that start with the same name as the key, but with endings sucha as Corner0
         if c.DEACTIVATE_MICROTILES is False and c.IMAGES[key].microtiles is not None:
-            primary, ext = c.IMAGES[key].png.rsplit(".", 1)
+            if type(c.IMAGES[key].microtiles) == str:
+                microtile_name = c.IMAGES[key].microtiles
+            else:
+                microtile_name = c.IMAGES[key].png
+            # Check if there's an extension
+            if "." in microtile_name:
+                primary, ext = microtile_name.rsplit(".", 1)
+            else:
+                # If there's no extension in the file name, use png as a default
+                primary = microtile_name
+                microtile_name += ".png"
+                ext = "png"
             ext = "." + ext
-            for microtile in ["Full", "Corner", "Side", "Top", "End"]:
+            for microtile in [name.capitalize() for name in MICROTILE_LEGEND.values()]:
                 found_microtiles = 0
                 for i in range(4):
                     # Make sure we have the entire set
@@ -144,50 +189,37 @@ def load_graphics():
                         images[key + "_" + microtile.lower()] = \
                             Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, primary + microtile + ext))
                     else:
+                        # Otherwise, try to mirror the side to look like the top.
                         if microtile == "Top":
                             if primary + "_" + "side" in images:
                                 image = images[primary + "_" + "side"].get()
                             elif primary + "_" + "side" + "0" in images:
                                 image = images[primary + "_" + "side" + "0"].get()
                             else:
-                                if c.SPECIAL_DEBUG: print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
+                                # If all else fails, raise an exception that the file wasn't found
                                 raise MissingMicrotileQuartetError(
                                     "Microtile corner " + primary + "_" + microtile.lower() +
                                     " not found. Please make sure the file " + primary + microtile + ext +
-                                    " exists in the folder " + c.RES_FOLDER + ".")
+                                    " exists in the folder " + os.path.join(os.getcwd(), c.RES_FOLDER) + ".")
                             image = pygame.transform.flip(image, 1, 0)
                             image = pygame.transform.rotate(image, 90)
                             images[key + "_" + microtile.lower()] = Graphics(image)
                         else:
-                            #images[key + "_" + microtile.lower()] = Graphics(image)
-
-                            if c.SPECIAL_DEBUG: print("Locals: "); pprint.pprint(locals()); time.sleep(0.01)
-
                             raise MissingMicrotileQuartetError(
                                 "Microtile corner " + primary + "_" + microtile.lower() +
                                 " not found. Please make sure the file " + primary + microtile + ext +
-                                " exists in the folder " + c.RES_FOLDER + ".")
+                                " exists in the folder " + os.path.join(os.getcwd(), c.RES_FOLDER) + ".")
                 else:
+                    # If 1 to 3 tiles were found, pick one, rotate it and use it as the top left one.
                     for i in range(4):
                         if primary + microtile + str(i) + ext in gen_res_images:
                             images[key + "_" + microtile.lower()] = Graphics(
-                                os.path.join(os.getcwd(), c.GEN_RES_FOLDER, primary + microtile + str(i) + ext))
+                                os.path.join(os.getcwd(), c.GEN_RES_FOLDER, primary + microtile + str(i) + ext), i * 90)
                         if primary + microtile + str(i) + ext in res_images:
                             images[key + "_" + microtile.lower()] = \
-                                Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, primary + microtile + str(i) + ext))
+                                Graphics(os.path.join(os.getcwd(), c.RES_FOLDER, primary + microtile + str(i) + ext),
+                                         i * 90)
     return images
-
-
-# This is a lookup-table for constructing microtiles. It specifies how the quartets should be used to be constructed
-# See doc/microtiles.txt for more information
-# "binary_neighbour_combination": ["quartet_name"]
-MICROTILE_LEGEND = {
-    "111": "full",
-    "101": "corner",
-    "001": "side",
-    "100": "top",
-    "000": "end"
-}
 
 
 def construct_microtile(tile_type, image_name, shape):
@@ -204,7 +236,7 @@ def construct_microtile(tile_type, image_name, shape):
         if tile_type + "_" + quartet_name + str(pos) in g.images:
             quartet = g.images[tile_type + "_" + quartet_name + str(pos)].get()
         elif tile_type + "_" + quartet_name in g.images:
-            if pos * 90 != 0:
+            if pos != 0:
                 quartet = pygame.transform.rotate(
                     g.images[tile_type + "_" + quartet_name].get(), pos * -90)
             else:
@@ -239,7 +271,7 @@ def prepare_images():
             Sizes of atlases must be multiples of 16, but need not be quadratic.
 
         All files starting with microtile- will be split into 8x8 microtile quartets and be named appropriately to
-            which tile it represents, provided that the atlas is constructed as a 48x48 with an image filled in as
+            which tile it represents, provided that the atlas is constructed as a 64x64 with an image filled in as
             a f.ex. lake with the shape depicted in the file res/example_microtile_atlas.jpg
             For example, %microtile-water.png
             Microtiles will be put in gen_res without trailing +.
@@ -287,7 +319,7 @@ def prepare_images():
             [pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, provided_images[provided_image]))]
 
     # Go through the heap in priority order and create the files
-    _process_heap(heap, loaded_images, source_files)
+    _process_heap(heap, loaded_images, source_files, implicit_backgrounds)
 
 
 def _parse_files():
@@ -298,6 +330,7 @@ def _parse_files():
     """
     # List of image keys that need to exist to fulfill all requirements
     required_images = []
+    # Images that exist
     # {"image_key": ["atlas/microtile/empty_string", ["requirement1", "requirement2"], "filename"]}
     source_files = {}
     # Requirements that are generated, f.ex. dirtGrass, from %dirt+grass.png
@@ -315,11 +348,15 @@ def _parse_files():
                 image_key = f[1:].rsplit(".", 1)[0].split("+")[0]
                 prefix = ""
                 requirements = f[1:].rsplit(".", 1)[0].split("+")[1:]
-                # Make sure an atlas and a microtile atlas can be loaded for the same tile
-                # if prefix == "microtile":
-                #   image_key = "microtile" + image_key
 
-            #            if image_key in source_files:
+            if prefix == "microtile":
+                # Make sure an atlas and a microtile atlas can be loaded for the same tile, f.ex. water
+                image_key = MICROTILE_ATLAS_PREFIX + image_key
+            else:
+                # Add the requirements to the array of derived images if it isn't a microtile atlas
+                for requirement in requirements:
+                    if requirement is not "":
+                        implicit_backgrounds.append(image_key + requirement[0].capitalize() + requirement[1:])
 
             source_files[image_key] = [
                 prefix,
@@ -327,10 +364,6 @@ def _parse_files():
                 f  # The entire filename
             ]
             required_images.extend(requirements)
-            # Add the requirements to the array of derived images
-            for requirement in requirements:
-                if requirement is not "":
-                    implicit_backgrounds.append(image_key + requirement[0].capitalize() + requirement[1:])
 
     return implicit_backgrounds, required_images, source_files
 
@@ -422,60 +455,146 @@ def _create_heap(provided_images, source_files):
     return heap
 
 
-def _process_heap(heap, loaded_images, source_files):
+def _process_heap(heap, loaded_images, source_files, implicit_backgrounds):
     while heap:
         image_key = heapq.heappop(heap)[2]
         src_image = pygame.image.load(os.path.join(os.getcwd(), c.RES_FOLDER, source_files[image_key][2]))
+
         if source_files[image_key][0] == "atlas":
             loaded_images[image_key] = []
             for j in range(int(src_image.get_height() / c.ATLAS_TILE_SIZE)):
                 for i in range(int(src_image.get_width() / c.ATLAS_TILE_SIZE)):
                     loaded_images[image_key].append(src_image.subsurface(pygame.Rect(
                         i * c.ATLAS_TILE_SIZE, j * c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE)))
-
             if loaded_images[image_key] is []:
                 # If the image is too small to divide, no image will have been added now.
                 loaded_images[image_key] = [src_image]
             # Make sure the generated files are saved to gen_res
             if len(source_files[image_key][1]) == 0:
                 source_files[image_key][1].append("")
-
         else:
             loaded_images[image_key] = [src_image]
 
-        if source_files[image_key][0] == "microtile":
-            # Microtiles are not compatible with overlaying
-            # TODO
-            continue
+        if source_files[image_key][0] != "microtile":
+            # For normal tiles or normal atlases
+            for background_name in source_files[image_key][1]:
+                if background_name == "":
+                    # If it's the special case empty string, save the textures to gen_res
+                    for i, loaded_image in enumerate(loaded_images[image_key], 1):
+                        _save_image(image_key, loaded_image, i)
+                else:
+                    # For all other values, the value is a background.
+                    for i, loaded_image in enumerate(loaded_images[image_key], 1):
+                        # Overlay each random variation of the image on the background and save it to gen_res
+                        image = pygame.Surface((c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE), pygame.SRCALPHA)
+                        image.blit(random.choice(loaded_images[background_name]), (0, 0))
+                        image.blit(loaded_image, (0, 0))
+                        _save_image(image_key + background_name[0].capitalize() + background_name[1:], image, i)
+                        # Take the random variations of the backgrounded image and make it available for other tiles
+                        if i == 1:
+                            loaded_images[image_key + background_name[0].capitalize() + background_name[1:]] = [image]
+                        else:
+                            loaded_images[image_key + background_name[0].capitalize() + background_name[1:]].append(image)
 
-        for background_name in source_files[image_key][1]:
-            if background_name == "":
-                # If it's the special case empty string, save the textures to gen_res
-                for i, loaded_image in enumerate(loaded_images[image_key], 1):
-                    _save_image(image_key, loaded_image, i)
-            else:
-                # For all other values, the value is a background.
-
-                # Overlay each random variation of the image on the background and save it to gen_res
-                for i, loaded_image in enumerate(loaded_images[image_key], 1):
-                    image = pygame.Surface((c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE))
-                    image.blit(random.choice(loaded_images[background_name]), (0, 0))
-                    image.blit(loaded_image, (0, 0))
-                    _save_image(image_key + background_name[0].capitalize() + background_name[1:], image, i)
-                    # Take the random variations of the backgrounded image and make it available for other tiles
-                    if i == 1:
-                        loaded_images[image_key + background_name[0].capitalize() + background_name[1:]] = [image]
+        else:
+            # For microtile atlases
+            if loaded_images[image_key][0].get_width() == c.ATLAS_TILE_SIZE * 4 and \
+                    loaded_images[image_key][0].get_height() == c.ATLAS_TILE_SIZE * 4:
+                if "" not in source_files[image_key][1]:
+                    source_files[image_key][1].append("")
+                # Put each background behind the atlas
+                for background_name in source_files[image_key][1]:
+                    if background_name is not "":
+                        microtile_atlas = pygame.Surface((c.ATLAS_TILE_SIZE*4, c.ATLAS_TILE_SIZE*4), pygame.SRCALPHA)
+                        # Use an entire atlas if possible
+                        atlas_background_successful = False
+                        if background_name in source_files and source_files[background_name][0] == "atlas":
+                            background_image = pygame.image.load(os.path.join(os.getcwd(),
+                                                                 c.RES_FOLDER, source_files[background_name][2]))
+                            if background_image.get_width() == c.ATLAS_TILE_SIZE * 4 and \
+                                    background_image.get_height() == c.ATLAS_TILE_SIZE * 4:
+                                # If there is such an atlas with the exact same size, use it.
+                                microtile_atlas.blit(background_image, (0, 0))
+                                atlas_background_successful = True
+                        if not atlas_background_successful:
+                            # If there isn't such an atlas, use single tiles, randomly chosen, over the entire background.
+                            for j in range(4):
+                                for i in range(4):
+                                    microtile_atlas.blit(random.choice(loaded_images[background_name]),
+                                                         (i*c.ATLAS_TILE_SIZE, j*c.ATLAS_TILE_SIZE))
+                        del atlas_background_successful
+                        microtile_atlas.blit(loaded_images[image_key][0], (0, 0))
                     else:
-                        loaded_images[image_key + background_name[0].capitalize() + background_name[1:]].append(image)
+                        microtile_atlas = loaded_images[image_key][0]
+
+                    # Create the name of the new image by appending the background to the image name
+                    if background_name is "":
+                        image_save_name = image_key[len(MICROTILE_ATLAS_PREFIX):]
+                    else:
+                        image_save_name = image_key[len(MICROTILE_ATLAS_PREFIX):] +\
+                                          background_name[0].capitalize() + background_name[1:]
+
+                    # Split the microtile atlas
+                    if not c.DEACTIVATE_MICROTILES:
+                        for j in range(8):
+                            for i in range(8):
+                                if MICROTILE_ATLAS_TABLE[j][i] is not None:
+                                    # Create a transparent surface
+                                    quarter = pygame.Surface((c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE), pygame.SRCALPHA)
+                                    # Decide which quarter of said surface the quarter should be blitted onto
+                                    x = 0
+                                    y = 0
+                                    if int(MICROTILE_ATLAS_TABLE[j][i][3]) is 1 or \
+                                            int(MICROTILE_ATLAS_TABLE[j][i][3]) is 2:
+                                        x = c.ATLAS_TILE_SIZE / 2
+                                    if int(MICROTILE_ATLAS_TABLE[j][i][3]) is 2 or \
+                                            int(MICROTILE_ATLAS_TABLE[j][i][3]) is 3:
+                                        y = c.ATLAS_TILE_SIZE / 2
+
+                                    quarter.blit(microtile_atlas.subsurface(pygame.Rect(
+                                        i*c.ATLAS_TILE_SIZE/2, j*c.ATLAS_TILE_SIZE/2,
+                                        c.ATLAS_TILE_SIZE/2, c.ATLAS_TILE_SIZE/2)),
+                                        (x, y))
+                                    _save_image(image_save_name +  # Image name and background name
+                                                MICROTILE_LEGEND[MICROTILE_ATLAS_TABLE[j][i][:3]].capitalize() +  # Quarter name
+                                                MICROTILE_ATLAS_TABLE[j][i][3],  # Quarter position
+                                                quarter)
+
+                    # Find out if there's a default tile.
+                    found_microtile_default = (image_save_name in loaded_images or
+                                               image_save_name in implicit_backgrounds)
+                    for heap_entry in heap:
+                        if heap_entry[2] == image_save_name:
+                            found_microtile_default = True
+                    if not found_microtile_default:
+                        # If a default tile isn't found anywhere, create one from the center of the microtile atlas
+                        default_image = pygame.Surface((16, 16))
+                        # But make sure the surface fits in with the edges of other tiles, so put the top left quarter
+                        # on the bottom right quarter and so on.
+                        for i in (0, 1):
+                            for j in (0, 1):
+                                # For each quarter, blit it in the opposite square
+                                default_image.blit(
+                                    microtile_atlas.subsurface(pygame.Rect(
+                                        c.ATLAS_TILE_SIZE*1.5 + i*c.ATLAS_TILE_SIZE*0.5,  # Position of source, x
+                                        c.ATLAS_TILE_SIZE*1.5 + j*c.ATLAS_TILE_SIZE*0.5,  # Position of source, y
+                                        c.ATLAS_TILE_SIZE*0.5, c.ATLAS_TILE_SIZE*0.5)),  # Size of
+                                    (i*c.ATLAS_TILE_SIZE*0.5, j*c.ATLAS_TILE_SIZE*0.5))  # Pygame blit coordinate
+                        _save_image(image_save_name,
+                                    microtile_atlas.subsurface(pygame.Rect(
+                                        c.ATLAS_TILE_SIZE*1.5, c.ATLAS_TILE_SIZE*1.5,
+                                        c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE)))
 
 
-def _save_image(image_name, image, i=0):
+def _save_image(image_name, image, i=1):
     """ Saves the provided image as image_name, with a number i, .png, in gen_res
         For example, grass2.png or grass.png
 
         If i is 1, no number is saved
     """
     if i == 1:
-        pygame.image.save(image, os.path.join(os.getcwd(), c.GEN_RES_FOLDER, image_name + ".png"))
+        number = ""
     else:
-        pygame.image.save(image, os.path.join(os.getcwd(), c.GEN_RES_FOLDER, image_name + str(i) + ".png"))
+        number = str(i)
+    if not os.path.isfile(os.path.join(os.getcwd(), c.GEN_RES_FOLDER, image_name + number + ".png")):
+        pygame.image.save(image, os.path.join(os.getcwd(), c.GEN_RES_FOLDER, image_name + number + ".png"))
