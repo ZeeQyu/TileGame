@@ -579,11 +579,9 @@ def _process_heap(heap, loaded_images, source_files, implicit_backgrounds):
                                         c.ATLAS_TILE_SIZE*1.5 + i*c.ATLAS_TILE_SIZE*0.5,  # Position of source, x
                                         c.ATLAS_TILE_SIZE*1.5 + j*c.ATLAS_TILE_SIZE*0.5,  # Position of source, y
                                         c.ATLAS_TILE_SIZE*0.5, c.ATLAS_TILE_SIZE*0.5)),  # Size of
-                                    (i*c.ATLAS_TILE_SIZE*0.5, j*c.ATLAS_TILE_SIZE*0.5))  # Pygame blit coordinate
+                                    ((1-i)*c.ATLAS_TILE_SIZE*0.5, (1-j)*c.ATLAS_TILE_SIZE*0.5))  # Pygame blit coordinate
                         _save_image(image_save_name,
-                                    microtile_atlas.subsurface(pygame.Rect(
-                                        c.ATLAS_TILE_SIZE*1.5, c.ATLAS_TILE_SIZE*1.5,
-                                        c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE)))
+                                    default_image)
 
 
 def _save_image(image_name, image, i=1):
