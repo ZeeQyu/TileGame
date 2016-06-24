@@ -449,6 +449,8 @@ def _create_heap(provided_images, source_files):
                 print("A loop of tiles who reference each other has been found. "
                       "Please check the res folder for the format of the following images,"
                       "and make sure they don't refernce each other in a circle: " + str(remaining_images))
+
+                c.debug_print(locals())
             break
         last_remaining_images = remaining_images
 
