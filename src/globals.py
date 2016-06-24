@@ -13,6 +13,7 @@ from src import constants as c
 # Making some variables that should be available for use in all modules
 map = width = height = player_start_x = player_start_y = screen = None
 images = {}
+should_quit = False
 
 # If the map should be rerendered next time.
 force_update = True

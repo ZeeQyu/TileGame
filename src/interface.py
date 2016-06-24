@@ -8,7 +8,6 @@
     
     Module handling interfaces, menus and prompts
 """
-import sys
 import time
 
 import pygame
@@ -42,7 +41,7 @@ def key_reconfig():
         for event in pygame.event.get():
             # Quit code
             if event.type == pgl.QUIT:
-                sys.exit()
+                g.should_quit = True
             # Cancel
             elif event.type == pgl.KEYDOWN and event.key == c.CONFIG_KEYS_KEY:
                 return

@@ -8,7 +8,6 @@
 
     Module for controlling input from the user. Note that the key rebinding happens separately in interface.py
 """
-import sys
 
 import pygame
 import pygame.locals as pgl
@@ -34,7 +33,7 @@ def event_check():
     for event in pygame.event.get():
         # Quit code
         if event.type == pgl.QUIT:
-            sys.exit()
+            g.should_quit = True
         if event.type == pgl.KEYDOWN or event.type == pgl.KEYUP:
             # Create beetle with (default) a
             if event.type == pgl.KEYDOWN and event.key == g.key_dict["spawn_beetle"][0]:
@@ -151,7 +150,7 @@ def event_check():
             elif (event.key == g.key_dict["close_window"][0] and
                   event.type == pgl.KEYDOWN) and c.NORMAL_DEBUG:
                 print("Closed with the escape key.")
-                sys.exit()
+                g.should_quit = True
 
 def _if_down(down_or_up):
     """ Checks if down_or_up is equal to pgl.KEYDOWN. Returns true if it is, otherwise it returns false.

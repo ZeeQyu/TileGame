@@ -42,7 +42,7 @@ uydfql24.n0c.txt
 *workspace.xml
 
 # generated textures
-gen_res
+gen_res/
 
 # Pycharm folder
-.idea
+.idea/

@@ -66,7 +66,7 @@ def main():
     time_start = time_cycles = time_updates = time_last_sleep = 0
     
     # Main loop
-    while True:
+    while not g.should_quit:
         # Make the screen update every frame
         if c.FORCE_UPDATE:
             g.force_update = True
