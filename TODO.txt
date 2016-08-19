@@ -1,5 +1,8 @@
 ZeeQyu TODO list:
 
+    Structure description in README.
+    "Tutorial" in readme
+
 	Pathfinding
 		Queue system
 		Rewrite the entire pathing system with caching paths and updates when the map is updated
