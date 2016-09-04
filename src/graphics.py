@@ -38,14 +38,12 @@ MICROTILE_ATLAS_PREFIX = "+-+"
 # Uses MICROTILE_LEGEND keys for identifying which kind of quarter it is, plus a number 0-3 for what quarter
 # position it's in (clockwise, starting with top left). None means "do not use this square".
 MICROTILE_ATLAS_TABLE = [
-    [ None,  None, "0000",  None,   None,   None,  None,  None],
-    [ None,  None,  None,   None,   None,   None,  None,  None],
-    [ None,  None, "0010", "1011", "1000", "0011", None, "0001"],
-    [ None,  None, "1003", "1112", "1113", "1012", None,  None],
-    [ None,  None, "1010", "1111", "1110", "1001", None,  None],
-    ["0003", None, "0013", "1002", "1013", "0012", None,  None],
-    [ None,  None,  None,   None,   None,   None,  None,  None],
-    [ None,  None,  None,   None,   None,  "0002", None,  None]
+    [ None, "0000",  None,   None,   None,  None],
+    [ None, "0010", "1011", "1000", "0011", "0001"],
+    [ None, "1003", "1112", "1113", "1012",  None],
+    [ None, "1010", "1111", "1110", "1001",  None],
+    ["0003", "0013", "1002", "1013", "0012",  None],
+    [ None,  None,   None,   None,  "0002",  None]
 ]
 
 class MissingMicrotileQuartetError(Exception):
@@ -500,28 +498,28 @@ def _process_heap(heap, loaded_images, source_files, implicit_backgrounds):
 
         else:
             # For microtile atlases
-            if loaded_images[image_key][0].get_width() == c.ATLAS_TILE_SIZE * 4 and \
-                    loaded_images[image_key][0].get_height() == c.ATLAS_TILE_SIZE * 4:
+            if loaded_images[image_key][0].get_width() == c.ATLAS_TILE_SIZE * 3 and \
+                    loaded_images[image_key][0].get_height() == c.ATLAS_TILE_SIZE * 3:
                 if "" not in source_files[image_key][1]:
                     source_files[image_key][1].append("")
                 # Put each background behind the atlas
                 for background_name in source_files[image_key][1]:
                     if background_name is not "":
-                        microtile_atlas = pygame.Surface((c.ATLAS_TILE_SIZE*4, c.ATLAS_TILE_SIZE*4), pygame.SRCALPHA)
+                        microtile_atlas = pygame.Surface((c.ATLAS_TILE_SIZE*3, c.ATLAS_TILE_SIZE*3), pygame.SRCALPHA)
                         # Use an entire atlas if possible
                         atlas_background_successful = False
                         if background_name in source_files and source_files[background_name][0] == "atlas":
                             background_image = pygame.image.load(os.path.join(os.getcwd(),
                                                                  c.RES_FOLDER, source_files[background_name][2]))
-                            if background_image.get_width() == c.ATLAS_TILE_SIZE * 4 and \
-                                    background_image.get_height() == c.ATLAS_TILE_SIZE * 4:
+                            if background_image.get_width() == c.ATLAS_TILE_SIZE * 3 and \
+                                    background_image.get_height() == c.ATLAS_TILE_SIZE * 3:
                                 # If there is such an atlas with the exact same size, use it.
                                 microtile_atlas.blit(background_image, (0, 0))
                                 atlas_background_successful = True
                         if not atlas_background_successful:
                             # If there isn't such an atlas, use single tiles, randomly chosen, over the entire background.
-                            for j in range(4):
-                                for i in range(4):
+                            for j in range(3):
+                                for i in range(3):
                                     microtile_atlas.blit(random.choice(loaded_images[background_name]),
                                                          (i*c.ATLAS_TILE_SIZE, j*c.ATLAS_TILE_SIZE))
                         del atlas_background_successful
@@ -538,8 +536,8 @@ def _process_heap(heap, loaded_images, source_files, implicit_backgrounds):
 
                     # Split the microtile atlas
                     if not c.DEACTIVATE_MICROTILES:
-                        for j in range(8):
-                            for i in range(8):
+                        for j in range(6):
+                            for i in range(6):
                                 if MICROTILE_ATLAS_TABLE[j][i] is not None:
                                     # Create a transparent surface
                                     quarter = pygame.Surface((c.ATLAS_TILE_SIZE, c.ATLAS_TILE_SIZE), pygame.SRCALPHA)
@@ -578,8 +576,8 @@ def _process_heap(heap, loaded_images, source_files, implicit_backgrounds):
                                 # For each quarter, blit it in the opposite square
                                 default_image.blit(
                                     microtile_atlas.subsurface(pygame.Rect(
-                                        c.ATLAS_TILE_SIZE*1.5 + i*c.ATLAS_TILE_SIZE*0.5,  # Position of source, x
-                                        c.ATLAS_TILE_SIZE*1.5 + j*c.ATLAS_TILE_SIZE*0.5,  # Position of source, y
+                                        c.ATLAS_TILE_SIZE*1.0 + i*c.ATLAS_TILE_SIZE*0.5,  # Position of source, x
+                                        c.ATLAS_TILE_SIZE*1.0 + j*c.ATLAS_TILE_SIZE*0.5,  # Position of source, y
                                         c.ATLAS_TILE_SIZE*0.5, c.ATLAS_TILE_SIZE*0.5)),  # Size of
                                     ((1-i)*c.ATLAS_TILE_SIZE*0.5, (1-j)*c.ATLAS_TILE_SIZE*0.5))  # Pygame blit coordinate
                         _save_image(image_save_name,

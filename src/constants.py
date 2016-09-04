@@ -140,12 +140,12 @@ IMAGES = {
     "stump": Img("stumpGrass.png", random=True, destroy=[5, "dirt"]),
     "sapling": Img("saplingGrass.png", random=True, destroy=[0, "grass"], evolve=[100, 200, "tree"]),
     "dirt-sapling": Img("saplingDirtGrass.png", random=True, destroy=[0, "dirt"], evolve=[100, 200, "tree"]),
-    "rock": Img("rockGrass.png", color_code=(0, 0, 0), random=True, collides=True),
+    "rock": Img("rockGrass.png", color_code=(0, 0, 0), random=True, collides=True, microtiles=True),
     "ore": Img("oreGrass.png", color_code=(255, 216, 0), random=True, placeable=True),
     "ore-sapling": Img("saplingOreGrass.png", destroy=[0, "ore"], evolve=[300, 400, "ore-tree"]),
     "ore-tree": Img("treeGrass.png", collides=True, destroy=[10, "ore-stump"]),
     "ore-stump": Img("stumpOreGrass.png", destroy=[15, "ore"]),
-    "water": Img("water.png", color_code=(0, 0, 255), random=True, microtiles=True),
+    "water": Img("waterGrass.png", color_code=(0, 0, 255), random=True, microtiles=True),
 
     # Structures
     "ore_mine": Img("structureMineOreGrass.png", destroy=[10, "ore-package"], random=True,
