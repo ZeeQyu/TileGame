@@ -2,6 +2,8 @@ TileGame
 ========
 An experimental tile-based game about moving resources and building systems by ZeeQyu
 
+![Screenshot of the game](screenshot.jpg)
+
 Requires Python 3.2 and Pygame for Python 3.2.
 **INSTALL.txt** has installation instructions.
 
